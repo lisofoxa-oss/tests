@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Какой у тебя язык любви? 💖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Playfair Display', sans-serif;
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .card-hover:hover {
+            transform: scale(1.05) rotate(1deg);
+        }
+
+        .option {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .option:hover {
+            transform: translateX(12px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgb(236 72 153 / 0.3);
+        }
+        
+        .selected {
+            background-color: #ec4899 !important;
+            color: white !important;
+            border-color: #db2777;
+            transform: scale(1.04);
+        }
+
+        .progress-bar {
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .heart-float {
+            animation: floatHeart 3s ease-in-out infinite;
+        }
+
+        @keyframes floatHeart {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .result-bar {
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-purple-100 to-violet-100 text-zinc-800 min-h-screen overflow-hidden">
+    <div class="max-w-2xl mx-auto min-h-screen flex flex-col bg-white shadow-2xl">
+
+        <!-- START SCREEN -->
+        <div id="start-screen" class="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center relative">
+            <div class="absolute top-8 right-8 text-6xl heart-float">💖</div>
+            <div class="absolute bottom-12 left-8 text-5xl heart-float" style="animation-delay: 1.2s;">✨</div>
+            
+            <div class="mb-10">
+                <div class="inline-flex items-center gap-4 bg-white shadow-xl px-8 py-4 rounded-3xl">
+                    <span class="text-6xl">💌</span>
+                    <span class="text-6xl">💕</span>
+                    <span class="text-6xl">🌹</span>
+                </div>
+            </div>
+            
+            <h1 class="title-font text-6xl md:text-7xl font-bold tracking-tighter mb-3 text-pink-600">
+                Какой у тебя<br>язык любви?
+            </h1>
+            <p class="text-2xl text-purple-600 font-light mb-2">15 вопросов • 3 минуты</p>
+            <p class="max-w-md text-zinc-500 text-lg">
+                Самый точный и весёлый тест по Гэри Чепмену<br>
+                <span class="font-medium text-pink-500">с кучей мемных ситуаций и реальной жизнью</span>
+            </p>
+
+            <button onclick="startQuiz()" 
+                    class="mt-16 px-14 py-7 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-2xl font-semibold rounded-3xl shadow-2xl hover:shadow-pink-500/50 active:scale-95 transition-all flex items-center gap-4">
+                Начать тест 💖
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <div class="mt-12 text-xs text-zinc-400 flex items-center gap-6">
+                <div>🔬 На основе реальной психологии</div>
+                <div>😂 С юмором и мемами</div>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden flex-1 flex flex-col">
+            <!-- Top bar -->
+            <div class="px-6 pt-8 pb-4 flex items-center justify-between border-b">
+                <button onclick="goBackToStart()" class="flex items-center gap-2 text-pink-500 hover:text-pink-600">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="font-medium">Назад</span>
+                </button>
+                <div class="font-mono text-lg font-bold text-purple-600" id="counter">1/15</div>
+            </div>
+
+            <!-- Progress -->
+            <div class="h-1.5 bg-pink-100">
+                <div id="progress" class="h-1.5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-r-full progress-bar" style="width: 6.66%"></div>
+            </div>
+
+            <!-- Question -->
+            <div class="flex-1 px-6 py-10 flex flex-col justify-center">
+                <div id="question-text" class="text-3xl leading-tight font-medium text-center text-zinc-800 min-h-[160px]">
+                </div>
+            </div>
+
+            <!-- Options -->
+            <div id="options" class="px-6 pb-12 grid gap-4">
+                <!-- JS injects -->
+            </div>
+
+            <!-- Bottom nav -->
+            <div class="px-6 pb-8">
+                <button onclick="nextQuestion()" id="next-button"
+                        class="w-full py-5 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold text-xl rounded-3xl shadow-xl active:scale-95 transition-all hidden">
+                    Следующий вопрос →
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="hidden flex-1 flex flex-col overflow-auto">
+            <div class="bg-gradient-to-br from-pink-500 to-purple-600 text-white pt-12 pb-8 px-6 text-center">
+                <div id="main-emoji" class="text-8xl mb-4"></div>
+                <div id="main-title" class="title-font text-5xl font-bold"></div>
+                <div id="main-subtitle" class="text-pink-200 text-xl mt-1"></div>
+            </div>
+
+            <div class="flex-1 px-6 py-8">
+                <!-- Percentage bars -->
+                <div class="mb-10">
+                    <div class="text-sm uppercase tracking-widest text-zinc-500 mb-4 text-center">Твои языки любви</div>
+                    <div id="bars-container" class="space-y-6">
+                        <!-- JS filled -->
+                    </div>
+                </div>
+
+                <!-- Detailed description -->
+                <div id="main-description" class="bg-white border border-pink-200 rounded-3xl p-8 mb-8 leading-relaxed text-lg"></div>
+
+                <!-- Fun tips -->
+                <div class="mb-8">
+                    <div class="uppercase text-pink-500 text-xs tracking-widest mb-4">Как попросить любви именно так:</div>
+                    <ul id="tips-list" class="space-y-4 text-zinc-700"></ul>
+                </div>
+
+                <!-- Science -->
+                <div class="bg-purple-50 border border-purple-200 rounded-3xl p-8 text-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fas fa-flask text-purple-500"></i>
+                        <span class="uppercase text-purple-600 text-xs tracking-widest font-medium">Научный факт</span>
+                    </div>
+                    <div id="science-fact" class="italic text-zinc-600"></div>
+                </div>
+            </div>
+
+            <!-- Footer buttons -->
+            <div class="sticky bottom-0 bg-white border-t p-6 flex gap-4">
+                <button onclick="restartQuiz()" 
+                        class="flex-1 py-6 border-2 border-pink-400 text-pink-500 font-semibold rounded-3xl active:bg-pink-50">
+                    Пройти ещё раз
+                </button>
+                <button onclick="shareResult()" 
+                        class="flex-1 py-6 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-3xl active:scale-95">
+                    <i class="fas fa-share-alt mr-2"></i> Поделиться с подругой
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const languages = {
+            words: { name: "Слова поощрения", emoji: "💌", color: "pink", desc: "Ты та самая девушка, которой достаточно услышать «ты невероятная» — и весь день сияет. Тебе важно, чтобы тебя хвалили, писали длинные сообщения и говорили, как сильно любят." },
+            time: { name: "Качественное время", emoji: "☕", color: "purple", desc: "Ты та, кто хочет просто быть вместе. Без телефонов, без отвлечений. Прогулка, кино на диване или даже просто молча пить кофе — для тебя это и есть любовь." },
+            gifts: { name: "Подарки", emoji: "🎁", color: "rose", desc: "Тебе не нужны дорогие вещи. Тебе важно, что человек думал о тебе и выбрал именно этот милый браслет/цветок/записочку. Подарок = «я тебя помню»." },
+            acts: { name: "Дела и забота", emoji: "🫶", color: "violet", desc: "Когда он сам чинит твою розетку, привозит еду, когда ты болеешь, или просто берёт на себя все домашние дела — ты таешь. Действия > слова." },
+            touch: { name: "Прикосновения", emoji: "🤗", color: "fuchsia", desc: "Объятия, поцелуи в макушку, держать за руку в кино, массаж ног после тяжёлого дня… Ты чувствуешь любовь через тело. Без касаний тебе грустно." }
+        };
+
+        let scores = { words: 0, time: 0, gifts: 0, acts: 0, touch: 0 };
+        let currentQuestion = 0;
+        let selected = null;
+
+        const questions = [
+            {
+                q: "Твой парень забыл про годовщину… Что тебя реально утешит?",
+                a: [
+                    { text: "Он напишет мне длинное красивое сообщение про то, как я ему дорога", lang: "words" },
+                    { text: "Он выключит телефон и проведёт весь вечер только со мной", lang: "time" },
+                    { text: "Он приедет с огромным букетом и моим любимым десертом", lang: "gifts" },
+                    { text: "Он сам приготовит ужин и уберёт всю квартиру", lang: "acts" },
+                    { text: "Он просто обнимет меня очень крепко и не отпустит", lang: "touch" }
+                ]
+            },
+            {
+                q: "Какое свидание ты будешь вспоминать всю жизнь?",
+                a: [
+                    { text: "Он весь вечер говорил мне комплименты и смотрел в глаза", lang: "words" },
+                    { text: "Мы гуляли 4 часа по парку и забыли про время", lang: "time" },
+                    { text: "Он подарил мне что-то очень личное и продуманное", lang: "gifts" },
+                    { text: "Он весь день возил меня по местам, которые я хотела увидеть", lang: "acts" },
+                    { text: "Мы всю дорогу держались за руки и целовались", lang: "touch" }
+                ]
+            },
+            {
+                q: "Ты очень устала после работы. Что тебя мгновенно поднимет настроение?",
+                a: [
+                    { text: "Сообщение: «Ты самая сильная и красивая, я тобой горжусь»", lang: "words" },
+                    { text: "Он приедет и просто посидит со мной рядом", lang: "time" },
+                    { text: "Он пришлёт тебе доставку твоего любимого латте и круассан", lang: "gifts" },
+                    { text: "Он сам помоет посуду и сделает тебе ванну", lang: "acts" },
+                    { text: "Он обнимет тебя сзади и поцелует в шею", lang: "touch" }
+                ]
+            },
+            {
+                q: "В чате с парнем ты больше всего ждёшь…",
+                a: [
+                    { text: "Длинные голосовые, где он говорит, как сильно скучает", lang: "words" },
+                    { text: "Предложение: «Давай созвонимся прямо сейчас?»", lang: "time" },
+                    { text: "«Смотри, я тебе купил вот это, потому что подумал о тебе»", lang: "gifts" },
+                    { text: "«Я заберу тебя с работы и довезу домой»", lang: "acts" },
+                    { text: "«Хочу тебя обнять прямо сейчас»", lang: "touch" }
+                ]
+            },
+            {
+                q: "Какой комплимент от парня заставляет тебя краснеть?",
+                a: [
+                    { text: "«Ты самая умная и красивая девушка, которую я встречал»", lang: "words" },
+                    { text: "«С тобой даже в пробке весело»", lang: "time" },
+                    { text: "«Я специально для тебя выбрал это колечко»", lang: "gifts" },
+                    { text: "«Я всё сделаю, чтобы тебе было легко»", lang: "acts" },
+                    { text: "«Твои объятия — моё любимое место на земле»", lang: "touch" }
+                ]
+            },
+            {
+                q: "Ты болеешь. Что тебе нужно больше всего?",
+                a: [
+                    { text: "Голосовое: «Малышка, ты справишься, я верю в тебя»", lang: "words" },
+                    { text: "Он приедет и просто полежит рядом", lang: "time" },
+                    { text: "Он привезёт лекарства + твой любимый плед и шоколад", lang: "gifts" },
+                    { text: "Он сам сходит в аптеку и приготовит тебе чай с мёдом", lang: "acts" },
+                    { text: "Он будет гладить тебя по голове и обнимать", lang: "touch" }
+                ]
+            },
+            {
+                q: "Какой подарок на 8 марта ты запомнишь навсегда?",
+                a: [
+                    { text: "Открытка с 10 причинами, почему он меня любит", lang: "words" },
+                    { text: "Путёвка на выходные только вдвоём", lang: "time" },
+                    { text: "Что-то очень дорогое и красивое", lang: "gifts" },
+                    { text: "Он сам сделал мне ремонт в комнате", lang: "acts" },
+                    { text: "Массаж + новый парфюм, который он выбрал сам", lang: "touch" }
+                ]
+            },
+            {
+                q: "В отношениях ты больше всего ценишь, когда…",
+                a: [
+                    { text: "Он постоянно говорит, что я для него особенная", lang: "words" },
+                    { text: "Мы вместе делаем даже скучные дела и нам весело", lang: "time" },
+                    { text: "Он постоянно дарит маленькие приятности", lang: "gifts" },
+                    { text: "Он берёт на себя мои проблемы и помогает", lang: "acts" },
+                    { text: "Мы много обнимаемся, целуемся и держимся за руки", lang: "touch" }
+                ]
+            },
+            {
+                q: "Ты расстроена. Что тебя быстрее всего успокоит?",
+                a: [
+                    { text: "Он напишет огромный текст поддержки", lang: "words" },
+                    { text: "«Давай я приеду и мы просто полежим»", lang: "time" },
+                    { text: "Он пришлёт тебе цветы прямо сейчас", lang: "gifts" },
+                    { text: "Он сам разберётся с твоей проблемой", lang: "acts" },
+                    { text: "Он обнимет и скажет «всё будет хорошо»", lang: "touch" }
+                ]
+            },
+            {
+                q: "Идеальный вечер пятницы для тебя — это…",
+                a: [
+                    { text: "Он читает мне вслух мои любимые сообщения", lang: "words" },
+                    { text: "Мы смотрим сериал и общаемся без телефонов", lang: "time" },
+                    { text: "Он приготовил ужин и купил мне новый крем", lang: "gifts" },
+                    { text: "Он убрал всю квартиру, пока я была на работе", lang: "acts" },
+                    { text: "Мы лежим в обнимку под пледом", lang: "touch" }
+                ]
+            },
+            {
+                q: "Какой пост в сторис ты сразу репостишь?",
+                a: [
+                    { text: "«Моя девушка — лучшее, что со мной случалось»", lang: "words" },
+                    { text: "Фото нас вдвоём с подписью «мой человек»", lang: "time" },
+                    { text: "Он купил мне цветы и выложил", lang: "gifts" },
+                    { text: "Видео, как он готовит мне завтрак", lang: "acts" },
+                    { text: "Видео, где он меня кружит и целует", lang: "touch" }
+                ]
+            },
+            {
+                q: "Ты чувствуешь себя самой любимой, когда…",
+                a: [
+                    { text: "Он говорит «я тобой горжусь» при всех", lang: "words" },
+                    { text: "Мы просто гуляем и болтаем обо всём", lang: "time" },
+                    { text: "Он дарит мне то, о чём я мельком упоминала", lang: "gifts" },
+                    { text: "Он помогает мне без просьб", lang: "acts" },
+                    { text: "Он постоянно меня обнимает и целует", lang: "touch" }
+                ]
+            },
+            {
+                q: "Что для тебя важнее всего в отношениях?",
+                a: [
+                    { text: "Чтобы меня постоянно хвалили и поддерживали словами", lang: "words" },
+                    { text: "Проводить вместе много времени и быть на одной волне", lang: "time" },
+                    { text: "Чтобы меня баловали подарками и сюрпризами", lang: "gifts" },
+                    { text: "Чтобы обо мне заботились делами", lang: "acts" },
+                    { text: "Много нежности и физического контакта", lang: "touch" }
+                ]
+            },
+            {
+                q: "Какой «маленький жест» заставляет тебя влюбляться заново?",
+                a: [
+                    { text: "Записка «я тебя люблю» в сумке", lang: "words" },
+                    { text: "Он отменяет планы, чтобы быть со мной", lang: "time" },
+                    { text: "Маленький подарочек «просто потому что»", lang: "gifts" },
+                    { text: "Он сам заправил мою машину", lang: "acts" },
+                    { text: "Поцелуй в лоб перед сном", lang: "touch" }
+                ]
+            },
+            {
+                q: "Последний вопрос ❤️ Какой язык ты уже чувствуешь своим?",
+                a: [
+                    { text: "Слова — это моё всё", lang: "words" },
+                    { text: "Время вместе — бесценно", lang: "time" },
+                    { text: "Подарки показывают внимание", lang: "gifts" },
+                    { text: "Дела говорят громче слов", lang: "acts" },
+                    { text: "Объятия лечат всё", lang: "touch" }
+                ]
+            }
+        ];
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestion = 0;
+            scores = { words: 0, time: 0, gifts: 0, acts: 0, touch: 0 };
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question-text').innerHTML = `<span class="block text-pink-500 text-2xl mb-6">Вопрос ${currentQuestion + 1}/15</span>${q.q}`;
+            document.getElementById('counter').textContent = `${currentQuestion + 1}/15`;
+            document.getElementById('progress').style.width = `${((currentQuestion) / 15) * 100}%`;
+
+            const container = document.getElementById('options');
+            container.innerHTML = '';
+
+            q.a.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = `option w-full text-left px-8 py-6 rounded-3xl border-2 border-transparent bg-white shadow-md hover:shadow-xl text-xl flex items-center gap-5`;
+                btn.innerHTML = `
+                    <span class="text-4xl flex-shrink-0">${['💌','☕','🎁','🫶','🤗'][index]}</span>
+                    <span>${option.text}</span>
+                `;
+                btn.onclick = () => selectAnswer(option.lang, btn);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('next-button').classList.add('hidden');
+        }
+
+        function selectAnswer(lang, btn) {
+            // remove previous selected
+            document.querySelectorAll('#options button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selected = lang;
+            document.getElementById('next-button').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (!selected) return;
+            scores[selected] += 1;
+            selected = null;
+
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            // Find top language
+            let maxScore = 0;
+            let mainLang = 'words';
+            Object.keys(scores).forEach(key => {
+                if (scores[key] > maxScore) {
+                    maxScore = scores[key];
+                    mainLang = key;
+                }
+            });
+
+            const main = languages[mainLang];
+
+            // Main result
+            document.getElementById('main-emoji').textContent = main.emoji;
+            document.getElementById('main-title').innerHTML = `${main.name} <span class="text-3xl">(${maxScore}/15)</span>`;
+            document.getElementById('main-subtitle').textContent = "Твой главный язык любви";
+            document.getElementById('main-description').innerHTML = main.desc + `<br><br><span class="text-pink-500 font-medium">Ты — та девушка, которую можно влюбить именно этим ❤️</span>`;
+
+            // All bars
+            const container = document.getElementById('bars-container');
+            container.innerHTML = '';
+            Object.keys(languages).forEach(key => {
+                const perc = Math.round((scores[key] / 15) * 100);
+                const lang = languages[key];
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div class="flex justify-between text-sm mb-1.5">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">${lang.emoji}</span>
+                            <span class="font-medium">${lang.name}</span>
+                        </div>
+                        <span class="font-mono text-pink-600">${perc}%</span>
+                    </div>
+                    <div class="h-4 bg-zinc-100 rounded-2xl overflow-hidden">
+                        <div class="result-bar h-4 rounded-2xl" style="width: ${perc}%; background: linear-gradient(to right, #ec4899, #a855f7);"></div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            // Tips
+            const tipsHTML = {
+                words: ["Попроси его каждый день говорить тебе хотя бы один комплимент", "Отправляй ему свои любимые песни с текстом «это про тебя»", "Проси голосовые вместо сухих «ок»"],
+                time: ["Скажи: «Давай выключим телефоны и просто побудем вместе»", "Предложи «свидание дома» без плана", "Попроси его выделять тебе 30 минут в день только для тебя"],
+                gifts: ["Говори: «Мне так приятно, когда ты думаешь обо мне и что-то даришь»", "Веди вишлист на подарки", "Цени даже маленькие сюрпризы вслух"],
+                acts: ["Попроси конкретно: «Можешь забрать меня с работы сегодня?»", "Говори спасибо за каждую мелочь, которую он делает", "Составь список дел, которые тебе тяжело делать самой"],
+                touch: ["Прямо говори: «Обними меня крепче»", "Проси массаж после тяжёлого дня", "Держи его за руку на людях"]
+            };
+
+            const tipsList = document.getElementById('tips-list');
+            tipsList.innerHTML = '';
+            tipsHTML[mainLang].forEach(tip => {
+                const li = document.createElement('li');
+                li.className = "flex gap-4 items-start";
+                li.innerHTML = `<span class="text-2xl mt-1">💡</span><span>${tip}</span>`;
+                tipsList.appendChild(li);
+            });
+
+            // Science
+            document.getElementById('science-fact').innerHTML = `По исследованию Gary Chapman (книга «Пять языков любви» — 20+ млн проданных копий) пары, которые знают и используют языки любви друг друга, в 7 раз реже разводятся. Это реально работает!`;
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+
+        function goBackToStart() {
+            if (confirm('Хочешь вернуться в начало? Прогресс потеряется 💔')) {
+                document.getElementById('quiz-screen').classList.add('hidden');
+                document.getElementById('start-screen').classList.remove('hidden');
+            }
+        }
+
+        function shareResult() {
+            const text = `Мой главный язык любви — ${document.getElementById('main-title').textContent.split('<')[0].trim()} 💖\nПройди тоже! https://lisofoxa-oss.github.io/tests/`;
+            navigator.clipboard.writeText(text);
+            alert('✅ Результат скопирован! Отправляй подругам и парню 😉');
+        }
+
+        // Keyboard
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('quiz-screen').classList.contains('hidden')) return;
+            if (e.key === 'Enter' && !document.getElementById('next-button').classList.contains('hidden')) {
+                nextQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
