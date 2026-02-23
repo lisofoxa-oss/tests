@@ -469,7 +469,7 @@
         }
 
         function shareResult() {
-            const text = `Я прошёл(а) тест «Как тебя выбесить?» и я — ${document.getElementById('result-title').textContent}! 🔥 Попробуй и ты: [вставь ссылку]`;
+            const text = `Я прошёл(а) тест «Как тебя выбесить?» и я — ${document.getElementById('result-title').textContent}! 🔥 Попробуй и ты: https://lisofoxa-oss.github.io/tests`;
             navigator.clipboard.writeText(text).then(() => {
                 alert('✅ Результат скопирован в буфер! Можешь отправить друзьям 😉');
             });
