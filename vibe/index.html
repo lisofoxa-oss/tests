@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>В какое время суток твой вайб 😈🌙☀️</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0a001f, #1a0033);
+      color: #f0e6ff;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.9rem;
+      margin: 30px 0 10px;
+      background: linear-gradient(90deg, #c084fc, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #c4b5fd;
+      margin-bottom: 40px;
+      font-size: 1.2rem;
+    }
+
+    .progress-container {
+      height: 6px;
+      background: rgba(192, 132, 252, 0.2);
+      border-radius: 9999px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #c084fc, #f472b6);
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .question-card {
+      background: rgba(30, 10, 60, 0.75);
+      border-radius: 24px;
+      padding: 40px 35px;
+      border: 1px solid #6b21a8;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+      min-height: 380px;
+      transition: all 0.4s ease;
+    }
+
+    .question-number {
+      color: #c084fc;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .question-text {
+      font-size: 1.55rem;
+      line-height: 1.35;
+      margin-bottom: 32px;
+      color: #e0d4ff;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      padding: 18px 22px;
+      background: rgba(50, 20, 90, 0.5);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      font-size: 1.1rem;
+    }
+
+    label:hover {
+      background: rgba(100, 50, 160, 0.6);
+      transform: translateX(8px);
+    }
+
+    label.selected {
+      background: rgba(168, 85, 247, 0.3);
+      border-color: #c084fc;
+      transform: scale(1.02);
+    }
+
+    input[type="radio"] {
+      margin-right: 16px;
+      accent-color: #c084fc;
+      transform: scale(1.3);
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+
+    button {
+      padding: 16px 40px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    #prevBtn {
+      background: transparent;
+      color: #c4b5fd;
+      border: 2px solid #6b21a8;
+    }
+
+    #nextBtn {
+      background: linear-gradient(45deg, #a855f7, #d946ef);
+      color: white;
+      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5);
+    }
+
+    #nextBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(168, 85, 247, 0.6);
+    }
+
+    #result {
+      display: none;
+      text-align: center;
+      padding: 50px 30px;
+      background: rgba(20, 5, 50, 0.85);
+      border-radius: 28px;
+      border: 2px dashed #c084fc;
+      margin-top: 40px;
+    }
+
+    .emoji-big {
+      font-size: 6.5rem;
+      margin: 20px 0;
+      filter: drop-shadow(0 0 30px #c084fc);
+    }
+
+    .result-title {
+      font-size: 2.4rem;
+      margin: 20px 0 16px;
+      background: linear-gradient(90deg, #e0bbff, #f9a8d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .score {
+      margin-top: 25px;
+      font-size: 1.1rem;
+      color: #c4b5fd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>В какое время суток твой вайб?</h1>
+    <p class="subtitle">Ответь честно 🌚</p>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="question-card" id="questionCard">
+      <div class="question-number" id="questionNum"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="options"></div>
+
+      <div class="navigation">
+        <button id="prevBtn" onclick="prevQuestion()">← Назад</button>
+        <button id="nextBtn" onclick="nextQuestion()">Далее →</button>
+      </div>
+    </div>
+
+    <div id="result">
+      <div class="emoji-big" id="emoji"></div>
+      <div class="result-title" id="resultTitle"></div>
+      <div id="resultText"></div>
+      <div class="score" id="scoreText"></div>
+      <button onclick="restartQuiz()" style="margin-top: 30px;">Пройти заново</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { num: 1, text: "Ты просыпаешься в 11:40 и первое, что делаешь...", options: [{text:"проверяешь, не писал ли кто ночью", value:4}, {text:"идёшь варить кофе и включать музыку", value:2}, {text:"орёшь в подушку «ещё пять минуточек»", value:1}, {text:"сразу в душ и на улицу бежать", value:0}] },
+      { num: 2, text: "Самое продуктивное время для тебя — это...", options: [{text:"8:00–12:00", value:0}, {text:"14:00–18:00", value:2}, {text:"22:00–02:00", value:3}, {text:"когда все уже спят", value:4}] },
+      { num: 3, text: "Как ты относишься к будильнику на 7 утра?", options: [{text:"это нормально, я встаю", value:0}, {text:"ненавижу, но терплю", value:2}, {text:"это личное оскорбление", value:4}, {text:"ставлю на 7, просыпаюсь в 11", value:3}] },
+      { num: 4, text: "Где ты чаще всего зависаешь в 3 часа ночи?", options: [{text:"тикток / ютуб / твиттер без остановки", value:4}, {text:"играешь / смотришь аниме / читаешь мангу", value:3}, {text:"сидишь в чатике с друзьями", value:2}, {text:"уже 10 часов как спишь", value:0}] },
+      { num: 5, text: "Твоё идеальное время для творчества / работы над проектом", options: [{text:"глубокая ночь, тишина, только я и плейлист", value:4}, {text:"утро, свежая голова", value:0}, {text:"день, когда все вокруг тоже чем-то заняты", value:2}, {text:"когда дедлайн уже вчера", value:3}] },
+      { num: 6, text: "Что ты ешь/пьёшь в 4 утра?", options: [{text:"дошик / лапшу / чипсы", value:4}, {text:"энергетик / кола / кофе", value:3}, {text:"йогурт или фрукты (я странный)", value:2}, {text:"сплю, ничего не ем", value:0}] },
+      { num: 7, text: "Самый страшный звук утром", options: [{text:"мама кричит «вставай!»", value:4}, {text:"будильник на 6:30", value:0}, {text:"тишина (значит проспал)", value:2}, {text:"пылесос соседей в 8 утра", value:1}] },
+      { num: 8, text: "Твоё настроение в 18:00", options: [{text:"норм, день прошёл", value:2}, {text:"только начинаю жить", value:4}, {text:"уже устал", value:1}, {text:"ещё даже не проснулся по-настоящему", value:3}] },
+      { num: 9, text: "Когда ты пишешь самые безумные сообщения?", options: [{text:"2–5 утра", value:4}, {text:"после 23:00", value:3}, {text:"днём, когда скучно", value:2}, {text:"почти никогда, я адекватный", value:0}] },
+      { num: 10, text: "Как быстро ты засыпаешь?", options: [{text:"5–15 минут и вырубон", value:0}, {text:"30–60 минут", value:2}, {text:"1–3 часа прокрастинации", value:3}, {text:"могу до 6 утра бодрствовать", value:4}] },
+      { num: 11, text: "Ты хотя бы раз ел пельмени или дошик в 4 утра?", options: [{text:"Да, классика", value:4}, {text:"Нет", value:0}] },
+      { num: 12, text: "У тебя есть плейлист «3 am vibes» или «night drive»?", options: [{text:"Конечно есть", value:4}, {text:"Нет", value:0}] },
+      { num: 13, text: "Ты пишешь «ой всё, сплю» в районе 5:20 утра?", options: [{text:"Регулярно", value:4}, {text:"Нет", value:0}] },
+      { num: 14, text: "Солнце для тебя — это атмосферное освещение для фото?", options: [{text:"Абсолютно", value:4}, {text:"Нет", value:0}] },
+      { num: 15, text: "Ты считаешь, что настоящая жизнь начинается после полуночи?", options: [{text:"100%", value:4}, {text:"Нет", value:0}] }
+    ];
+
+    let currentQuestion = 0;
+    let answers = new Array(questions.length).fill(null);
+
+    function renderQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('questionNum').textContent = `Вопрос ${q.num} из ${questions.length}`;
+      document.getElementById('questionText').textContent = q.text;
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((option, i) => {
+        const label = document.createElement('label');
+        label.innerHTML = `
+          <input type="radio" name="q${currentQuestion}" value="${option.value}" ${answers[currentQuestion] === option.value ? 'checked' : ''}>
+          ${option.text}
+        `;
+        if (answers[currentQuestion] === option.value) label.classList.add('selected');
+        label.addEventListener('click', () => {
+          answers[currentQuestion] = parseInt(option.value);
+          document.querySelectorAll('#options label').forEach(l => l.classList.remove('selected'));
+          label.classList.add('selected');
+        });
+        optionsContainer.appendChild(label);
+      });
+
+      document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'block';
+      document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'Узнать результат →' : 'Далее →';
+
+      const progress = ((currentQuestion + 1) / questions.length) * 100;
+      document.getElementById('progress').style.width = `${progress}%`;
+    }
+
+    function nextQuestion() {
+      if (answers[currentQuestion] === null) {
+        alert("Выбери вариант ответа :)");
+        return;
+      }
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      } else {
+        calculateResult();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+      }
+    }
+
+    function calculateResult() {
+      let nightScore = answers.reduce((sum, val) => sum + (val || 0), 0);
+      const maxScore = 60;
+      const percentage = Math.round((nightScore / maxScore) * 100);
+
+      let title = "", emoji = "", description = "";
+      if (nightScore >= 48) {
+        title = "НОЧНОЙ ДЕМОН 3:00 AM";
+        emoji = "🌑😈👁️‍🗨️";
+        description = "Ты живёшь по законам ночи. Солнце для тебя — миф, а 4 утра — лучшее время для продуктивности и глубоких мыслей.";
+      } else if (nightScore >= 36) {
+        title = "Сумеречный псих";
+        emoji = "🌆🖤";
+        description = "Ты расцветаешь после заката. День — просто прелюдия к настоящей жизни.";
+      } else if (nightScore >= 24) {
+        title = "Дневной вайб — классика";
+        emoji = "🌞📱";
+        description = "Ты довольно сбалансированный человек. Можешь и днём, и ночью, но вечер — твоя золотая середина.";
+      } else {
+        title = "Утренний жаворонок";
+        emoji = "🌅🐦";
+        description = "Ты любишь утро, свежий воздух и продуктивный день. Ночь для тебя — время спать.";
+      }
+
+      document.getElementById('questionCard').style.display = 'none';
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+
+      document.getElementById('emoji').textContent = emoji;
+      document.getElementById('resultTitle').textContent = title;
+      document.getElementById('resultText').innerHTML = `<p style="font-size:1.3rem;margin:20px 0;">${description}</p>`;
+      document.getElementById('scoreText').textContent = `Ночной вайб: ${percentage}% (${nightScore} из ${maxScore})`;
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      answers = new Array(questions.length).fill(null);
+      document.getElementById('questionCard').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+      renderQuestion();
+    }
+
+    window.onload = () => { renderQuestion(); };
+  </script>
+</body>
+</html>
