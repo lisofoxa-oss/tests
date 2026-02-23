@@ -97,10 +97,10 @@
       const score = answers.reduce((a,b)=>a+b,0);
       const percent = Math.round(score / 32 * 100);
       let title, emoji, text;
-      if (score >= 28) { title="ТЫ БЕЗУМНО ВЛЮБЛЁНА(Ы)"; emoji="💖🔥"; text="Это не просто влюблённость — это настоящая любовь. Ты уже не можешь без него/неё."; }
+      if (score >= 28) { title="ТЫ БЕЗУМНО ВЛЮБЛЁН(А)"; emoji="💖🔥"; text="Это не просто влюблённость — это настоящая любовь. Ты уже не можешь без него/неё."; }
       else if (score >= 22) { title="Сильная влюблённость"; emoji="🌸💘"; text="Бабочки в животе, улыбка 24/7 и мысли только о нём/ней. Почти любовь!"; }
       else if (score >= 15) { title="Лёгкая влюблённость"; emoji="😊💕"; text="Приятные чувства, но ещё не всё серьёзно. Можно развивать дальше."; }
-      else { title="Пока только симпатия"; emoji="🌟"; text="Ты заинтересована, но до глубоких чувств ещё далеко. Всё впереди!"; }
+      else { title="Пока только симпатия"; emoji="🌟"; text="Ты заинтересован(а), но до глубоких чувств ещё далеко. Всё впереди!"; }
 
       document.getElementById('questionCard').style.display='none';
       const res = document.getElementById('result'); res.style.display='block';
