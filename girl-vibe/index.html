@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Какой ты тип девушки по вайбу? 🎀🌸</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #831843, #db2777);
+      color: #fce7f3;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin: 30px 0 10px;
+      background: linear-gradient(90deg, #f472b6, #ec4899, #f9a8d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle { text-align: center; color: #fda4af; font-size: 1.3rem; margin-bottom: 40px; }
+    .progress-container { height: 8px; background: rgba(251,113,133,0.25); border-radius: 9999px; margin-bottom: 40px; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, #f472b6, #ec4899); width: 0%; transition: width 0.4s ease; }
+    .question-card {
+      background: rgba(50, 15, 40, 0.92);
+      border-radius: 30px;
+      padding: 42px 36px;
+      border: 2px solid #fda4af;
+      backdrop-filter: blur(12px);
+      min-height: 440px;
+      box-shadow: 0 25px 60px -10px rgba(236,72,153,0.4);
+    }
+    .question-number { color: #fda4af; font-size: 1.2rem; margin-bottom: 12px; }
+    .question-text { font-size: 1.65rem; line-height: 1.4; margin-bottom: 38px; color: #fff1f2; }
+    .options { display: flex; flex-direction: column; gap: 16px; }
+    label {
+      display: flex;
+      align-items: center;
+      padding: 21px 26px;
+      background: rgba(190, 24, 93, 0.35);
+      border-radius: 22px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+      font-size: 1.2rem;
+    }
+    label:hover { background: rgba(251,113,133,0.4); transform: translateX(12px); }
+    label.selected { background: rgba(251,113,133,0.35); border-color: #fda4af; transform: scale(1.04); }
+    input[type="radio"] { margin-right: 18px; accent-color: #fda4af; transform: scale(1.45); }
+    .navigation { display: flex; justify-content: space-between; margin-top: 50px; }
+    button {
+      padding: 16px 44px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+    #prevBtn { background: transparent; color: #fda4af; border: 2px solid #fda4af; }
+    #nextBtn { background: linear-gradient(45deg, #ec4899, #f472b6); color: white; box-shadow: 0 12px 35px rgba(236,72,153,0.5); }
+    #result { display: none; text-align: center; padding: 60px 40px; background: rgba(50,15,40,0.95); border-radius: 34px; border: 3px dashed #fda4af; margin-top: 40px; box-shadow: 0 30px 70px -15px rgba(236,72,153,0.6); }
+    .emoji-big { font-size: 7.5rem; margin: 20px 0 25px; filter: drop-shadow(0 0 40px #fda4af); }
+    .result-title { font-size: 2.7rem; margin: 15px 0 20px; background: linear-gradient(90deg,#fda4af,#f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Какой ты тип девушки по вайбу? 🎀🌸</h1>
+    <p class="subtitle">13 вопросов, чтобы узнать свою настоящую эстетику 💖</p>
+    <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
+
+    <div class="question-card" id="questionCard">
+      <div class="question-number" id="questionNum"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="options"></div>
+      <div class="navigation">
+        <button id="prevBtn" onclick="prevQuestion()">← Назад</button>
+        <button id="nextBtn" onclick="nextQuestion()">Далее →</button>
+      </div>
+    </div>
+
+    <div id="result">
+      <div class="emoji-big" id="emoji"></div>
+      <div class="result-title" id="resultTitle"></div>
+      <div id="resultText" style="font-size:1.4rem;line-height:1.65;color:#fce7f3;max-width:520px;margin:0 auto;"></div>
+      <button onclick="restartQuiz()" style="margin-top:40px;background:#ec4899;color:white;padding:18px 50px;">Пройти ещё раз 💕</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {num:1, text:"Твой любимый способ начинать утро, зайка? ☕", options:[
+        {t:"Обнимать подушку и мечтать ещё 30 минут 🌸", cat:"soft"},
+        {t:"Делать макияж с бантиками и селфи 🎀", cat:"coquette"},
+        {t:"Читать книгу с кофе в тёмной комнате 🖤", cat:"dark"},
+        {t:"Включать трендовый трек и танцевать у зеркала 🔥", cat:"y2k"},
+        {t:"Гулять босиком по траве с чаем из ромашки 🌿", cat:"cottage"},
+        {t:"Делать зарядку и пить протеин 💪", cat:"sporty"}
+      ]},
+      {num:2, text:"Какой эмодзи ты ставишь чаще всего? ✨", options:[
+        {t:"🌸💗", cat:"soft"}, {t:"🎀💕", cat:"coquette"}, {t:"🖤📖", cat:"dark"},
+        {t:"💅🔥", cat:"y2k"}, {t:"🧚‍♀️🌼", cat:"cottage"}, {t:"🏃‍♀️✨", cat:"sporty"}
+      ]},
+      {num:3, text:"На свидание ты наденешь...", options:[
+        {t:"Пастельное платье и бантики", cat:"soft"},
+        {t:"Корсет + мини-юбка + огромный бант 🎀", cat:"coquette"},
+        {t:"Чёрный свитер оверсайз и юбка-карандаш 🖤", cat:"dark"},
+        {t:"Блестящий топ + низкая посадка + кеды 🔥", cat:"y2k"},
+        {t:"Сарафан в цветочек и соломенная шляпа 🌼", cat:"cottage"},
+        {t:"Спорт-бра и леггинсы (но красивые!)", cat:"sporty"}
+      ]},
+      {num:4, text:"Твой идеальный плейлист называется...", options:[
+        {t:"«Soft hugs & dreams»", cat:"soft"},
+        {t:"«Coquette hours 💗»", cat:"coquette"},
+        {t:"«Dark academia rainy days»", cat:"dark"},
+        {t:"«Y2K baddie anthems 🔥»", cat:"y2k"},
+        {t:"«Cottagecore fairytale»", cat:"cottage"},
+        {t:"«Gym glow playlist»", cat:"sporty"}
+      ]},
+      {num:5, text:"Когда ты грустишь, ты...", options:[
+        {t:"Обнимаешь плюшевого мишку и плачешь в подушку 🌸", cat:"soft"},
+        {t:"Делаешь 100 фото в зеркале с бантиками 🎀", cat:"coquette"},
+        {t:"Пишешь стихи и пьёшь вино в темноте 🖤", cat:"dark"},
+        {t:"Включаешь громкую музыку и танцуешь до утра 🔥", cat:"y2k"},
+        {t:"Идёшь в сад собирать цветы 🌿", cat:"cottage"},
+        {t:"Идёшь бегать, чтобы выплеснуть энергию 🏃‍♀️", cat:"sporty"}
+      ]},
+      {num:6, text:"Какой твой любимый десерт?", options:[
+        {t:"Малиновый чизкейк с розочками 🌸", cat:"soft"},
+        {t:"Клубничный торт с сердечками 🎀", cat:"coquette"},
+        {t:"Чёрный шоколад 90%", cat:"dark"},
+        {t:"Pop rocks + сладкая вата 🔥", cat:"y2k"},
+        {t:"Ягоды с мёдом прямо с грядки 🌼", cat:"cottage"},
+        {t:"Протеиновый брауни после тренировки 💪", cat:"sporty"}
+      ]},
+      {num:7, text:"Твой Instagram вайб — это...", options:[
+        {t:"Пастельные фото в платьях и цветах", cat:"soft"},
+        {t:"Миллион зеркальных селфи с бантиками 🎀", cat:"coquette"},
+        {t:"Эстетика библиотек и свечей 🖤", cat:"dark"},
+        {t:"Блестки, губы и тренды 2024 🔥", cat:"y2k"},
+        {t:"Полевые цветы, пикники, книги", cat:"cottage"},
+        {t:"Фото с тренировки и смузи-боли", cat:"sporty"}
+      ]},
+      {num:8, text:"Если бы ты была персонажем аниме...", options:[
+        {t:"Нежная школьница с огромными глазами 🌸", cat:"soft"},
+        {t:"Принцесса в розовых бантах 🎀", cat:"coquette"},
+        {t:"Таинственная девушка в чёрном пальто 🖤", cat:"dark"},
+        {t:"Яркая идолка с конфетти 🔥", cat:"y2k"},
+        {t:"Лесная фея в венке из цветов 🧚", cat:"cottage"},
+        {t:"Спортивная героиня с суперсилой 💪", cat:"sporty"}
+      ]},
+      {num:9, text:"Как ты празднуешь день рождения?", options:[
+        {t:"Пижамная вечеринка с тортиком и подружками 🌸", cat:"soft"},
+        {t:"Тема «Barbie» — всё розовое и в бантиках 🎀", cat:"coquette"},
+        {t:"Тихий вечер с вином и старыми фильмами 🖤", cat:"dark"},
+        {t:"Клуб + 50 друзей + торт в лицо 🔥", cat:"y2k"},
+        {t:"Пикник в парке с корзинкой и цветами 🌼", cat:"cottage"},
+        {t:"Поход в горы или катание на велике 🏔️", cat:"sporty"}
+      ]},
+      {num:10, text:"Твой главный жизненный девиз?", options:[
+        {t:"«Будь нежной, как цветочек» 🌸", cat:"soft"},
+        {t:"«Больше бантиков — больше счастья» 🎀", cat:"coquette"},
+        {t:"«Мир — это театр, а я в чёрном» 🖤", cat:"dark"},
+        {t:"«Slay every day» 🔥", cat:"y2k"},
+        {t:"«Простые радости — самые сладкие» 🌿", cat:"cottage"},
+        {t:"«Движение — жизнь!» 🏃‍♀️", cat:"sporty"}
+      ]},
+      {num:11, text:"Что ты купишь в первую очередь в новом сезоне?", options:[
+        {t:"Платье с рюшами и сердечками", cat:"soft"},
+        {t:"Огромный розовый бант и чулки 🎀", cat:"coquette"},
+        {t:"Чёрный тренч и ботинки на платформе", cat:"dark"},
+        {t:"Блестящий топ и мини-юбку с цепями 🔥", cat:"y2k"},
+        {t:"Сарафан в цветочек и плетёную сумку", cat:"cottage"},
+        {t:"Новые кроссовки и спортивный костюм 💪", cat:"sporty"}
+      ]},
+      {num:12, text:"Как ты реагируешь на комплимент?", options:[
+        {t:"Краснеешь и прячешь лицо в ладошки 🌸", cat:"soft"},
+        {t:"Крутишься и говоришь «спасибоиии 🎀»", cat:"coquette"},
+        {t:"Улыбаешься загадочно и говоришь «знаю» 🖤", cat:"dark"},
+        {t:"«Оооо, ты тоже огонь! 🔥»", cat:"y2k"},
+        {t:"«Ой, спасибо, я сама цветы собирала» 🌼", cat:"cottage"},
+        {t:"«Спасибо! Я вчера 10 км пробежала 😏»", cat:"sporty"}
+      ]},
+      {num:13, text:"Последний вопрос, милашка: твой любимый цвет?", options:[
+        {t:"Пастельно-розовый и бежевый", cat:"soft"},
+        {t:"Ярко-розовый и белый с бантиками 🎀", cat:"coquette"},
+        {t:"Чёрный, бордовый, тёмно-фиолетовый 🖤", cat:"dark"},
+        {t:"Неоновый розовый + серебро 🔥", cat:"y2k"},
+        {t:"Нежно-зелёный, лавандовый, кремовый 🌿", cat:"cottage"},
+        {t:"Ярко-голубой, белый, неоновый оранжевый 💪", cat:"sporty"}
+      ]}
+    ];
+
+    const typeInfo = {
+      soft: { name:"НЕЖНАЯ SOFT GIRL 🌸", emoji:"🌸💗", desc:"Ты — ходячая нежность! Любительница пастели, обнимашек и всего милого. Мир вокруг тебя становится мягче, когда ты рядом." },
+      coquette: { name:"COQUETTE BABY DOLL 🎀", emoji:"🎀💕", desc:"Королева бантиков и флирта! Ты знаешь, как одним взглядом и поворотом головы заставить всех таять. Максимум женственности и шарма!" },
+      dark: { name:"DARK ACADEMIA QUEEN 🖤", emoji:"🖤📜", desc:"Ты — загадка в чёрном пальто. Интеллект, эстетика и лёгкая меланхолия. Тебя хочется разгадывать часами." },
+      y2k: { name:"Y2K BADDIE QUEEN 🔥", emoji:"💅🔥", desc:"Ты — взрыв энергии и блеска! Низкая посадка, блестки, уверенность на 1000%. Ты создана, чтобы сиять и ломать тренды." },
+      cottage: { name:"COTTAGECORE FAIRY 🧚", emoji:"🌼🧚", desc:"Ты живёшь в своём сказочном мире полевых цветов и тёплых свитеров. Самая уютная и душевная девушка на свете." },
+      sporty: { name:"SPORTY GLOW GIRL 🏃‍♀️", emoji:"🏃‍♀️✨", desc:"Энергия, здоровье и сияние! Ты вдохновляешь всех вокруг двигаться и быть лучшей версией себя. Спорт — твой вайб!" }
+    };
+
+    let current = 0;
+    let scores = {soft:0, coquette:0, dark:0, y2k:0, cottage:0, sporty:0};
+
+    function render() {
+      const q = questions[current];
+      document.getElementById('questionNum').textContent = `Вопрос ${q.num} из 13 💖`;
+      document.getElementById('questionText').textContent = q.text;
+
+      const container = document.getElementById('options');
+      container.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="radio" name="q${current}" value="${opt.cat}"> ${opt.t}`;
+        label.onclick = () => {
+          document.querySelectorAll('#options label').forEach(l => l.classList.remove('selected'));
+          label.classList.add('selected');
+          scores[opt.cat] += 2;   // даём по 2 балла за ответ, чтобы результат был ярче
+        };
+        container.appendChild(label);
+      });
+
+      document.getElementById('prevBtn').style.display = current === 0 ? 'none' : 'block';
+      document.getElementById('nextBtn').textContent = current === 12 ? 'Узнать свой тип! 🎉' : 'Далее →';
+      document.getElementById('progress').style.width = `${((current+1)/13)*100}%`;
+    }
+
+    function nextQuestion() {
+      if (!document.querySelector(`input[name="q${current}"]:checked`)) {
+        alert("Выбери вариант, милашка 💕");
+        return;
+      }
+      if (current < 12) {
+        current++;
+        render();
+      } else {
+        showResult();
+      }
+    }
+
+    function prevQuestion() {
+      if (current > 0) {
+        current--;
+        render();
+      }
+    }
+
+    function showResult() {
+      let maxScore = 0;
+      let winner = 'soft';
+      for (let key in scores) {
+        if (scores[key] > maxScore) {
+          maxScore = scores[key];
+          winner = key;
+        }
+      }
+
+      document.getElementById('questionCard').style.display = 'none';
+      const res = document.getElementById('result');
+      res.style.display = 'block';
+
+      const info = typeInfo[winner];
+      document.getElementById('emoji').textContent = info.emoji;
+      document.getElementById('resultTitle').textContent = info.name;
+      document.getElementById('resultText').innerHTML = `
+        ${info.desc}<br><br>
+        <small style="opacity:0.85">Ты набрала ${maxScore} баллов в этой эстетике — это очень много! 💖</small>
+      `;
+    }
+
+    function restartQuiz() {
+      current = 0;
+      scores = {soft:0, coquette:0, dark:0, y2k:0, cottage:0, sporty:0};
+      document.getElementById('questionCard').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+      render();
+    }
+
+    window.onload = render;
+  </script>
+</body>
+</html>
