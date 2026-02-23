@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🙈 Тест: Чего ты стесняешься?</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6b9d;
+    --pink-light: #ffa3c4;
+    --pink-pale: #fff0f5;
+    --peach: #ffb88c;
+    --lavender: #c3aed6;
+    --lavender-deep: #9b72cf;
+    --mint: #a8e6cf;
+    --yellow: #ffd93d;
+    --bg: #fef6fb;
+    --text: #4a3347;
+    --text-light: #7a6577;
+    --card: #ffffff;
+    --shadow: 0 8px 32px rgba(180, 100, 150, 0.12);
+    --shadow-hover: 0 12px 40px rgba(180, 100, 150, 0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    right: -30%;
+    width: 80vw;
+    height: 80vw;
+    background: radial-gradient(circle, rgba(255,107,157,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -40%;
+    left: -20%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, rgba(195,174,214,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .floating-emoji {
+    position: fixed;
+    font-size: 2rem;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatEmoji 20s ease-in-out infinite;
+  }
+
+  @keyframes floatEmoji {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-30px) rotate(10deg); }
+    50% { transform: translateY(-15px) rotate(-5deg); }
+    75% { transform: translateY(-40px) rotate(8deg); }
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === HEADER === */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeInDown 0.8s ease;
+  }
+
+  .header-emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    animation: wiggle 3s ease-in-out infinite;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(-12deg); }
+    30% { transform: rotate(10deg); }
+    45% { transform: rotate(-8deg); }
+    60% { transform: rotate(5deg); }
+    75% { transform: rotate(0deg); }
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--pink), var(--lavender-deep));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .header .subtitle {
+    font-family: 'Caveat', cursive;
+    font-size: 1.35rem;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  .disclaimer {
+    background: linear-gradient(135deg, var(--pink-pale), #f3eaff);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    border: 1px solid rgba(195,174,214,0.2);
+    animation: fadeIn 1s ease 0.3s both;
+  }
+
+  .disclaimer strong { color: var(--text); }
+
+  /* === PROGRESS === */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(254,246,251,0.92);
+    backdrop-filter: blur(12px);
+    padding: 0.75rem 0;
+    margin: 0 -1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    transition: box-shadow 0.3s;
+  }
+
+  .progress-wrap.scrolled {
+    box-shadow: 0 4px 20px rgba(180, 100, 150, 0.1);
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-light);
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: rgba(195,174,214,0.2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink), var(--lavender-deep), var(--peach));
+    background-size: 200% 100%;
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: shimmer 3s ease infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* === QUESTION CARD === */
+  .question-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-top: 1.5rem;
+    animation: fadeInUp 0.5s ease;
+    border: 1px solid rgba(195,174,214,0.1);
+  }
+
+  .question-card.exit {
+    animation: fadeOutLeft 0.35s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeOutLeft {
+    to { opacity: 0; transform: translateX(-60px) scale(0.95); }
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .question-number {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pink);
+    margin-bottom: 0.75rem;
+  }
+
+  .question-number .badge {
+    background: linear-gradient(135deg, var(--pink), var(--lavender-deep));
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+  }
+
+  .question-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .question-text .emoji-accent {
+    font-size: 1.5rem;
+    vertical-align: middle;
+  }
+
+  /* === OPTIONS === */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .option {
+    background: var(--pink-pale);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--pink), var(--lavender-deep));
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 14px;
+  }
+
+  .option:hover {
+    border-color: var(--pink-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,107,157,0.15);
+  }
+
+  .option:hover::before {
+    opacity: 0.06;
+  }
+
+  .option:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .option.selected {
+    border-color: var(--pink);
+    background: linear-gradient(135deg, rgba(255,107,157,0.12), rgba(195,174,214,0.12));
+    box-shadow: 0 4px 16px rgba(255,107,157,0.2);
+  }
+
+  .option-letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(255,107,157,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--pink);
+    flex-shrink: 0;
+    transition: all 0.25s;
+    z-index: 1;
+  }
+
+  .option.selected .option-letter {
+    background: var(--pink);
+    color: #fff;
+  }
+
+  .option-text {
+    z-index: 1;
+  }
+
+  /* === RESULTS === */
+  .results {
+    animation: fadeInUp 0.6s ease;
+  }
+
+  .results-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow);
+    margin-top: 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(195,174,214,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .results-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--pink), var(--lavender-deep), var(--peach), var(--mint));
+  }
+
+  .result-emoji {
+    font-size: 4.5rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: bounceIn 0.6s ease;
+  }
+
+  @keyframes bounceIn {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+  }
+
+  .result-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--pink), var(--lavender-deep));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .result-type {
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    color: var(--lavender-deep);
+    margin-bottom: 1.25rem;
+  }
+
+  .result-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+
+  .result-meter {
+    margin: 1.5rem 0;
+  }
+
+  .meter-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .meter-bar {
+    height: 12px;
+    background: rgba(195,174,214,0.15);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0%;
+  }
+
+  .meter-fill.social { background: linear-gradient(90deg, var(--pink), #ff85ab); }
+  .meter-fill.body { background: linear-gradient(90deg, var(--peach), #ffcc80); }
+  .meter-fill.intellect { background: linear-gradient(90deg, var(--lavender), var(--lavender-deep)); }
+  .meter-fill.emotional { background: linear-gradient(90deg, var(--mint), #6dd5a0); }
+  .meter-fill.romantic { background: linear-gradient(90deg, #ff6b9d, #ff4081); }
+
+  .science-box {
+    background: linear-gradient(135deg, #f8f0ff, var(--pink-pale));
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    text-align: left;
+    border: 1px solid rgba(195,174,214,0.15);
+  }
+
+  .science-box h3 {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--lavender-deep);
+    margin-bottom: 0.5rem;
+  }
+
+  .science-box p {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-light);
+  }
+
+  .restart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, var(--pink), var(--lavender-deep));
+    color: #fff;
+    border: none;
+    border-radius: 99px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 16px rgba(255,107,157,0.3);
+  }
+
+  .restart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255,107,157,0.4);
+  }
+
+  .restart-btn:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  /* === BREAKDOWN === */
+  .breakdown {
+    margin-top: 1.5rem;
+  }
+
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(195,174,214,0.1);
+  }
+
+  .breakdown-item:last-child { border-bottom: none; }
+
+  .breakdown-emoji { font-size: 1.5rem; }
+
+  .breakdown-info { flex: 1; }
+
+  .breakdown-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .breakdown-desc {
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+
+  .breakdown-score {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--pink);
+  }
+
+  /* === CONFETTI === */
+  .confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    top: -20px;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 500px) {
+    .container { padding: 1.25rem 1rem 3rem; }
+    .header h1 { font-size: 1.7rem; }
+    .question-card { padding: 1.5rem 1.25rem; }
+    .results-card { padding: 2rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating background emojis -->
+<div class="floating-emoji" style="top:10%;left:5%;animation-delay:0s">🌸</div>
+<div class="floating-emoji" style="top:25%;right:8%;animation-delay:3s;font-size:1.5rem">✨</div>
+<div class="floating-emoji" style="top:60%;left:3%;animation-delay:7s">🦋</div>
+<div class="floating-emoji" style="top:75%;right:5%;animation-delay:11s;font-size:1.8rem">💫</div>
+<div class="floating-emoji" style="top:40%;right:3%;animation-delay:5s;font-size:1.3rem">🌙</div>
+<div class="floating-emoji" style="top:85%;left:10%;animation-delay:9s;font-size:1.6rem">🫧</div>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header" id="header">
+    <span class="header-emoji">🙈</span>
+    <h1>Чего ты на самом деле стесняешься?</h1>
+    <div class="subtitle">шуточный тест с капелькой психологии ✨</div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>⚠️ Дисклеймер:</strong> Этот тест создан для развлечения и самопознания. Он не заменяет консультацию психолога, но может подкинуть пару инсайтов. Отвечай честно — тут никто не подглядывает 👀
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-info">
+      <span id="progressText">Вопрос 1 из 12</span>
+      <span id="progressPercent">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Quiz Content -->
+  <div id="quizContent"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    emoji: "🎤",
+    text: "Представь: тебя попросили сказать тост на большом застолье. Твоя первая мысль?",
+    options: [
+      { text: "«Мне? А можно я просто стакан подниму молча?» 😶", scores: { social: 3, emotional: 1 } },
+      { text: "«Окей, скажу что-нибудь, но голос 100% дрогнет» 🫣", scores: { social: 2, emotional: 2 } },
+      { text: "«Наконец-то! Я готовила эту речь с рождения» 💅", scores: { social: 0, emotional: 0 } },
+      { text: "«Ладно, но сначала выпью для храбрости» 🍷", scores: { social: 1, emotional: 1 } }
+    ]
+  },
+  {
+    emoji: "📸",
+    text: "Кто-то достаёт камеру на вечеринке и направляет на тебя. Что делаешь?",
+    options: [
+      { text: "Закрываю лицо руками — классика жанра 🫣", scores: { body: 3, social: 1 } },
+      { text: "Быстро поправляю волосы и выбираю «свой ракурс» 💁‍♀️", scores: { body: 2, social: 0 } },
+      { text: "Прячусь за ближайшего человека 🫥", scores: { social: 2, body: 1 } },
+      { text: "Позирую как на обложку Vogue, естественно 📸", scores: { body: 0, social: 0 } }
+    ]
+  },
+  {
+    emoji: "🧠",
+    text: "В компании заходит разговор о теме, в которой ты реально шаришь. Ты...",
+    options: [
+      { text: "Молчу. Вдруг скажу что-то не то и все решат что я тупая 😶", scores: { intellect: 3, social: 1 } },
+      { text: "Скромно вставляю пару фактов, но не выпендриваюсь 🤓", scores: { intellect: 2, social: 0 } },
+      { text: "Выкладываю всё что знаю — люди должны знать правду! 📚", scores: { intellect: 0, social: 0 } },
+      { text: "Говорю, но потом два дня переживаю, что показалась заучкой 😰", scores: { intellect: 2, emotional: 2 } }
+    ]
+  },
+  {
+    emoji: "💌",
+    text: "Тебе написал симпатичный человек. Первое сообщение. Что происходит?",
+    options: [
+      { text: "Перечитываю 47 раз, зову подругу помочь ответить 📱", scores: { romantic: 3, emotional: 1 } },
+      { text: "Отвечаю через 3 часа (специально жду), хотя хочу прямо сейчас ⏰", scores: { romantic: 2, social: 1 } },
+      { text: "Отвечаю нормально, чего тут стесняться? 😎", scores: { romantic: 0, emotional: 0 } },
+      { text: "Оставляю на «прочитано» — боюсь написать глупость 👻", scores: { romantic: 2, emotional: 2 } }
+    ]
+  },
+  {
+    emoji: "👗",
+    text: "Ты купила крутой наряд, но он чуть смелее обычного. Что дальше?",
+    options: [
+      { text: "Ношу только дома перед зеркалом, на улицу — ни за что 🪞", scores: { body: 3, social: 1 } },
+      { text: "Надену, но накину сверху кардиган «на всякий случай» 🧥", scores: { body: 2, social: 1 } },
+      { text: "Надеваю и иду покорять мир! 🔥", scores: { body: 0, social: 0 } },
+      { text: "Надену, но буду весь день одёргивать и переживать 😬", scores: { body: 2, emotional: 2 } }
+    ]
+  },
+  {
+    emoji: "🍽️",
+    text: "В ресторане официант принёс не то, что ты заказала. Твой ход?",
+    options: [
+      { text: "Молча ем то, что принесли. Скандалы — не моё 😅", scores: { social: 3, emotional: 1 } },
+      { text: "Прошу подругу сказать за меня 🤝", scores: { social: 2, emotional: 1 } },
+      { text: "Вежливо говорю что произошла ошибка 🙂", scores: { social: 1, emotional: 0 } },
+      { text: "Вызываю менеджера — я заслуживаю свой тирамису! 💪", scores: { social: 0, emotional: 0 } }
+    ]
+  },
+  {
+    emoji: "😢",
+    text: "Тебе грустно. Как ты ведёшь себя с близкими?",
+    options: [
+      { text: "Говорю что всё отлично и улыбаюсь 🎭", scores: { emotional: 3, social: 1 } },
+      { text: "Намекаю, что мне плохо, но подробности из меня надо вытаскивать 🫠", scores: { emotional: 2, social: 1 } },
+      { text: "Прямо говорю что мне грустно и прошу поддержки 💬", scores: { emotional: 0, social: 0 } },
+      { text: "Пишу длинный пост в соцсети — там проще 📝", scores: { emotional: 2, social: 2 } }
+    ]
+  },
+  {
+    emoji: "🏖️",
+    text: "Сценарий: пляж, купальник, толпа людей. Уровень паники?",
+    options: [
+      { text: "Я не снимаю парео даже в воде 🫠", scores: { body: 3, social: 1 } },
+      { text: "Ок, но постоянно втягиваю живот и выбираю позу 📐", scores: { body: 2, emotional: 1 } },
+      { text: "Нормально, тело как тело, пошли купаться 🏊‍♀️", scores: { body: 0, emotional: 0 } },
+      { text: "Иду на пляж только в 6 утра, когда никого нет 🌅", scores: { body: 2, social: 2 } }
+    ]
+  },
+  {
+    emoji: "🎓",
+    text: "Тебя хвалят за достижение при всех. Как реагируешь?",
+    options: [
+      { text: "Краснею и бормочу «да ладно, ерунда...» 🍅", scores: { social: 2, emotional: 2 } },
+      { text: "Мне приятно, но хочется провалиться сквозь землю 🕳️", scores: { social: 2, intellect: 1 } },
+      { text: "Улыбаюсь и говорю «спасибо, я старалась!» 😊", scores: { social: 0, emotional: 0 } },
+      { text: "Начинаю объяснять, что это «на самом деле не так уж круто» 😐", scores: { intellect: 2, emotional: 2 } }
+    ]
+  },
+  {
+    emoji: "💃",
+    text: "Играет твоя любимая песня на танцполе. Идёшь танцевать?",
+    options: [
+      { text: "Танцую, но только мелкими движениями и в полутьме 🌑", scores: { body: 2, social: 2 } },
+      { text: "Только если идёт толпа подруг и можно затеряться 👯‍♀️", scores: { social: 3, body: 1 } },
+      { text: "Конечно! Это МОЯ песня! 🎶", scores: { body: 0, social: 0 } },
+      { text: "Танцую в душе. Буквально. Дома. В душе. 🚿", scores: { body: 2, social: 2 } }
+    ]
+  },
+  {
+    emoji: "💬",
+    text: "Тебе нужно попросить о чём-то важном (повышение, помощь, одолжение). Стратегия?",
+    options: [
+      { text: "Репетирую речь 100 раз, но в момент X говорю совсем другое 🎭", scores: { social: 2, emotional: 2 } },
+      { text: "Лучше напишу — голосом не смогу 📩", scores: { social: 2, emotional: 1 } },
+      { text: "Прямо подхожу и говорю. Нормальная же просьба 🤷‍♀️", scores: { social: 0, emotional: 0 } },
+      { text: "Жду, что человек сам догадается. Телепатия же работает? 🔮", scores: { emotional: 3, social: 1 } }
+    ]
+  },
+  {
+    emoji: "🪞",
+    text: "Последний вопрос! Если бы ты могла перестать стесняться чего-то одного — чего?",
+    options: [
+      { text: "Своей внешности и тела 🌸", scores: { body: 3 } },
+      { text: "Общения с незнакомыми людьми 🗣️", scores: { social: 3 } },
+      { text: "Своих чувств и эмоций 💗", scores: { emotional: 3 } },
+      { text: "Своего ума и мнений 🧠", scores: { intellect: 3 } }
+    ]
+  }
+];
+
+const resultProfiles = {
+  body: {
+    emoji: "🪞✨",
+    title: "Стеснение тела",
+    type: "«Невидимка на пляже»",
+    description: `Твоё стеснение живёт где-то между зеркалом и примерочной. Ты можешь часами выбирать ракурс для фото, менять три наряда перед выходом и прятаться за оверсайз-худи даже летом. Но вот что интересно — скорее всего, 90% «недостатков», которые ты видишь, замечаешь только ты сама. Это не утешение из открытки, а реальный факт из психологии: наш мозг концентрируется на собственных «несовершенствах», которые другие люди попросту не видят.`,
+    advice: "Попробуй эксперимент: надень то, что обычно «оставляешь для дома», и выйди на 15 минут. Скорее всего, никто даже бровью не поведёт 💪"
+  },
+  social: {
+    emoji: "🫣💬",
+    title: "Социальное стеснение",
+    type: "«Профессиональный наблюдатель»",
+    description: `Ты великий мастер избегания неловких ситуаций. Перейти на другую сторону улицы, чтобы не здороваться со знакомым? Классика. Репетировать заказ кофе в голове? Обязательно. Но за этим скрывается страх оценки — ты переоцениваешь, сколько внимания другие на самом деле обращают на тебя. Психологи называют это «эффект прожектора» — нам кажется, что мы под лучом света, хотя каждый занят своей жизнью.`,
+    advice: "Лайфхак: начни с мелочей. Скажи «привет» кассиру, спроси дорогу у прохожего. Каждый маленький контакт — маленькая победа 🏆"
+  },
+  emotional: {
+    emoji: "🫠💗",
+    title: "Эмоциональное стеснение",
+    type: "«Человек-айсберг»",
+    description: `Снаружи — спокойствие и «у меня всё хорошо». Внутри — целый океан чувств, который ты привыкла скрывать. Тебе сложно просить о помощи, говорить «мне плохо» или даже принимать комплименты. Это часто связано с тем, что в детстве нас учили «не плакать» и «не выпендриваться». Психологи называют это алекситимией лайт-версии — не то чтобы ты не чувствуешь, ты просто не привыкла это показывать.`,
+    advice: "Начни с малого: когда подруга спросит «как дела?», попробуй ответить честно хотя бы раз в неделю. Уязвимость — это не слабость, а суперсила 🦸‍♀️"
+  },
+  intellect: {
+    emoji: "🧠🤫",
+    title: "Интеллектуальное стеснение",
+    type: "«Скромный гений в засаде»",
+    description: `Ты знаешь больше, чем показываешь. Молчишь на совещаниях, хотя у тебя есть отличная идея. Обесцениваешь свои достижения словами «мне просто повезло». Это очень похоже на синдром самозванца — феномен, при котором люди (чаще всего умные и компетентные) убеждены, что «на самом деле ничего не знают» и их вот-вот разоблачат. Около 70% людей испытывали это хотя бы раз!`,
+    advice: "Заведи «банку достижений» — записывай туда всё, чем гордишься, даже мелочи. Когда самозванец проснётся — перечитай 📋"
+  },
+  romantic: {
+    emoji: "💘🫣",
+    title: "Романтическое стеснение",
+    type: "«Тайный агент любви»",
+    description: `Тебе проще написать диссертацию, чем первой написать «привет» симпатичному человеку. Ты анализируешь каждое его сообщение как шифровку ЦРУ, а перед свиданием меняешь наряд минимум 5 раз. Это нормально! Романтическая сфера — одна из самых уязвимых, потому что здесь риск отвержения ощущается особенно остро. Мозг буквально обрабатывает романтическое отвержение теми же зонами, что и физическую боль.`,
+    advice: "Помни: неловкость на первом свидании — это мило, а не ужасно. И тот, кого ты стесняешься, скорее всего, стесняется тебя так же 🥰"
+  }
+};
+
+// State
+let currentQ = 0;
+let scores = { social: 0, body: 0, intellect: 0, emotional: 0, romantic: 0 };
+let answered = false;
+
+// DOM
+const quizContent = document.getElementById('quizContent');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const progressPercent = document.getElementById('progressPercent');
+const progressWrap = document.getElementById('progressWrap');
+
+// Scroll shadow
+window.addEventListener('scroll', () => {
+  progressWrap.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+function renderQuestion(idx) {
+  answered = false;
+  const q = questions[idx];
+  const letters = ['А', 'Б', 'В', 'Г'];
+  
+  // Update progress
+  const pct = Math.round((idx / questions.length) * 100);
+  progressFill.style.width = pct + '%';
+  progressText.textContent = `Вопрос ${idx + 1} из ${questions.length}`;
+  progressPercent.textContent = pct + '%';
+
+  const html = `
+    <div class="question-card" id="questionCard">
+      <div class="question-number">
+        <span class="badge">${idx + 1}</span>
+        Вопрос ${idx + 1} из ${questions.length}
+      </div>
+      <div class="question-text">
+        <span class="emoji-accent">${q.emoji}</span> ${q.text}
+      </div>
+      <div class="options">
+        ${q.options.map((opt, i) => `
+          <div class="option" onclick="selectOption(${i})" data-idx="${i}">
+            <span class="option-letter">${letters[i]}</span>
+            <span class="option-text">${opt.text}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  
+  quizContent.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectOption(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentQ];
+  const option = q.options[idx];
+  
+  // Add scores
+  for (const [key, val] of Object.entries(option.scores)) {
+    scores[key] = (scores[key] || 0) + val;
+  }
+
+  // Visual feedback
+  document.querySelectorAll('.option')[idx].classList.add('selected');
+
+  // Next question or results
+  setTimeout(() => {
+    const card = document.getElementById('questionCard');
+    card.classList.add('exit');
+    
+    setTimeout(() => {
+      currentQ++;
+      if (currentQ < questions.length) {
+        renderQuestion(currentQ);
+      } else {
+        showResults();
+      }
+    }, 350);
+  }, 500);
+}
+
+function getTopCategory() {
+  let max = 0;
+  let top = 'social';
+  for (const [key, val] of Object.entries(scores)) {
+    if (val > max) { max = val; top = key; }
+  }
+  return top;
+}
+
+function getMaxPossible() {
+  // Roughly — max 3 per question, 12 questions, but not all questions score in all categories
+  return { social: 24, body: 21, intellect: 12, emotional: 21, romantic: 9 };
+}
+
+function showResults() {
+  const topCat = getTopCategory();
+  const profile = resultProfiles[topCat];
+  const maxScores = getMaxPossible();
+  
+  // Update progress to 100%
+  progressFill.style.width = '100%';
+  progressText.textContent = 'Готово!';
+  progressPercent.textContent = '100%';
+
+  const categories = [
+    { key: 'social', emoji: '🗣️', name: 'Социальное', cls: 'social' },
+    { key: 'body', emoji: '🪞', name: 'Телесное', cls: 'body' },
+    { key: 'intellect', emoji: '🧠', name: 'Интеллектуальное', cls: 'intellect' },
+    { key: 'emotional', emoji: '💗', name: 'Эмоциональное', cls: 'emotional' },
+    { key: 'romantic', emoji: '💘', name: 'Романтическое', cls: 'romantic' }
+  ];
+
+  const html = `
+    <div class="results">
+      <div class="results-card">
+        <span class="result-emoji">${profile.emoji}</span>
+        <div class="result-title">${profile.title}</div>
+        <div class="result-type">${profile.type}</div>
+        <div class="result-description">${profile.description}</div>
+
+        <div style="text-align:left;">
+          ${categories.map(cat => {
+            const pct = Math.min(Math.round((scores[cat.key] / maxScores[cat.key]) * 100), 100);
+            return `
+              <div class="result-meter">
+                <div class="meter-label">
+                  <span>${cat.emoji} ${cat.name}</span>
+                  <span>${pct}%</span>
+                </div>
+                <div class="meter-bar">
+                  <div class="meter-fill ${cat.cls}" data-width="${pct}"></div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="breakdown">
+          <h3 style="font-size:0.95rem;margin-bottom:0.5rem;">📊 Разбор по категориям:</h3>
+          ${categories
+            .sort((a, b) => scores[b.key] - scores[a.key])
+            .map(cat => `
+              <div class="breakdown-item">
+                <span class="breakdown-emoji">${cat.emoji}</span>
+                <div class="breakdown-info">
+                  <div class="breakdown-name">${cat.name} стеснение</div>
+                  <div class="breakdown-desc">${getShortDesc(cat.key, scores[cat.key], maxScores[cat.key])}</div>
+                </div>
+                <span class="breakdown-score">${scores[cat.key]}/${maxScores[cat.key]}</span>
+              </div>
+            `).join('')}
+        </div>
+
+        <div class="science-box">
+          <h3>🔬 Научный факт</h3>
+          <p>${getScienceFact(topCat)}</p>
+        </div>
+
+        <div class="science-box" style="margin-top:0.75rem;">
+          <h3>💡 Совет</h3>
+          <p>${profile.advice}</p>
+        </div>
+
+        <button class="restart-btn" onclick="restart()">
+          🔄 Пройти ещё раз
+        </button>
+      </div>
+    </div>
+  `;
+
+  quizContent.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Animate meter fills
+  setTimeout(() => {
+    document.querySelectorAll('.meter-fill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 300);
+
+  // Confetti!
+  launchConfetti();
+}
+
+function getShortDesc(key, score, max) {
+  const pct = score / max;
+  const descs = {
+    social: pct > 0.5 ? 'Для тебя каждый выход в люди — маленький подвиг' : 'Общение — не проблема',
+    body: pct > 0.5 ? 'Зеркало — не всегда друг' : 'Тело — не источник тревоги',
+    intellect: pct > 0.5 ? 'Синдром самозванца заглядывает в гости' : 'Уверенность в своих знаниях',
+    emotional: pct > 0.5 ? 'Чувства прячутся глубоко внутри' : 'Эмоции выражаешь свободно',
+    romantic: pct > 0.5 ? 'Любовь — зона максимального стеснения' : 'В романтике чувствуешь себя уверенно'
+  };
+  return descs[key];
+}
+
+function getScienceFact(category) {
+  const facts = {
+    body: 'Исследования показывают, что около 91% женщин недовольны своим телом. При этом учёные из Университета Чикаго выяснили, что окружающие воспринимают нашу внешность на 20% привлекательнее, чем мы сами. Так называемый «разрыв привлекательности» — мы буквально хуже видим собственную красоту!',
+    social: 'Социальная тревожность — один из самых распространённых типов тревожных расстройств. «Эффект прожектора» (spotlight effect), описанный психологом Томасом Гиловичем, показывает: мы думаем, что на нас смотрят в 2 раза чаще, чем это происходит на самом деле.',
+    emotional: 'Психолог Брене Браун в своих исследованиях показала, что уязвимость — не слабость, а основа для близости и доверия. Люди, которые умеют показывать свои чувства, формируют более крепкие и глубокие отношения.',
+    intellect: 'Синдром самозванца впервые описали психологи Паулина Клэнс и Сюзанна Аймс в 1978 году. По разным оценкам, до 70% людей хотя бы раз в жизни чувствовали себя «самозванцами». Причём чаще он встречается у высокоинтеллектуальных людей — парадокс!',
+    romantic: 'Нейробиологи из Университета Мичигана обнаружили, что мозг обрабатывает романтическое отвержение теми же нейронными путями, что и физическую боль. Поэтому стеснение в романтике — это буквально защитная реакция от потенциальной «боли».'
+  };
+  return facts[category];
+}
+
+function launchConfetti() {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  document.body.appendChild(container);
+
+  const emojis = ['🎉', '✨', '💖', '🌸', '⭐', '🦋', '💫', '🫧'];
+  
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.fontSize = (Math.random() * 1.2 + 0.8) + 'rem';
+    piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    piece.style.animationDelay = Math.random() * 1.5 + 's';
+    container.appendChild(piece);
+  }
+
+  setTimeout(() => container.remove(), 5000);
+}
+
+function restart() {
+  currentQ = 0;
+  scores = { social: 0, body: 0, intellect: 0, emotional: 0, romantic: 0 };
+  renderQuestion(0);
+}
+
+// Start!
+renderQuestion(0);
+</script>
+</body>
+</html>
