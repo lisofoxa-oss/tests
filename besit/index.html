@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как тебя выбесить? 🔥 Тест</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Playfair Display', sans-serif;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+        }
+
+        .option {
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .option:hover {
+            transform: scale(1.02);
+            background-color: #4f46e5;
+            color: white;
+        }
+        
+        .selected {
+            background-color: #4f46e5 !important;
+            color: white !important;
+            border-color: #6366f1;
+        }
+
+        .progress-bar {
+            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .neon-text {
+            text-shadow: 0 0 20px rgb(165 243 252);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-950 via-pink-950 to-violet-950 text-white min-h-screen">
+    <div class="max-w-2xl mx-auto min-h-screen flex flex-col">
+        
+        <!-- START SCREEN -->
+        <div id="start-screen" class="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
+            <div class="mb-8 flex items-center justify-center gap-3">
+                <div class="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-3xl flex items-center justify-center text-4xl shadow-xl">🔥</div>
+                <div class="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-3xl flex items-center justify-center text-4xl shadow-xl">😤</div>
+            </div>
+            
+            <h1 class="title-font text-6xl md:text-7xl font-bold tracking-tighter mb-4 neon-text">
+                КАК ТЕБЯ<br>ВЫБЕСИТЬ?
+            </h1>
+            <p class="text-xl text-pink-200 max-w-md mb-12">
+                Красивый психологический тест<br>
+                <span class="text-cyan-300">с научным подходом</span>
+            </p>
+
+            <div class="text-sm uppercase tracking-widest text-pink-300 mb-8">Сначала выбери себя</div>
+            
+            <div class="grid grid-cols-2 gap-6 w-full max-w-md">
+                <!-- Девушка -->
+                <div onclick="selectGender('girl')" 
+                     class="card-hover cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 flex flex-col items-center justify-center hover:border-pink-400 group">
+                    <div class="text-7xl mb-4 transition-transform group-hover:scale-110">💃</div>
+                    <div class="text-2xl font-semibold">Я девушка</div>
+                    <div class="text-pink-200 text-sm mt-1">👑</div>
+                </div>
+                
+                <!-- Парень -->
+                <div onclick="selectGender('boy')" 
+                     class="card-hover cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 flex flex-col items-center justify-center hover:border-cyan-400 group">
+                    <div class="text-7xl mb-4 transition-transform group-hover:scale-110">🕺</div>
+                    <div class="text-2xl font-semibold">Я парень</div>
+                    <div class="text-cyan-200 text-sm mt-1">🔥</div>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-xs text-white/40 flex items-center gap-2">
+                <i class="fas fa-heart"></i>
+                <span>8 вопросов • 100% бесплатно • Наука + юмор</span>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden flex-1 flex flex-col">
+            <!-- Header -->
+            <div class="px-6 pt-8 flex items-center justify-between">
+                <button onclick="goBackToStart()" 
+                        class="flex items-center gap-2 text-white/70 hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="text-sm">Назад</span>
+                </button>
+                <div class="text-xs uppercase tracking-widest text-white/50" id="gender-display"></div>
+                <div class="flex items-center gap-2 text-sm">
+                    <span id="question-counter" class="font-mono">1/8</span>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="px-6 mt-4">
+                <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div id="progress" class="h-1.5 bg-gradient-to-r from-pink-400 to-cyan-400 rounded-full progress-bar" style="width: 12.5%"></div>
+                </div>
+            </div>
+
+            <!-- Question -->
+            <div class="flex-1 flex flex-col justify-center px-6 py-8">
+                <div id="question-text" 
+                     class="text-3xl md:text-4xl font-medium leading-tight text-center min-h-[180px] fade-in">
+                </div>
+            </div>
+
+            <!-- Options -->
+            <div id="options-container" class="px-6 pb-12 grid gap-4">
+                <!-- JS will inject 4 options -->
+            </div>
+
+            <!-- Footer nav -->
+            <div class="px-6 pb-8 flex justify-between items-center text-sm">
+                <button onclick="prevQuestion()" 
+                        id="prev-btn"
+                        class="hidden px-8 py-3 rounded-2xl border border-white/30 hover:bg-white/10 transition-colors">
+                    ← Назад
+                </button>
+                <button onclick="nextQuestion()" 
+                        id="next-btn"
+                        class="hidden ml-auto px-10 py-3 bg-white text-purple-950 font-semibold rounded-3xl hover:bg-white/90 transition-all active:scale-95">
+                    Далее →
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="hidden flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
+            <div id="result-emoji" class="text-8xl mb-6"></div>
+            
+            <div id="result-title" class="title-font text-5xl font-bold mb-2"></div>
+            <div id="result-subtitle" class="text-pink-300 text-xl mb-8"></div>
+            
+            <div class="max-w-md mx-auto bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-8 mb-10 text-left">
+                <div id="result-desc" class="text-lg leading-relaxed mb-8"></div>
+                
+                <div class="border-t border-white/20 pt-6">
+                    <div class="uppercase text-xs tracking-widest text-white/50 mb-3">Научный факт</div>
+                    <div id="result-science" class="text-sm text-cyan-200 italic"></div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-md bg-white/5 rounded-3xl p-6 mb-12">
+                <div class="uppercase text-xs tracking-widest mb-4 text-white/60">Чтобы тебя по-настоящему выбесить:</div>
+                <ul id="result-tips" class="space-y-3 text-left text-pink-200">
+                    <!-- JS filled -->
+                </ul>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="restartQuiz()" 
+                        class="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/30 rounded-3xl font-medium transition-all active:scale-95">
+                    Пройти ещё раз
+                </button>
+                <button onclick="shareResult()" 
+                        class="px-8 py-4 bg-gradient-to-r from-pink-500 to-cyan-500 rounded-3xl font-semibold transition-all active:scale-95">
+                    <i class="fas fa-share-nodes mr-2"></i>Поделиться
+                </button>
+            </div>
+            
+            <div class="mt-10 text-xs text-white/30">Тест создан с любовью ❤️ и психологией</div>
+        </div>
+    </div>
+
+    <script>
+        // Tailwind script already loaded
+        function initTailwind() {
+            // Already initialized via CDN
+        }
+
+        let currentGender = '';
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let scores = { order: 0, sensory: 0, boundary: 0, freedom: 0 };
+
+        const questions = [
+            {
+                text: "Когда кто-то сильно опаздывает на встречу без предупреждения?",
+                category: "order",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            },
+            {
+                text: "Кто-то громко чавкает или жуёт с открытым ртом рядом с тобой?",
+                category: "sensory",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            },
+            {
+                text: "Твои сообщения читают, но не отвечают часами?",
+                category: "boundary",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            },
+            {
+                text: "Партнёр постоянно спрашивает «где ты?» и контролирует каждый шаг?",
+                category: "freedom",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            },
+            {
+                text: "После еды в раковине остаётся гора грязной посуды?",
+                category: "order",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            },
+            {
+                text: "В транспорте кто-то слушает музыку из наушников на полную громкость?",
+                category: "sensory",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            },
+            {
+                text: "Тебя постоянно перебивают, когда ты рассказываешь историю?",
+                category: "boundary",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            },
+            {
+                text: "Планы на вечер меняют в последний момент?",
+                category: "freedom",
+                options: [
+                    { text: "Совсем не бесит 😌", score: 0 },
+                    { text: "Немного раздражает 😕", score: 1 },
+                    { text: "Сильно бесит 😠", score: 2 },
+                    { text: "Выбешивает до дрожи 🤬", score: 3 }
+                ]
+            }
+        ];
+
+        const typeData = {
+            order: {
+                emoji: "📋",
+                title: "Педант Порядка",
+                subtitle: "Структура — твоя суперсила",
+                desc: "Ты любишь, когда всё по полочкам. Хаос и непредсказуемость выводят тебя из себя быстрее всего. Ты человек, который планирует и ценит пунктуальность.",
+                science: "По исследованиям Psychology Today и Big Five, высокий уровень добросовестности (conscientiousness) делает людей крайне чувствительными к нарушениям порядка. Это помогает достигать целей, но иногда мешает расслабиться.",
+                tips: [
+                    "Опоздать на 40 минут без объяснений",
+                    "Устроить бардак в комнате",
+                    "Изменить планы в последний момент"
+                ]
+            },
+            sensory: {
+                emoji: "🎧",
+                title: "Сенсорный Сенсей",
+                subtitle: "Ты чувствуешь ВСЁ",
+                desc: "Шумы, запахи, текстуры — для тебя это как гром среди ясного неба. Ты относишься к 15–20 % высокочувствительных людей (HSP).",
+                science: "Highly Sensitive Person (HSP) — научно доказанный тип личности. Твой мозг глубже обрабатывает сенсорную информацию, что делает тебя более творческим, но и более уязвимым к перегрузкам.",
+                tips: [
+                    "Чавкать рядом с тобой",
+                    "Включить музыку на полную в наушниках",
+                    "Дышать тебе в лицо"
+                ]
+            },
+            boundary: {
+                emoji: "🛡️",
+                title: "Защитник Границ",
+                subtitle: "Уважение — обязательно",
+                desc: "Ты очень тонко чувствуешь неуважение и игнор. Перебивания, отсутствие ответов и грубость бьют по тебе сильнее всего.",
+                science: "Это связано с высоким уровнем эмпатии и особенностями attachment-стиля. Люди с сильными личными границами быстрее замечают их нарушение — и это здорово!",
+                tips: [
+                    "Не отвечать на сообщения 3 часа",
+                    "Перебивать каждую твою фразу",
+                    "Говорить «успокойся» когда ты злишься"
+                ]
+            },
+            freedom: {
+                emoji: "🕊️",
+                title: "Свободный Воин",
+                subtitle: "Автономия превыше всего",
+                desc: "Контроль, навязчивость и внезапные изменения планов — твои главные триггеры. Ты ценишь свободу и личное пространство.",
+                science: "Часто связано с avoidant attachment стилем или высокой потребностью в автономии (Self-Determination Theory). Свобода для тебя — базовая психологическая потребность.",
+                tips: [
+                    "Писать каждые 10 минут «где ты?»",
+                    "Менять планы за 5 минут до встречи",
+                    "Контролировать каждый твой шаг"
+                ]
+            }
+        };
+
+        function selectGender(gender) {
+            currentGender = gender;
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('gender-display').innerHTML = gender === 'girl' ? '💃 Девушка' : '🕺 Парень';
+            startQuiz();
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            answers = [];
+            scores = { order: 0, sensory: 0, boundary: 0, freedom: 0 };
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question-text').innerHTML = `<span class="text-2xl block mb-4 text-white/60">${currentQuestionIndex + 1}.</span> ${q.text}`;
+            document.getElementById('question-counter').textContent = `${currentQuestionIndex + 1}/8`;
+            
+            const progress = Math.round(((currentQuestionIndex) / 8) * 100);
+            document.getElementById('progress').style.width = `${progress}%`;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((option, i) => {
+                const btn = document.createElement('button');
+                btn.className = `option w-full text-left px-8 py-6 rounded-3xl border border-white/20 bg-white/5 hover:border-indigo-400 text-xl flex items-center gap-4`;
+                btn.innerHTML = `
+                    <span class="text-3xl w-10">${['😌','😕','😠','🤬'][i]}</span>
+                    <span>${option.text}</span>
+                `;
+                btn.onclick = () => selectOption(i);
+                container.appendChild(btn);
+            });
+
+            // Show/hide prev button
+            document.getElementById('prev-btn').classList.toggle('hidden', currentQuestionIndex === 0);
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        let selectedOptionIndex = -1;
+
+        function selectOption(index) {
+            selectedOptionIndex = index;
+            
+            // Highlight selected
+            const allBtns = document.querySelectorAll('#options-container button');
+            allBtns.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+            
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (selectedOptionIndex === -1) return;
+            
+            const q = questions[currentQuestionIndex];
+            const score = q.options[selectedOptionIndex].score;
+            scores[q.category] += score;
+            
+            answers.push(selectedOptionIndex);
+            selectedOptionIndex = -1;
+            
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex === 0) return;
+            currentQuestionIndex--;
+            selectedOptionIndex = answers[currentQuestionIndex];
+            showQuestion();
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            // Find max category
+            let maxScore = 0;
+            let maxCategory = 'order';
+            
+            Object.keys(scores).forEach(cat => {
+                if (scores[cat] > maxScore) {
+                    maxScore = scores[cat];
+                    maxCategory = cat;
+                }
+            });
+            
+            const data = typeData[maxCategory];
+            
+            document.getElementById('result-emoji').textContent = data.emoji;
+            document.getElementById('result-title').textContent = data.title;
+            document.getElementById('result-subtitle').textContent = data.subtitle;
+            document.getElementById('result-desc').innerHTML = data.desc + `<br><br><span class="text-white/60 text-sm">Твой результат — ${maxScore} из 12 баллов в этой категории</span>`;
+            document.getElementById('result-science').textContent = data.science;
+            
+            // Tips
+            const tipsList = document.getElementById('result-tips');
+            tipsList.innerHTML = '';
+            data.tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start gap-3';
+                li.innerHTML = `<span class="text-red-400 mt-1">•</span> ${tip}`;
+                tipsList.appendChild(li);
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+
+        function goBackToStart() {
+            if (confirm('Вернуться на стартовый экран? Прогресс будет потерян.')) {
+                document.getElementById('quiz-screen').classList.add('hidden');
+                document.getElementById('start-screen').classList.remove('hidden');
+            }
+        }
+
+        function shareResult() {
+            const text = `Я прошёл(а) тест «Как тебя выбесить?» и я — ${document.getElementById('result-title').textContent}! 🔥 Попробуй и ты: [вставь ссылку]`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Результат скопирован в буфер! Можешь отправить друзьям 😉');
+            });
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('quiz-screen').classList.contains('hidden')) return;
+            
+            if (e.key === 'ArrowRight' && !document.getElementById('next-btn').classList.contains('hidden')) {
+                nextQuestion();
+            }
+            if (e.key === 'ArrowLeft' && currentQuestionIndex > 0) {
+                prevQuestion();
+            }
+        });
+
+        // Init
+        window.onload = function() {
+            // Make sure Tailwind works
+            console.log('%cТест готов! 🎉 Выбери себя и начинай!', 'color:#c026d3; font-size:16px; font-weight:600');
+        };
+    </script>
+</body>
+</html>
