@@ -2,259 +2,472 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Тесты зайки 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Психологические тесты ✨</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --pink: #f472b6;
-      --purple: #c084fc;
-      --dark: #0f001a;
+      --bg: #0b0a10;
+      --surface: rgba(255,255,255,0.04);
+      --surface2: rgba(255,255,255,0.07);
+      --surface3: rgba(255,255,255,0.10);
+      --text: #d0cdd8;
+      --text-dim: #7a7584;
+      --text-bright: #f0edf5;
+      --border: rgba(255,255,255,0.06);
+      --accent1: #c084fc;
+      --accent2: #f472b6;
+      --accent3: #818cf8;
+      --glow1: rgba(192,132,252,0.15);
+      --glow2: rgba(244,114,182,0.12);
     }
+
+    html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0f001a, #1a0033);
-      color: #f0e6ff;
-      margin: 0;
-      padding: 20px;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      position: relative;
+      min-height: 100dvh;
       overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Волшебный звёздный фон */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(192, 132, 252, 0.12) 0%, transparent 40%),
-                  radial-gradient(circle at 70% 60%, rgba(244, 114, 182, 0.12) 0%, transparent 40%),
-                  radial-gradient(circle at 20% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 10%, var(--glow1), transparent 60%),
+        radial-gradient(ellipse 50% 60% at 85% 80%, var(--glow2), transparent 60%);
       pointer-events: none;
       z-index: 0;
-      animation: stars 25s linear infinite;
     }
 
-    @keyframes stars {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(15px, 15px); }
-    }
-
-    .container {
-      max-width: 1200px;
+    .page {
+      max-width: 720px;
       margin: 0 auto;
+      padding: 0 16px;
       position: relative;
       z-index: 1;
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    /* ─── Header ─── */
+    .header {
+      padding: 48px 0 32px;
+      text-align: center;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent1);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .header-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent2);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
 
     h1 {
-      text-align: center;
-      font-size: clamp(2.6rem, 7vw, 4rem);
-      margin: 30px 0 8px;
-      background: linear-gradient(90deg, #e0a3ff, #f9a8d4);
+      font-size: clamp(1.9rem, 6vw, 2.8rem);
+      font-weight: 800;
+      color: var(--text-bright);
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-weight: 700;
-      letter-spacing: -1px;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #d8b4fe;
-      font-size: clamp(1.2rem, 4vw, 1.45rem);
-      margin-bottom: 40px;
-      font-weight: 500;
+    .header-desc {
+      font-size: 15px;
+      color: var(--text-dim);
+      max-width: 400px;
+      margin: 0 auto;
+      font-weight: 400;
+      line-height: 1.6;
     }
 
-    .search-container {
-      max-width: 520px;
-      margin: 0 auto 50px;
+    /* ─── Search ─── */
+    .search-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 12px 0;
+      background: rgba(11,10,16,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      margin-bottom: 8px;
+    }
+
+    .search-inner {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+      font-size: 16px;
     }
 
     #searchInput {
       width: 100%;
-      padding: 18px 28px;
-      font-size: 1.15rem;
-      background: rgba(30, 10, 60, 0.75);
-      border: 2px solid rgba(192, 132, 252, 0.4);
-      border-radius: 50px;
-      color: #f0e6ff;
+      padding: 14px 16px 14px 44px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text-bright);
       outline: none;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+      -webkit-appearance: none;
     }
+
+    #searchInput::placeholder { color: var(--text-dim); }
 
     #searchInput:focus {
-      border-color: #c084fc;
-      box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.2);
-      transform: scale(1.02);
+      border-color: rgba(192,132,252,0.3);
+      background: var(--surface3);
+      box-shadow: 0 0 0 3px rgba(192,132,252,0.08);
     }
 
-    .count {
-      text-align: center;
-      color: #a78bfa;
-      font-size: 1.05rem;
-      margin-bottom: 20px;
+    .count-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 4px;
+      margin-bottom: 4px;
+    }
+
+    .count-text {
+      font-size: 13px;
+      color: var(--text-dim);
       font-weight: 500;
     }
 
+    .count-num {
+      color: var(--accent1);
+      font-weight: 700;
+    }
+
+    /* ─── Cards ─── */
     .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .card {
-      background: rgba(30, 10, 60, 0.8);
-      border-radius: 28px;
-      padding: 28px 24px;
-      border: 1px solid #6b21a8;
-      backdrop-filter: blur(16px);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.25s ease;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
       opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 0.7s forwards;
+      transform: translateY(12px);
+      animation: cardIn 0.4s ease forwards;
     }
 
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:hover, .card:active {
+      background: var(--surface2);
+      border-color: rgba(192,132,252,0.15);
+      transform: translateY(-2px);
+    }
+
+    .card:active {
+      transform: scale(0.98);
+    }
+
+    .card-emoji {
+      font-size: 32px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface2);
+      border-radius: 14px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-emoji {
+      transform: scale(1.08) rotate(4deg);
+    }
+
+    .card-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.45;
+      font-weight: 400;
+    }
+
+    .card-arrow {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      color: var(--text-dim);
+      transition: all 0.25s ease;
+    }
+
+    .card:hover .card-arrow {
+      color: var(--accent1);
+      transform: translateX(3px);
+    }
+
+    /* ─── Category labels ─── */
+    .category-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      font-weight: 600;
+      padding: 24px 4px 10px;
+    }
+
+    .category-label:first-of-type {
+      padding-top: 8px;
+    }
+
+    /* ─── Empty state ─── */
+    .empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-dim);
+    }
+
+    .empty-emoji { font-size: 40px; margin-bottom: 12px; display: block; }
+    .empty-text { font-size: 15px; }
+
+    /* ─── Footer ─── */
+    .footer {
+      text-align: center;
+      padding: 48px 20px 32px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    .footer-main {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .footer-heart {
+      font-size: 12px;
+      color: rgba(244,114,182,0.5);
+      font-style: italic;
+    }
+
+    /* ─── Responsive ─── */
+    @media (min-width: 520px) {
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .card {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px 20px;
+        gap: 12px;
+      }
+
+      .card-emoji {
+        width: 64px;
+        height: 64px;
+        font-size: 34px;
+        margin: 0 auto;
+      }
+
+      .card-arrow { display: none; }
+
+      .card-title { font-size: 15.5px; }
+      .card-desc { font-size: 13px; }
+
+      .category-label {
+        grid-column: 1 / -1;
       }
     }
 
-    .card:hover {
-      transform: translateY(-14px) scale(1.04);
-      box-shadow: 0 35px 70px -15px rgba(192, 132, 252, 0.45);
-      border-color: #c084fc;
-    }
-
-    .emoji {
-      font-size: 4.8rem;
-      margin-bottom: 18px;
-      display: block;
-      transition: transform 0.4s;
-    }
-
-    .card:hover .emoji {
-      transform: scale(1.15) rotate(8deg);
-    }
-
-    .card h3 {
-      font-size: 1.55rem;
-      margin: 0 0 12px;
-      color: #f3e8ff;
-      line-height: 1.25;
-    }
-
-    .card p {
-      color: #c4b5fd;
-      line-height: 1.5;
-      margin-bottom: 26px;
-      font-size: 1rem;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 15px 38px;
-      background: linear-gradient(45deg, #c026d3, #db2777);
-      color: white;
-      text-decoration: none;
-      border-radius: 50px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      box-shadow: 0 8px 25px rgba(192, 38, 211, 0.4);
-      transition: all 0.3s ease;
-    }
-
-    .btn:hover {
-      transform: scale(1.1) translateY(-2px);
-      box-shadow: 0 15px 35px rgba(219, 39, 119, 0.5);
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 70px;
-      color: #9f7aea;
-      font-size: 1.05rem;
-      padding-bottom: 20px;
-    }
-
-    @media (min-width: 768px) {
-      body { padding: 40px 20px; }
-      .grid { gap: 32px; }
+    @media (min-width: 640px) {
+      .page { padding: 0 24px; }
+      .header { padding: 60px 0 36px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Тесты 💖</h1>
-    <p class="subtitle">Выбирай и проходи — всё только для тебя, моя зайка 🌙☀️</p>
-
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="🔍 Поиск тестов...">
+  <div class="page">
+    <div class="header">
+      <div class="header-badge">Коллекция тестов</div>
+      <h1>Узнай себя <span>по-настоящему</span></h1>
+      <p class="header-desc">Психологические тесты с научной базой, красивыми результатами и щепоткой юмора</p>
     </div>
 
-    <div class="count">Найдено тестов: <span id="countNum">12</span></div>
+    <div class="search-wrap">
+      <div class="search-inner">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Найти тест...">
+      </div>
+    </div>
+
+    <div class="count-bar">
+      <span class="count-text">Всего тестов: <span class="count-num" id="countNum">0</span></span>
+    </div>
 
     <div class="grid" id="quizGrid"></div>
 
     <div class="footer">
-      Сделано с огромной любовью для самой лучшей зайки на свете ❤️<br>
-      <span style="font-size:0.9rem; opacity:0.7;">Ты — моё самое любимое чудо ✨</span>
+      <p class="footer-main">Тесты основаны на реальных психологических теориях.<br>Но помни: ни один тест не знает тебя лучше, чем ты 🤍</p>
+      <p class="footer-heart">made with love for зайка 🐰</p>
     </div>
   </div>
 
   <script>
     const tests = [
-      { folder: "vibe", emoji: "😈🌙", title: "В какое время суток твой вайб", desc: "Узнай, жаворонок ты или ночной демон" },
-      { folder: "gulyanka", emoji: "🌳☀️", title: "Когда сегодня идти гулять", desc: "Научный тест — идеальное время именно сегодня" },
-      { folder: "love", emoji: "❤️", title: "Насколько ты влюблён(а)", desc: "Серьёзный тест для пары" },
-      { folder: "girl-vibe", emoji: "🎀🌸", title: "Какой ты тип девушки по вайбу", desc: "13 вопросов — узнай свою настоящую эстетику!" },
-      { folder: "besit", emoji: "🔥😤", title: "Как тебя выбесить?", desc: "8 вопросов • 100% бесплатно • Наука + юмор" },
-      { folder: "yazik-lubvi", emoji: "🔬💖", title: "Какой у тебя язык любви? 💖", desc: "🔬 На основе реальной психологии 😂" },
-      { folder: "shy", emoji: "🙈✨", title: "🙈 Тест: Чего ты стесняешься?", desc: "Шуточный тест с капелькой психологии" },
-      { folder: "foto", emoji: "🪞🔬", title: "🪞 Почему ты не отправляешь это фото?", desc: "Научный тест на основе 6 психологических шкал" },
-      { folder: "witch", emoji: "🌙✨", title: "🌙 Какая ты ведьма?", desc: "Выбери стихию и узнай свой тип магии 🔮" },
-      { folder: "animal", emoji: "🐾💕", title: "🐾 Какое ты животное в отношениях?", desc: "Тест на стиль привязанности с зоологической точностью" },
-      { folder: "drink", emoji: "🍷🧪", title: "🍷 Какой ты напиток?", desc: "Тест на темперамент с нотками науки и юмора" },
-      { folder: "movie", emoji: "🎬⚔️", title: "🎬 Какой ты персонаж в фильме?", desc: "Тест на архетип по Юнгу и Кэмпбеллу" },
-      { folder: "age", emoji: "⏳🔬", title: "⏳ Почему ты скрываешь возраст?", desc: "Научный тест на основе 6 психологических механизмов" }
+      { cat: "science", folder: "foto", emoji: "🪞🔬", title: "Почему ты не отправляешь это фото?", desc: "Научный тест на основе 6 психологических шкал" },
+      { cat: "science", folder: "age", emoji: "⏳🔬", title: "Почему ты скрываешь возраст?", desc: "Научный тест — 6 психологических механизмов" },
+      { cat: "science", folder: "yazik-lubvi", emoji: "🔬💖", title: "Какой у тебя язык любви?", desc: "На основе реальной психологии" },
+      { cat: "science", folder: "love", emoji: "❤️", title: "Насколько ты влюблён(а)", desc: "Серьёзный тест для пары" },
+      { cat: "fun", folder: "witch", emoji: "🌙✨", title: "Какая ты ведьма?", desc: "Выбери стихию и узнай свой тип магии" },
+      { cat: "fun", folder: "animal", emoji: "🐾💕", title: "Какое ты животное в отношениях?", desc: "Стиль привязанности с зоологической точностью" },
+      { cat: "fun", folder: "drink", emoji: "🍷🧪", title: "Какой ты напиток?", desc: "Тест на темперамент с нотками науки" },
+      { cat: "fun", folder: "movie", emoji: "🎬⚔️", title: "Какой ты персонаж в фильме?", desc: "Тест на архетип по Юнгу и Кэмпбеллу" },
+      { cat: "fun", folder: "shy", emoji: "🙈✨", title: "Чего ты стесняешься?", desc: "Шуточный тест с капелькой психологии" },
+      { cat: "fun", folder: "girl-vibe", emoji: "🎀🌸", title: "Какой ты тип девушки по вайбу", desc: "13 вопросов — узнай свою эстетику" },
+      { cat: "vibe", folder: "besit", emoji: "🔥😤", title: "Как тебя выбесить?", desc: "8 вопросов — наука + юмор" },
+      { cat: "vibe", folder: "vibe", emoji: "😈🌙", title: "В какое время суток твой вайб", desc: "Жаворонок, сова или ночной демон?" },
+      { cat: "vibe", folder: "gulyanka", emoji: "🌳☀️", title: "Когда сегодня идти гулять", desc: "Научный тест — идеальное время для прогулки" }
     ];
+
+    const catLabels = {
+      science: '🔬 Научные',
+      fun: '✨ Развлекательные',
+      vibe: '🌀 Вайб-тесты'
+    };
 
     const grid = document.getElementById('quizGrid');
     const searchInput = document.getElementById('searchInput');
     const countNum = document.getElementById('countNum');
 
-    function renderCards(filteredTests) {
+    function renderCards(list) {
       grid.innerHTML = '';
-      filteredTests.forEach((test, i) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.style.animationDelay = `${i * 0.08}s`;
-        card.innerHTML = `
-          <span class="emoji">${test.emoji}</span>
-          <h3>${test.title}</h3>
-          <p>${test.desc}</p>
-          <a href="${test.folder}/" class="btn">Пройти тест →</a>
-        `;
-        grid.appendChild(card);
-      });
-      countNum.textContent = filteredTests.length;
+      if (list.length === 0) {
+        grid.innerHTML = '<div class="empty"><span class="empty-emoji">🔍</span><div class="empty-text">Ничего не найдено</div></div>';
+        countNum.textContent = '0';
+        return;
+      }
+
+      const isSearch = searchInput.value.trim().length > 0;
+      let delay = 0;
+
+      if (isSearch) {
+        list.forEach(test => {
+          grid.appendChild(makeCard(test, delay));
+          delay++;
+        });
+      } else {
+        const cats = ['science', 'fun', 'vibe'];
+        cats.forEach(cat => {
+          const items = list.filter(t => t.cat === cat);
+          if (items.length === 0) return;
+          const label = document.createElement('div');
+          label.className = 'category-label';
+          label.textContent = catLabels[cat];
+          grid.appendChild(label);
+          items.forEach(test => {
+            grid.appendChild(makeCard(test, delay));
+            delay++;
+          });
+        });
+      }
+
+      countNum.textContent = list.length;
     }
 
-    // Первоначальный рендер
+    function makeCard(test, delay) {
+      const a = document.createElement('a');
+      a.className = 'card';
+      a.href = test.folder + '/';
+      a.style.animationDelay = `${delay * 0.05}s`;
+      a.innerHTML = `
+        <div class="card-emoji">${test.emoji}</div>
+        <div class="card-body">
+          <div class="card-title">${test.title}</div>
+          <div class="card-desc">${test.desc}</div>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      `;
+      return a;
+    }
+
     renderCards(tests);
 
-    // Поиск
     searchInput.addEventListener('input', () => {
       const term = searchInput.value.toLowerCase().trim();
-      const filtered = tests.filter(test => 
-        test.title.toLowerCase().includes(term) || 
-        test.desc.toLowerCase().includes(term)
+      const filtered = tests.filter(t =>
+        t.title.toLowerCase().includes(term) ||
+        t.desc.toLowerCase().includes(term)
       );
       renderCards(filtered);
     });
