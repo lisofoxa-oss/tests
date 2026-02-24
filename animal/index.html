@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какое ты животное в отношениях? — Тест</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #faf6f1;
+  --surface: #ffffff;
+  --surface2: #f3ede5;
+  --text: #4a3f35;
+  --text-dim: #9a8d7f;
+  --text-bright: #2c241c;
+  --border: rgba(74,63,53,0.1);
+  --accent: #c17d54;
+  --accent2: #d4956c;
+  --accent-soft: rgba(193,125,84,0.1);
+  --warm: #e8a87c;
+  --cool: #85b4a6;
+  --pink: #c48b9f;
+  --gold: #c9a96e;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 0% 0%, rgba(193,125,84,0.06), transparent 50%),
+    radial-gradient(ellipse 60% 80% at 100% 100%, rgba(133,180,166,0.06), transparent 50%);
+  pointer-events: none;
+}
+
+.container { max-width: 660px; margin: 0 auto; padding: 20px 20px 60px; position: relative; }
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 50px 0 36px;
+  animation: fadeUp 0.8s ease;
+}
+
+.header-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  display: block;
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+
+h1 em { color: var(--accent); font-style: italic; }
+
+.subtitle {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 420px;
+  margin: 0 auto;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+/* ─── Scenario pick ─── */
+.scenario-section {
+  margin-top: 32px;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+
+.scenario-section h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  text-align: center;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+
+.scenario-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+  font-weight: 300;
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.scenario-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.scenario-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(74,63,53,0.06); }
+.scenario-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+
+.scenario-emoji { font-size: 36px; margin-bottom: 10px; display: block; }
+.scenario-name { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--text-bright); margin-bottom: 4px; }
+.scenario-desc { font-size: 12px; color: var(--text-dim); font-weight: 300; }
+
+.btn-start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--surface2);
+  color: var(--text-dim);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.btn-start.active {
+  opacity: 1;
+  pointer-events: all;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(193,125,84,0.25);
+}
+
+.btn-start.active:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(193,125,84,0.3); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250,246,241,0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 16px 0 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.progress-label { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; font-weight: 300; }
+.progress-count { font-size: 13px; color: var(--accent); font-weight: 600; }
+.progress-bar { height: 3px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--warm)); border-radius: 10px; transition: width 0.5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s ease;
+  box-shadow: 0 2px 12px rgba(74,63,53,0.04);
+}
+
+.q-num { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 4px; font-weight: 500; }
+.q-tag { display: inline-block; font-size: 11px; color: var(--text-dim); padding: 4px 10px; background: var(--surface2); border-radius: 6px; margin-bottom: 14px; }
+
+.q-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: var(--text-bright);
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--surface2);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: var(--text);
+  user-select: none;
+}
+
+.option:hover { background: rgba(193,125,84,0.05); border-color: var(--border); }
+.option.selected { border-color: var(--accent); background: var(--accent-soft); }
+
+.option-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--text-dim);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.option.selected .option-dot { border-color: var(--accent); background: var(--accent); }
+.option.selected .option-dot::after { content: ''; position: absolute; inset: 4px; background: #fff; border-radius: 50%; }
+
+.btn-next {
+  width: 100%; padding: 15px; border: none; border-radius: 14px;
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s ease; margin-top: 10px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: var(--accent); color: #fff;
+  box-shadow: 0 4px 16px rgba(193,125,84,0.2);
+}
+
+.btn-next.active:hover { transform: translateY(-2px); }
+
+/* ─── Results ─── */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp 0.8s ease; }
+
+.result-hero { text-align: center; padding: 48px 10px 30px; }
+.result-emoji { font-size: 72px; display: block; margin-bottom: 16px; animation: wiggle 3s ease-in-out infinite; }
+.result-label { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--accent); margin-bottom: 10px; }
+
+.result-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.8rem, 5.5vw, 2.4rem);
+  color: var(--text-bright);
+  margin-bottom: 12px;
+}
+
+.result-tagline {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-dim);
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 12px rgba(74,63,53,0.04);
+}
+
+.r-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+.meter-section { margin: 16px 0 6px; }
+
+.meter-row { margin-bottom: 14px; }
+.meter-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.meter-name { font-size: 13px; color: var(--text); font-weight: 500; }
+.meter-val { font-size: 12px; color: var(--accent); font-weight: 600; }
+.meter-bg { height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 10px; background: var(--accent); transition: width 1s ease; width: 0; }
+
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; }
+
+.btn-share {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border: none; border-radius: 14px;
+  background: var(--accent); color: #fff;
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s ease; text-decoration: none;
+}
+
+.btn-share:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(193,125,84,0.25); }
+
+.btn-more {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 14px;
+  background: var(--surface); color: var(--text);
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; text-decoration: none; transition: all 0.3s ease;
+}
+
+.btn-more:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-retry {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 14px;
+  background: transparent; color: var(--text-dim);
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 400;
+  cursor: pointer; transition: all 0.3s ease;
+}
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--surface); border: 1px solid var(--accent); color: var(--text-bright);
+  padding: 12px 24px; border-radius: 12px; font-size: 13px; z-index: 999;
+  transition: transform 0.4s ease; pointer-events: none;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 12px 14px 50px; }
+  .scenarios-grid { gap: 10px; }
+  .scenario-card { padding: 20px 12px; }
+  .question-card, .r-card { padding: 24px 18px; }
+  .q-text { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <span class="header-icon">🐾</span>
+      <h1>Какое ты <em>животное</em> в отношениях?</h1>
+      <p class="subtitle">Тест на стиль привязанности с зоологической точностью. Выбери сценарий свидания — и мы определим, кто ты в любви.</p>
+    </div>
+
+    <div class="scenario-section">
+      <h2>Идеальное свидание?</h2>
+      <p class="scenario-hint">Выбери, что тебе ближе</p>
+      <div class="scenarios-grid">
+        <div class="scenario-card" data-sc="cozy" onclick="pickScenario('cozy')">
+          <span class="scenario-emoji">🕯️</span>
+          <div class="scenario-name">Тихий вечер</div>
+          <div class="scenario-desc">Плед, фильм, чай, никого больше</div>
+        </div>
+        <div class="scenario-card" data-sc="adventure" onclick="pickScenario('adventure')">
+          <span class="scenario-emoji">🎢</span>
+          <div class="scenario-name">Приключение</div>
+          <div class="scenario-desc">Спонтанная поездка, новые места</div>
+        </div>
+        <div class="scenario-card" data-sc="deep" onclick="pickScenario('deep')">
+          <span class="scenario-emoji">🌌</span>
+          <div class="scenario-name">Разговоры до утра</div>
+          <div class="scenario-desc">Откровенность, глубина, звёзды</div>
+        </div>
+        <div class="scenario-card" data-sc="social" onclick="pickScenario('social')">
+          <span class="scenario-emoji">🎉</span>
+          <div class="scenario-name">Вечеринка вдвоём</div>
+          <div class="scenario-desc">Смех, танцы, общие друзья</div>
+        </div>
+      </div>
+      <button class="btn-start" id="btnStart" onclick="startTest()">Узнать своё животное 🐾</button>
+    </div>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Вопрос</span>
+      <span class="progress-count" id="progressCount">1 / 10</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="questionsContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast">🐾 Скопировано!</div>
+
+<script>
+let scenario = null, curQ = 0, selOpt = null;
+let sc = { cat: 0, dog: 0, fox: 0, owl: 0, otter: 0, deer: 0 };
+
+const questions = [
+  {
+    tag: "Стиль привязанности · Боулби",
+    text: "Партнёр не отвечает 3 часа. Что у тебя в голове?",
+    options: [
+      { text: "Ничего — ответит, когда сможет", scores: { cat: 3, owl: 1 } },
+      { text: "Мелькнёт тревога, но стараюсь не накручивать", scores: { deer: 2, dog: 1 } },
+      { text: "Пишу что-нибудь смешное — типа ненавязчиво напоминаю о себе", scores: { otter: 2, fox: 1 } },
+      { text: "Если не ответит ещё час — я уже мысленно разрулила 5 сценариев", scores: { fox: 3 } }
+    ]
+  },
+  {
+    tag: "Личное пространство",
+    text: "Сколько личного пространства тебе нужно в отношениях?",
+    options: [
+      { text: "Много. Я люблю, но мне нужен мой мир", scores: { cat: 3, fox: 1 } },
+      { text: "Баланс: время вместе + время одной. Чётко.", scores: { owl: 3 } },
+      { text: "Мне хорошо рядом, я не устаю от близких", scores: { dog: 3, otter: 1 } },
+      { text: "Зависит от фазы луны и настроения", scores: { otter: 2, deer: 2 } }
+    ]
+  },
+  {
+    tag: "Язык любви · Чепмен",
+    text: "Как ты выражаешь любовь?",
+    options: [
+      { text: "Делаю что-то руками — готовлю, нахожу подарки, организую", scores: { dog: 3, deer: 1 } },
+      { text: "Говорю — комплименты, мемы, голосовые в 2 часа ночи", scores: { otter: 3 } },
+      { text: "Присутствую тихо рядом — и это говорит всё", scores: { cat: 2, owl: 2 } },
+      { text: "По-разному — подстраиваюсь под человека", scores: { fox: 3 } }
+    ]
+  },
+  {
+    tag: "Конфликты",
+    text: "Вы поссорились. Твоя стратегия:",
+    options: [
+      { text: "Ухожу остыть — поговорим потом, на холодную голову", scores: { cat: 3, owl: 1 } },
+      { text: "Обсуждаю сразу — не могу держать внутри", scores: { dog: 2, otter: 2 } },
+      { text: "Тихо анализирую, что пошло не так, потом прихожу с выводами", scores: { owl: 3, fox: 1 } },
+      { text: "Переживаю молча, боюсь всё усугубить", scores: { deer: 3 } }
+    ]
+  },
+  {
+    tag: "Доверие",
+    text: "Как быстро ты доверяешь новому человеку?",
+    options: [
+      { text: "Медленно. Доверие надо заслужить", scores: { cat: 2, fox: 2 } },
+      { text: "Довольно быстро — верю, пока не докажут обратное", scores: { dog: 3, otter: 1 } },
+      { text: "Доверяю, но всегда держу запасной план", scores: { fox: 3 } },
+      { text: "Мне сложно — боюсь быть уязвимой", scores: { deer: 3 } }
+    ]
+  },
+  {
+    tag: "Ревность",
+    text: "Он/она лайкнул(а) фото симпатичного человека. Твоя реакция?",
+    options: [
+      { text: "Вообще не замечу — я не слежу за такими вещами", scores: { cat: 3 } },
+      { text: "Замечу, подмечу, но промолчу — посмотрим, что дальше", scores: { fox: 3, owl: 1 } },
+      { text: "Шутя скажу: «О, красивая, кто это?» — и считаю реакцию", scores: { otter: 2, fox: 1 } },
+      { text: "Внутри кольнёт, но постараюсь не показать", scores: { deer: 2, dog: 1 } }
+    ]
+  },
+  {
+    tag: "Забота",
+    text: "Партнёр заболел. Ты:",
+    options: [
+      { text: "Приезжаю с аптечкой, супом и пледом — mission care activated", scores: { dog: 3, deer: 1 } },
+      { text: "Пишу «выздоравливай💕» и даю отдохнуть", scores: { cat: 2, owl: 1 } },
+      { text: "Звоню каждый час, шучу, отвлекаю — чтобы не скучал(а)", scores: { otter: 3 } },
+      { text: "Гуглю симптомы, составляю план лечения", scores: { owl: 3 } }
+    ]
+  },
+  {
+    tag: "Будущее",
+    text: "Как ты относишься к планированию будущего с партнёром?",
+    options: [
+      { text: "Живу настоящим — зачем загадывать?", scores: { cat: 2, otter: 2 } },
+      { text: "Мечтаю, но вслух не говорю — боюсь спугнуть", scores: { deer: 3 } },
+      { text: "Строю планы вместе — это часть близости", scores: { dog: 3 } },
+      { text: "Анализирую совместимость, прежде чем вкладываться", scores: { owl: 2, fox: 2 } }
+    ]
+  },
+  {
+    tag: "Уязвимость · Браун",
+    text: "Что для тебя самое сложное в отношениях?",
+    options: [
+      { text: "Просить о помощи или говорить «мне плохо»", scores: { cat: 2, fox: 2 } },
+      { text: "Не терять себя — когда растворяюсь в другом", scores: { dog: 2, deer: 2 } },
+      { text: "Сохранять интерес — мне быстро становится скучно", scores: { otter: 2, fox: 1 } },
+      { text: "Не контролировать всё — отпустить и довериться", scores: { owl: 3 } }
+    ]
+  },
+  {
+    tag: "Финальный вопрос",
+    text: "Идеальные отношения для тебя — это когда:",
+    options: [
+      { text: "Мы как лучшие друзья, только ближе", scores: { otter: 3, dog: 1 } },
+      { text: "Два самодостаточных человека выбирают быть вместе", scores: { cat: 3, fox: 1 } },
+      { text: "Мне спокойно. Не тревожно. Просто тепло", scores: { deer: 3, dog: 1 } },
+      { text: "Есть рост — мы делаем друг друга лучше", scores: { owl: 3 } }
+    ]
+  }
+];
+
+const animals = {
+  cat: {
+    emoji: "🐈",
+    name: "Кошка",
+    style: "Избегающий-независимый",
+    tagline: "Любишь, но на своих условиях. Подойдёшь, когда захочешь — и это не обсуждается.",
+    desc: "Ты ценишь свободу и личное пространство больше всего. Это не значит, что ты не любишь — ты любишь глубоко, но тихо. Тебе важно сохранить свою идентичность внутри отношений. Боулби назвал бы это «избегающим стилем привязанности», но в здоровой форме это просто независимость. Ты выбираешь быть рядом — а не нуждаешься в этом.",
+    shadow: "Иногда твоя независимость читается как холодность. Партнёр может чувствовать, что ты «одной лапой за дверью». Задача — научиться показывать тепло, не теряя себя.",
+    meters: { "Независимость": 95, "Эмпатия": 60, "Спонтанность": 50, "Тревожность": 25 }
+  },
+  dog: {
+    emoji: "🐕",
+    name: "Собака",
+    style: "Надёжный-заботливый",
+    tagline: "Ты любишь всем сердцем, без полумер. Верность — это не слово, а твоя суть.",
+    desc: "Ты — воплощение надёжной привязанности. Рядом с тобой тепло и безопасно. Ты из тех, кто помнит, что партнёр любит на завтрак, и кто первым обнимает после тяжёлого дня. Готтман назвал бы тебя «мастером отношений» — ты интуитивно делаешь то, чему другие учатся годами.",
+    shadow: "Ты можешь отдавать так много, что забываешь о себе. Или принимать плохое обращение, лишь бы не потерять близость. Задача — помнить: здоровая любовь — это когда заботятся о тебе в ответ.",
+    meters: { "Независимость": 35, "Эмпатия": 95, "Спонтанность": 55, "Тревожность": 40 }
+  },
+  fox: {
+    emoji: "🦊",
+    name: "Лиса",
+    style: "Стратег-адаптивный",
+    tagline: "Ты всегда на шаг впереди. Чувствуешь людей лучше, чем они сами.",
+    desc: "Ты — мастер чтения ситуаций. Адаптируешься к любому человеку, понимаешь мотивы, просчитываешь реакции. Это не манипуляция — это развитый эмоциональный интеллект. Но за этой адаптивностью иногда прячется вопрос: «А какая я настоящая?» В отношениях ты чередуешь близость и дистанцию — и делаешь это элегантно.",
+    shadow: "Контроль через понимание — тоже контроль. Иногда стоит перестать «считывать» и просто быть. Задача — позволить себе быть непредсказуемой и уязвимой.",
+    meters: { "Независимость": 75, "Эмпатия": 80, "Спонтанность": 65, "Тревожность": 55 }
+  },
+  owl: {
+    emoji: "🦉",
+    name: "Сова",
+    style: "Аналитик-осознанный",
+    tagline: "Ты любишь умно. Анализируешь, понимаешь, выстраиваешь — но иногда забываешь чувствовать.",
+    desc: "Ты подходишь к отношениям как к проекту: изучаешь совместимость, понимаешь динамику, строишь коммуникацию осознанно. Это зрелый подход — Готтман одобрил бы. Ты та, кто читает книги про отношения и реально применяет. Но иногда за анализом теряется спонтанность.",
+    shadow: "Когда голова ведёт, сердце отстаёт. Ты можешь «понимать» чувства, не переживая их. Задача — иногда выключить аналитика и просто прыгнуть.",
+    meters: { "Независимость": 70, "Эмпатия": 65, "Спонтанность": 35, "Тревожность": 45 }
+  },
+  otter: {
+    emoji: "🦦",
+    name: "Выдра",
+    style: "Игривый-социальный",
+    tagline: "С тобой весело даже в понедельник. Ты превращаешь отношения в приключение.",
+    desc: "Ты — солнечный луч в любых отношениях. Шутишь, придумываешь сюрпризы, делаешь обычный вторник особенным. Исследования показывают, что юмор и игривость — одни из главных предикторов долгих отношений. Ты создаёшь ту лёгкость, к которой люди хотят возвращаться.",
+    shadow: "За лёгкостью иногда прячется страх серьёзных разговоров. Если становится тяжело — ты шутишь. Если слишком близко — отвлекаешься. Задача — позволить себе быть серьёзной, не теряя искры.",
+    meters: { "Независимость": 55, "Эмпатия": 70, "Спонтанность": 95, "Тревожность": 35 }
+  },
+  deer: {
+    emoji: "🦌",
+    name: "Олень",
+    style: "Чувствительный-осторожный",
+    tagline: "Ты чувствуешь глубже, чем показываешь. Твоя осторожность — это не слабость, а мудрость.",
+    desc: "Ты из тех, кто долго присматривается, прежде чем открыться. Но когда открываешься — это всерьёз. Твоя чувствительность — суперсила: ты замечаешь оттенки настроения, которые другие пропускают. Элейн Арон назвала бы тебя «высокочувствительной личностью» — это не диагноз, а особенность нервной системы.",
+    shadow: "Тревога может заставить тебя додумывать то, чего нет. «Он промолчал = он разлюбил» — знакомо? Задача — различать реальную угрозу и фантазию тревожного мозга.",
+    meters: { "Независимость": 40, "Эмпатия": 90, "Спонтанность": 45, "Тревожность": 85 }
+  }
+};
+
+function pickScenario(s) {
+  scenario = s;
+  document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`[data-sc="${s}"]`).classList.add('selected');
+  document.getElementById('btnStart').classList.add('active');
+}
+
+function startTest() {
+  if (!scenario) return;
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  const bonus = { cozy: { cat: 2, deer: 1 }, adventure: { otter: 2, fox: 1 }, deep: { owl: 2, deer: 1 }, social: { dog: 2, otter: 1 } };
+  for (const [k, v] of Object.entries(bonus[scenario])) sc[k] += v;
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  document.getElementById('questionsContainer').innerHTML = `
+    <div class="question-card">
+      <div class="q-num">Вопрос ${i+1} из ${questions.length}</div>
+      <div class="q-tag">${q.tag}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">${q.options.map((o,j) => `
+        <div class="option" onclick="sel(this,${j})"><div class="option-dot"></div><span>${o.text}</span></div>
+      `).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="next()">${i===questions.length-1?'Узнать результат 🐾':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${i+1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i/questions.length)*100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop - 10, behavior: 'smooth' });
+}
+
+function sel(el, i) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function next() {
+  if (selOpt === null) return;
+  for (const [k,v] of Object.entries(questions[curQ].options[selOpt].scores)) sc[k] += v;
+  selOpt = null;
+  curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('questionsContainer').innerHTML = '';
+  const sorted = Object.entries(sc).sort((a,b) => b[1]-a[1]);
+  const type = sorted[0][0];
+  const a = animals[type];
+  const second = animals[sorted[1][0]];
+  const maxVal = sorted[0][1];
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="result-hero">
+      <span class="result-emoji">${a.emoji}</span>
+      <div class="result-label">${a.style}</div>
+      <div class="result-title">Ты — ${a.name}</div>
+      <p class="result-tagline">${a.tagline}</p>
+    </div>
+    <div class="r-card"><h3>🔬 Что это значит</h3><p>${a.desc}</p></div>
+    <div class="r-card">
+      <h3>📊 Твой профиль</h3>
+      <div class="meter-section">${Object.entries(a.meters).map(([k,v]) => `
+        <div class="meter-row"><div class="meter-top"><span class="meter-name">${k}</span><span class="meter-val">${v}%</span></div>
+        <div class="meter-bg"><div class="meter-fill" data-w="${v}"></div></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="r-card"><h3>🌘 Теневая сторона</h3><p>${a.shadow}</p></div>
+    ${sorted[1][1] > 4 ? `<div class="r-card"><h3>🧬 Скрытый тип: ${second.emoji} ${second.name}</h3><p>${second.tagline} Этот тип тоже сильно проявился — ты переключаешься между ними в зависимости от ситуации.</p></div>` : ''}
+    <div class="actions">
+      <button class="btn-share" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>Поделиться</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a>
+      <button class="btn-retry" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+  setTimeout(() => document.querySelectorAll('.meter-fill').forEach(b => b.style.width = b.dataset.w + '%'), 300);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function share() {
+  const a = animals[Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0]];
+  const text = `${a.emoji} Я — ${a.name} в отношениях!\n\n${a.tagline}\n\nУзнай своё животное: https://lisofoxa-oss.github.io/tests/`;
+  if (navigator.share) navigator.share({ title:'Какое ты животное в отношениях?', text }).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(() => { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); });
+}
+</script>
+</body>
+</html>
