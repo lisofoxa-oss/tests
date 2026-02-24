@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какая ты ведьма? — Тест</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a10;
+  --surface: #12111a;
+  --surface2: #1a1825;
+  --text: #d4cfe0;
+  --text-dim: #7e7894;
+  --text-bright: #f0ecf8;
+  --border: rgba(160,140,200,0.12);
+  --glow: rgba(160,140,200,0.06);
+  --fire: #e8634a;
+  --fire-soft: #f4a261;
+  --water: #5b8fb9;
+  --water-soft: #89c4e1;
+  --earth: #7a9e6e;
+  --earth-soft: #b5c99a;
+  --air: #a78bba;
+  --air-soft: #d4bde8;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Raleway', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Animated stars background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 15% 80%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.25), transparent),
+    radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.35), transparent),
+    radial-gradient(1px 1px at 60% 85%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1.5px 1.5px at 25% 35%, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 95% 50%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.25), transparent);
+  animation: twinkle 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 85%, rgba(120,80,160,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 85% 15%, rgba(80,100,160,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── HEADER ─── */
+.header {
+  text-align: center;
+  padding: 60px 0 40px;
+  animation: fadeUp 1s ease;
+}
+
+.moon {
+  width: 60px; height: 60px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f0ecf8, #c4b5d9);
+  box-shadow: 0 0 40px rgba(200,180,230,0.3), 0 0 80px rgba(200,180,230,0.1);
+  position: relative;
+  animation: float 6s ease-in-out infinite;
+}
+
+.moon::after {
+  content: '';
+  position: absolute;
+  width: 45px; height: 45px;
+  border-radius: 50%;
+  background: var(--bg);
+  top: -5px; right: -8px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  font-weight: 800;
+  color: var(--text-bright);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+h1 em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--air-soft), var(--fire-soft));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 440px;
+  margin: 0 auto;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+/* ─── ELEMENT SELECTION ─── */
+.element-section {
+  margin-top: 40px;
+  animation: fadeUp 1s ease 0.3s both;
+}
+
+.element-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  text-align: center;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+
+.element-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 28px;
+  font-weight: 300;
+}
+
+.elements-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.element-card {
+  position: relative;
+  border-radius: 20px;
+  padding: 28px 20px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  text-align: center;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.element-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 0.12;
+  transition: opacity 0.4s ease;
+}
+
+.element-card:hover::before { opacity: 0.2; }
+.element-card:hover { transform: translateY(-4px); }
+
+.element-card.selected {
+  border-color: var(--el-color);
+  transform: translateY(-4px);
+}
+
+.element-card.selected::before { opacity: 0.25; }
+
+.element-card[data-el="fire"]::before { background: radial-gradient(circle at 50% 80%, var(--fire), transparent 70%); }
+.element-card[data-el="water"]::before { background: radial-gradient(circle at 50% 80%, var(--water), transparent 70%); }
+.element-card[data-el="earth"]::before { background: radial-gradient(circle at 50% 80%, var(--earth), transparent 70%); }
+.element-card[data-el="air"]::before { background: radial-gradient(circle at 50% 80%, var(--air), transparent 70%); }
+
+.element-card[data-el="fire"] { --el-color: var(--fire); background: rgba(232,99,74,0.06); }
+.element-card[data-el="water"] { --el-color: var(--water); background: rgba(91,143,185,0.06); }
+.element-card[data-el="earth"] { --el-color: var(--earth); background: rgba(122,158,110,0.06); }
+.element-card[data-el="air"] { --el-color: var(--air); background: rgba(167,139,186,0.06); }
+
+.element-emoji {
+  font-size: 42px;
+  margin-bottom: 12px;
+  filter: saturate(0.9);
+}
+
+.element-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+
+.element-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.btn-begin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  margin-top: 24px;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--surface2);
+  color: var(--text-dim);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.btn-begin.active {
+  opacity: 1;
+  pointer-events: all;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--active-color, var(--air)), var(--active-soft, var(--air-soft)));
+  box-shadow: 0 6px 24px rgba(160,140,200,0.2);
+}
+
+.btn-begin.active:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(160,140,200,0.3); }
+
+/* ─── PROGRESS ─── */
+.progress-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,16,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 16px 0 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+
+.progress-container.active { display: block; }
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.progress-label { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; font-weight: 300; }
+.progress-count { font-size: 13px; font-weight: 600; }
+
+.progress-bar { height: 3px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+}
+
+/* ─── QUESTIONS ─── */
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s ease;
+}
+
+.question-flavor {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 300;
+}
+
+.question-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-bright);
+  line-height: 1.5;
+  margin-bottom: 22px;
+  font-style: italic;
+}
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--surface2);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  user-select: none;
+}
+
+.option:hover { border-color: var(--border); }
+.option.selected { border-color: var(--el-active); background: rgba(160,140,200,0.08); color: var(--text-bright); }
+
+.option-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--text-dim);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.option.selected .option-dot {
+  border-color: var(--el-active);
+  background: var(--el-active);
+}
+
+.option.selected .option-dot::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: var(--bg);
+  border-radius: 50%;
+}
+
+.btn-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  margin-top: 10px;
+  background: var(--surface2);
+  color: var(--text-dim);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1;
+  pointer-events: all;
+  color: var(--bg);
+}
+
+.btn-next.active:hover { transform: translateY(-2px); }
+
+/* ─── RESULTS ─── */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp 0.8s ease; }
+
+.result-hero {
+  text-align: center;
+  padding: 50px 10px 30px;
+  position: relative;
+}
+
+.result-big-emoji {
+  font-size: 64px;
+  margin-bottom: 20px;
+  display: block;
+  animation: float 4s ease-in-out infinite;
+}
+
+.result-type-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  font-weight: 300;
+}
+
+.result-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-weight: 800;
+  color: var(--text-bright);
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+.result-tagline {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-dim);
+  max-width: 400px;
+  margin: 0 auto 10px;
+  line-height: 1.6;
+}
+
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 14px;
+}
+
+.result-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.result-card p {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.85;
+  font-weight: 300;
+}
+
+.traits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.trait {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface2);
+  text-align: center;
+}
+
+.trait-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.trait-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+/* Compatibility */
+.compat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.compat-row:last-child { border-bottom: none; }
+
+.compat-emoji { font-size: 24px; }
+.compat-info { flex: 1; }
+.compat-name { font-size: 13px; color: var(--text-bright); font-weight: 500; }
+.compat-desc { font-size: 11.5px; color: var(--text-dim); font-weight: 300; }
+
+.compat-meter {
+  width: 60px; height: 4px;
+  background: var(--surface2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.compat-fill { height: 100%; border-radius: 10px; }
+
+/* ─── Actions ─── */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.btn-share, .btn-more, .btn-retry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border-radius: 14px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-share { border: none; color: var(--bg); }
+.btn-share:hover { transform: translateY(-2px); }
+
+.btn-more {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.btn-more:hover { border-color: var(--text-dim); }
+
+.btn-retry {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.btn-retry:hover { color: var(--text); }
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-bright);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 13px;
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 480px) {
+  .container { padding: 12px 14px 50px; }
+  .elements-grid { gap: 10px; }
+  .element-card { padding: 22px 14px; min-height: 155px; }
+  .element-emoji { font-size: 34px; }
+  .question-card, .result-card { padding: 24px 18px; }
+  .question-text { font-size: 18px; }
+  .option { padding: 12px 14px; font-size: 13.5px; }
+  .traits-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ═══ HEADER ═══ -->
+  <div id="headerSection">
+    <div class="header">
+      <div class="moon"></div>
+      <h1>Какая ты <em>ведьма?</em></h1>
+      <p class="subtitle">Выбери стихию, ответь на 10 вопросов — и узнай, какой магией обладает твоя личность. С щепоткой юнгианской психологии и капелькой мистики.</p>
+    </div>
+
+    <!-- ═══ ELEMENT PICK ═══ -->
+    <div class="element-section">
+      <h2>Выбери свою стихию</h2>
+      <p class="element-hint">Ту, что позовёт первой — не думай долго</p>
+
+      <div class="elements-grid">
+        <div class="element-card" data-el="fire" onclick="pickElement('fire')">
+          <div class="element-emoji">🔥</div>
+          <div class="element-name">Огонь</div>
+          <div class="element-desc">Страсть, действие, трансформация</div>
+        </div>
+        <div class="element-card" data-el="water" onclick="pickElement('water')">
+          <div class="element-emoji">🌊</div>
+          <div class="element-name">Вода</div>
+          <div class="element-desc">Интуиция, эмоции, глубина</div>
+        </div>
+        <div class="element-card" data-el="earth" onclick="pickElement('earth')">
+          <div class="element-emoji">🌿</div>
+          <div class="element-name">Земля</div>
+          <div class="element-desc">Стабильность, забота, корни</div>
+        </div>
+        <div class="element-card" data-el="air" onclick="pickElement('air')">
+          <div class="element-emoji">🌬️</div>
+          <div class="element-name">Воздух</div>
+          <div class="element-desc">Мысли, свобода, перемены</div>
+        </div>
+      </div>
+
+      <button class="btn-begin" id="btnBegin" onclick="startTest()">
+        Начать ритуал ✦
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ PROGRESS ═══ -->
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Ритуал</span>
+      <span class="progress-count" id="progressCount">1 / 10</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- ═══ QUESTIONS ═══ -->
+  <div id="questionsContainer"></div>
+
+  <!-- ═══ RESULTS ═══ -->
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">✨ Ссылка скопирована!</div>
+
+<script>
+let chosenElement = null;
+let currentQ = 0;
+let selOption = null;
+let scores = { healer: 0, seer: 0, storm: 0, shadow: 0, garden: 0, chaos: 0 };
+
+const elColors = {
+  fire: { main: '#e8634a', soft: '#f4a261', gradient: 'linear-gradient(135deg, #e8634a, #f4a261)' },
+  water: { main: '#5b8fb9', soft: '#89c4e1', gradient: 'linear-gradient(135deg, #5b8fb9, #89c4e1)' },
+  earth: { main: '#7a9e6e', soft: '#b5c99a', gradient: 'linear-gradient(135deg, #7a9e6e, #b5c99a)' },
+  air: { main: '#a78bba', soft: '#d4bde8', gradient: 'linear-gradient(135deg, #a78bba, #d4bde8)' }
+};
+
+const questions = [
+  {
+    flavor: "Юнг · Архетипы",
+    text: "Полнолуние. Ты не спишь. Что ты делаешь?",
+    options: [
+      { text: "Записываю мысли — мне ночью лучше всего думается", scores: { seer: 3, shadow: 1 } },
+      { text: "Гуляю одна — ночь честнее дня", scores: { shadow: 3, storm: 1 } },
+      { text: "Готовлю что-нибудь вкусное или завариваю чай с травами", scores: { healer: 2, garden: 2 } },
+      { text: "Переписываюсь с кем-то до 4 утра — энергия прёт", scores: { chaos: 3, storm: 1 } }
+    ]
+  },
+  {
+    flavor: "Эмоциональный интеллект",
+    text: "Подруга плачет. Что ты делаешь первым?",
+    options: [
+      { text: "Обнимаю молча — слова сейчас не нужны", scores: { healer: 3, garden: 1 } },
+      { text: "Спрашиваю конкретно, что случилось — мне нужна картина", scores: { seer: 2, storm: 1 } },
+      { text: "Предлагаю план: «Окей, вот что мы сейчас сделаем»", scores: { storm: 3, chaos: 1 } },
+      { text: "Делюсь своей похожей историей, чтобы она не чувствовала себя одной", scores: { shadow: 2, healer: 1 } }
+    ]
+  },
+  {
+    flavor: "Тип силы",
+    text: "Если бы у тебя была магическая способность, ты бы выбрала:",
+    options: [
+      { text: "Читать чувства людей (без их слов)", scores: { seer: 3, healer: 1 } },
+      { text: "Менять настроение комнаты одним присутствием", scores: { storm: 2, chaos: 2 } },
+      { text: "Исцелять — убирать тревогу, боль, хаос", scores: { healer: 3, garden: 1 } },
+      { text: "Видеть правду, которую все скрывают", scores: { shadow: 3, seer: 1 } }
+    ]
+  },
+  {
+    flavor: "Теневая сторона · Юнг",
+    text: "Что тебя бесит в людях больше всего?",
+    options: [
+      { text: "Фальшь — когда говорят одно, а чувствуют другое", scores: { shadow: 3, seer: 1 } },
+      { text: "Безразличие — когда кому-то плохо, а все мимо", scores: { healer: 3, garden: 1 } },
+      { text: "Слабость — когда могут, но не делают", scores: { storm: 3, chaos: 1 } },
+      { text: "Скучность — когда всё предсказуемо и по правилам", scores: { chaos: 3, storm: 1 } }
+    ]
+  },
+  {
+    flavor: "Среда обитания",
+    text: "Твоё идеальное место силы:",
+    options: [
+      { text: "Старая библиотека с потайными комнатами", scores: { seer: 3, shadow: 1 } },
+      { text: "Сад — дикий, запущенный, с травами и цветами", scores: { garden: 3, healer: 1 } },
+      { text: "Крыша высотки ночью, с ветром и огнями города", scores: { storm: 2, chaos: 2 } },
+      { text: "Тёплый дом с камином, где пахнет чем-то вкусным", scores: { healer: 2, garden: 2 } }
+    ]
+  },
+  {
+    flavor: "Коммуникация",
+    text: "В компании друзей ты обычно:",
+    options: [
+      { text: "Наблюдаю — замечаю то, что другие пропускают", scores: { seer: 2, shadow: 2 } },
+      { text: "Создаю настроение — шучу, рассказываю истории", scores: { chaos: 3, storm: 1 } },
+      { text: "Слушаю и помогаю — ко мне приходят с проблемами", scores: { healer: 3 } },
+      { text: "Беру инициативу — «ладно, я решу»", scores: { storm: 3 } }
+    ]
+  },
+  {
+    flavor: "Интуиция",
+    text: "Бывало такое, что ты «чувствовала» что-то до того, как это произошло?",
+    options: [
+      { text: "Постоянно — я предчувствую настроение, события, звонки", scores: { seer: 3, shadow: 1 } },
+      { text: "Да, но только с близкими людьми — чувствую их издалека", scores: { healer: 2, seer: 1 } },
+      { text: "Скорее нет — я больше действую, чем чувствую", scores: { storm: 2, chaos: 1 } },
+      { text: "Бывает, но я списываю это на совпадения и не парюсь", scores: { chaos: 2, garden: 1 } }
+    ]
+  },
+  {
+    flavor: "Конфликт",
+    text: "Тебя обидели. Что делает твоя «внутренняя ведьма»?",
+    options: [
+      { text: "Молча уходит — и человек сам почувствует, что натворил", scores: { shadow: 3, seer: 1 } },
+      { text: "Устраивает бурю — я не умею молчать, когда больно", scores: { storm: 3, chaos: 1 } },
+      { text: "Прощает, но запоминает — и ставит защитный барьер", scores: { healer: 2, garden: 2 } },
+      { text: "Превращает боль в юмор — «ну и дурак, зато какая история»", scores: { chaos: 3 } }
+    ]
+  },
+  {
+    flavor: "Тайный талант",
+    text: "Люди не знают, но ты тайно хороша в:",
+    options: [
+      { text: "Чтении людей — понимаю мотивы, даже когда врут", scores: { seer: 3 } },
+      { text: "Создании уюта — любое пространство превращаю в гнездо", scores: { garden: 3, healer: 1 } },
+      { text: "Манипулировании обстоятельствами — всё как-то складывается", scores: { chaos: 2, shadow: 2 } },
+      { text: "Убеждении — когда мне нужно, я очень убедительна", scores: { storm: 3 } }
+    ]
+  },
+  {
+    flavor: "Философия · Финальный вопрос",
+    text: "Если бы ты могла зачаровать одну вещь на свете, то это была бы:",
+    options: [
+      { text: "Зеркало — чтобы каждый видел себя таким, какой он есть", scores: { shadow: 3, seer: 2 } },
+      { text: "Чай — каждый, кто его пьёт, чувствует себя в безопасности", scores: { healer: 3, garden: 1 } },
+      { text: "Карта — показывает не путь, а то, чего ты по-настоящему хочешь", scores: { seer: 2, chaos: 2 } },
+      { text: "Огонь — зажигается сам, когда кому-то нужны тепло или смелость", scores: { storm: 2, garden: 2 } }
+    ]
+  }
+];
+
+const witchTypes = {
+  healer: {
+    emoji: "🌿✨",
+    label: "Ведьма-Целительница",
+    element: "Земля + Вода",
+    tagline: "Ты — та, к кому приходят, когда больше некуда. Твоя магия — в тепле.",
+    archetype: "Архетип Целителя (Юнг)",
+    description: "Ты интуитивно чувствуешь, когда человеку плохо — даже если он молчит. Твоя сила не в заклинаниях, а в присутствии: люди рядом с тобой успокаиваются, как будто кто-то накрыл их тёплым одеялом. Юнг назвал бы это «раненым целителем» — ты лечишь других отчасти потому, что хорошо знакома с собственной болью.",
+    shadow: "Ты так много отдаёшь другим, что забываешь наполнить свой котёл. Выгорание — твоё проклятие. Иногда «помощь» — это способ не разбираться в своих чувствах. Твоя ведьминская задача — научиться быть эгоисткой хотя бы 20 минут в день.",
+    traits: { "Стихия силы": "Эмпатия", "Зелье": "Ромашковый чай", "Фамильяр": "Кошка", "Время суток": "Золотой час" },
+    compat: [
+      { emoji: "⚡", name: "Ведьма Бурь", desc: "Ты её успокаиваешь, она тебя зажигает", pct: 85 },
+      { emoji: "🔮", name: "Ведьма-Провидица", desc: "Глубокий союз — вы обе чувствуете больше, чем говорите", pct: 92 },
+      { emoji: "🌑", name: "Ведьма Теней", desc: "Ты видишь в ней свет, который она сама не видит", pct: 78 }
+    ]
+  },
+  seer: {
+    emoji: "🔮🌙",
+    label: "Ведьма-Провидица",
+    element: "Вода + Воздух",
+    tagline: "Ты видишь слишком много — и это и дар, и проклятие.",
+    archetype: "Архетип Мудреца (Юнг)",
+    description: "Ты из тех, кто замечает микровыражение, недосказанность, паузу длиной в секунду. Твой мозг бессознательно считывает паттерны быстрее, чем ты успеваешь это осознать — и это создаёт ощущение «предчувствия». Нейронаука объясняет это быстрой обработкой невербальных сигналов, Юнг назвал бы это «интуитивным типом».",
+    shadow: "Ты так много анализируешь, что иногда забываешь жить. Из-за постоянного «сканирования» людей тебе сложно расслабиться. А ещё — ты иногда «знаешь» то, что лучше бы не знала. Твоя ведьминская задача — научиться выключать внутренний радар и просто быть.",
+    traits: { "Стихия силы": "Интуиция", "Зелье": "Чай с лавандой", "Фамильяр": "Сова", "Время суток": "3 часа ночи" },
+    compat: [
+      { emoji: "🌿", name: "Ведьма-Целительница", desc: "Она даёт тебе покой, ты даёшь ей ясность", pct: 92 },
+      { emoji: "🌑", name: "Ведьма Теней", desc: "Вместе вы знаете всё обо всех — это мощно и немного пугающе", pct: 88 },
+      { emoji: "🎪", name: "Ведьма Хаоса", desc: "Она вытаскивает тебя из головы в реальность — полезно, но шумно", pct: 65 }
+    ]
+  },
+  storm: {
+    emoji: "⚡🌪️",
+    label: "Ведьма Бурь",
+    element: "Огонь + Воздух",
+    tagline: "Ты не входишь в комнату — ты меняешь в ней давление.",
+    archetype: "Архетип Воина (Юнг)",
+    description: "Ты — та самая энергия, которая заставляет вещи происходить. Когда ты решила — мир подстраивается. Юнг описал это как «волевой тип» с доминирующей функцией действия. Люди за тобой идут не потому, что ты просишь — а потому, что рядом с тобой всё кажется возможным.",
+    shadow: "Ты так привыкла быть сильной, что разучилась быть слабой. Просить о помощи — это как кастовать заклинание на незнакомом языке. А иногда твоя «буря» ранит тех, кто просто стоял рядом. Ведьминская задача — научиться штилю. Не всё нужно побеждать.",
+    traits: { "Стихия силы": "Воля", "Зелье": "Чёрный кофе", "Фамильяр": "Волк", "Время суток": "Рассвет" },
+    compat: [
+      { emoji: "🌿", name: "Ведьма-Целительница", desc: "Она — твоя тихая гавань после бурь", pct: 85 },
+      { emoji: "🎪", name: "Ведьма Хаоса", desc: "Вместе вы — стихийное бедствие (в хорошем смысле)", pct: 80 },
+      { emoji: "🔮", name: "Ведьма-Провидица", desc: "Она стратег, ты — исполнитель. Мощный дуэт", pct: 72 }
+    ]
+  },
+  shadow: {
+    emoji: "🌑🖤",
+    label: "Ведьма Теней",
+    element: "Вода + Земля",
+    tagline: "Ты знаешь то, что все чувствуют, но боятся сказать.",
+    archetype: "Архетип Тени (Юнг)",
+    description: "Ты — ведьма глубин. Тебя тянет к тому, что скрыто: невысказанные чувства, подавленные желания, неудобная правда. Юнг считал, что работа с Тенью — это самая важная работа в психике, и ты делаешь её интуитивно. Ты не боишься тёмных углов — ни чужих, ни своих.",
+    shadow: "Ирония: у Ведьмы Теней тоже есть тень — это склонность к изоляции. Ты так хорошо видишь чужую фальшь, что перестаёшь доверять. А иногда «честность» — это способ держать людей на расстоянии. Ведьминская задача — впустить свет, не потеряв глубину.",
+    traits: { "Стихия силы": "Правда", "Зелье": "Полынный чай", "Фамильяр": "Ворон", "Время суток": "Сумерки" },
+    compat: [
+      { emoji: "🔮", name: "Ведьма-Провидица", desc: "Вы обе видите невидимое — вместе вы опасно мудры", pct: 88 },
+      { emoji: "🌿", name: "Ведьма-Целительница", desc: "Она учит тебя мягкости, ты учишь её честности", pct: 78 },
+      { emoji: "⚡", name: "Ведьма Бурь", desc: "Она — действие, ты — понимание. Сложно, но сильно", pct: 68 }
+    ]
+  },
+  garden: {
+    emoji: "🌻🍯",
+    label: "Ведьма Сада",
+    element: "Земля + Огонь",
+    tagline: "Ты создаёшь мир вокруг себя — тёплый, живой, настоящий.",
+    archetype: "Архетип Создателя (Юнг)",
+    description: "Твоя магия — в руках. Ты из тех, кто превращает хаос в уют, пустую квартиру — в дом, а плохой день — в вечер с хорошей едой и свечами. Юнг назвал бы это «ощущающим типом» — ты воспринимаешь мир через текстуры, запахи, вкусы. Ты не меняешь мир — ты выращиваешь свой.",
+    shadow: "Ты так хорошо создаёшь «кокон», что иногда боишься из него выходить. Перемены — это не твоё. А ещё ты можешь заботиться о других настолько, что это превращается в контроль: «Ты поел? Надень шарф. Я лучше знаю». Ведьминская задача — позволить саду расти диким.",
+    traits: { "Стихия силы": "Забота", "Зелье": "Облепиховый морс", "Фамильяр": "Пчела", "Время суток": "Утро" },
+    compat: [
+      { emoji: "🌑", name: "Ведьма Теней", desc: "Ты — её безопасное место, она — твоя глубина", pct: 82 },
+      { emoji: "⚡", name: "Ведьма Бурь", desc: "Ты заземляешь её, она вытаскивает тебя из рутины", pct: 76 },
+      { emoji: "🎪", name: "Ведьма Хаоса", desc: "Противоположности: она всё ломает, ты всё строишь. Искры!", pct: 60 }
+    ]
+  },
+  chaos: {
+    emoji: "🎪🃏",
+    label: "Ведьма Хаоса",
+    element: "Огонь + Воздух",
+    tagline: "Ты — та самая непредсказуемая подруга, без которой жизнь скучна.",
+    archetype: "Архетип Трикстера (Юнг)",
+    description: "Правила? Какие правила? Ты живёшь по принципу «а что если?» — и это делает тебя одновременно самой весёлой и самой пугающей в компании. Юнг описал Трикстера как силу, которая разрушает устаревшие структуры. Ты не ломаешь ради хаоса — ты ломаешь, чтобы освободить место для нового.",
+    shadow: "За юмором и лёгкостью иногда прячется страх глубины. Если стало слишком серьёзно — ты шутишь. Если стало слишком близко — ты исчезаешь. Твой хаос — иногда щит, а не меч. Ведьминская задача — позволить себе быть серьёзной, не теряя искры.",
+    traits: { "Стихия силы": "Спонтанность", "Зелье": "Апероль", "Фамильяр": "Лиса", "Время суток": "Полночь" },
+    compat: [
+      { emoji: "⚡", name: "Ведьма Бурь", desc: "Дуэт хаоса — весело, громко, незабываемо", pct: 80 },
+      { emoji: "🌻", name: "Ведьма Сада", desc: "Она тебя стабилизирует, ты её оживляешь", pct: 60 },
+      { emoji: "🔮", name: "Ведьма-Провидица", desc: "Она видит паттерн в твоём хаосе — это интригует", pct: 65 }
+    ]
+  }
+};
+
+function pickElement(el) {
+  chosenElement = el;
+  document.querySelectorAll('.element-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`[data-el="${el}"]`).classList.add('selected');
+  
+  const btn = document.getElementById('btnBegin');
+  btn.classList.add('active');
+  btn.style.setProperty('--active-color', elColors[el].main);
+  btn.style.setProperty('--active-soft', elColors[el].soft);
+}
+
+function startTest() {
+  if (!chosenElement) return;
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  
+  const c = elColors[chosenElement];
+  document.getElementById('progressFill').style.background = c.gradient;
+  document.getElementById('progressCount').style.color = c.main;
+  document.documentElement.style.setProperty('--el-active', c.main);
+  
+  // Element bonus
+  const elBonus = { fire: { storm: 2, chaos: 1 }, water: { seer: 2, healer: 1 }, earth: { garden: 2, healer: 1 }, air: { chaos: 2, seer: 1 } };
+  const bonus = elBonus[chosenElement];
+  for (const [k, v] of Object.entries(bonus)) scores[k] += v;
+  
+  showQuestion(0);
+}
+
+function showQuestion(idx) {
+  const q = questions[idx];
+  const c = elColors[chosenElement];
+  const container = document.getElementById('questionsContainer');
+  
+  container.innerHTML = `
+    <div class="question-card">
+      <div class="question-flavor" style="color:${c.main}">${q.flavor}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="options">
+        ${q.options.map((o, i) => `
+          <div class="option" onclick="selectOpt(this, ${i})">
+            <div class="option-dot"></div>
+            <span>${o.text}</span>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn-next" id="btnNext" onclick="nextQ()" style="--el-active:${c.main}">
+        ${idx === questions.length - 1 ? '✦ Раскрыть тип' : 'Дальше →'}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('progressCount').textContent = `${idx + 1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(idx / questions.length) * 100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop - 10, behavior: 'smooth' });
+}
+
+function selectOpt(el, idx) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOption = idx;
+  const btn = document.getElementById('btnNext');
+  btn.classList.add('active');
+  btn.style.background = elColors[chosenElement].gradient;
+}
+
+function nextQ() {
+  if (selOption === null) return;
+  const q = questions[currentQ];
+  for (const [k, v] of Object.entries(q.options[selOption].scores)) scores[k] += v;
+  selOption = null;
+  currentQ++;
+  if (currentQ < questions.length) {
+    showQuestion(currentQ);
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('questionsContainer').innerHTML = '';
+  document.getElementById('progressFill').style.width = '100%';
+  
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const type = sorted[0][0];
+  const w = witchTypes[type];
+  const c = elColors[chosenElement];
+  
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="result-hero">
+      <span class="result-big-emoji">${w.emoji}</span>
+      <div class="result-type-label" style="color:${c.main}">${w.element}</div>
+      <div class="result-title">${w.label}</div>
+      <p class="result-tagline">${w.tagline}</p>
+    </div>
+
+    <div class="result-card">
+      <h3>🔮 Твоя магия</h3>
+      <p style="font-size:11px; color:${c.main}; margin-bottom:8px; letter-spacing:0.5px;">${w.archetype}</p>
+      <p>${w.description}</p>
+      <div class="traits-grid">
+        ${Object.entries(w.traits).map(([k, v]) => `
+          <div class="trait">
+            <div class="trait-label">${k}</div>
+            <div class="trait-value">${v}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>🌘 Теневая сторона</h3>
+      <p>${w.shadow}</p>
+    </div>
+
+    <div class="result-card">
+      <h3>⚗️ Совместимость с другими ведьмами</h3>
+      ${w.compat.map(c2 => `
+        <div class="compat-row">
+          <div class="compat-emoji">${c2.emoji}</div>
+          <div class="compat-info">
+            <div class="compat-name">${c2.name}</div>
+            <div class="compat-desc">${c2.desc}</div>
+          </div>
+          <div class="compat-meter">
+            <div class="compat-fill" style="width:${c2.pct}%; background:${c.gradient}"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="actions">
+      <button class="btn-share" style="background:${c.gradient}" onclick="shareResult()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться
+      </button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">
+        🧪 Пройти ещё тесты
+      </a>
+      <button class="btn-retry" onclick="location.reload()">↻ Пройти заново</button>
+    </div>
+  `;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareResult() {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const w = witchTypes[sorted[0][0]];
+  const text = `${w.emoji} Я — ${w.label}!\n\n${w.tagline}\n\nУзнай свой тип: https://lisofoxa-oss.github.io/tests/`;
+  
+  if (navigator.share) {
+    navigator.share({ title: 'Какая ты ведьма?', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    });
+  }
+}
+</script>
+</body>
+</html>
