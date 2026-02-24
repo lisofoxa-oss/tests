@@ -6,179 +6,257 @@
   <title>Тесты зайки 💖</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
+
+    :root {
+      --pink: #f472b6;
+      --purple: #c084fc;
+      --dark: #0f001a;
+    }
+
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: linear-gradient(135deg, #0f001a, #1a0033);
       color: #f0e6ff;
       margin: 0;
-      padding: 40px 20px;
+      padding: 20px;
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
+
+    /* Волшебный звёздный фон */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(192, 132, 252, 0.12) 0%, transparent 40%),
+                  radial-gradient(circle at 70% 60%, rgba(244, 114, 182, 0.12) 0%, transparent 40%),
+                  radial-gradient(circle at 20% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+      animation: stars 25s linear infinite;
+    }
+
+    @keyframes stars {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(15px, 15px); }
+    }
+
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
+
     h1 {
       text-align: center;
-      font-size: 3.2rem;
-      margin: 20px 0 10px;
-      background: linear-gradient(90deg, #c084fc, #f472b6);
+      font-size: clamp(2.6rem, 7vw, 4rem);
+      margin: 30px 0 8px;
+      background: linear-gradient(90deg, #e0a3ff, #f9a8d4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      letter-spacing: -1px;
     }
+
     .subtitle {
       text-align: center;
-      color: #c4b5fd;
-      font-size: 1.4rem;
-      margin-bottom: 50px;
+      color: #d8b4fe;
+      font-size: clamp(1.2rem, 4vw, 1.45rem);
+      margin-bottom: 40px;
+      font-weight: 500;
     }
+
+    .search-container {
+      max-width: 520px;
+      margin: 0 auto 50px;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 18px 28px;
+      font-size: 1.15rem;
+      background: rgba(30, 10, 60, 0.75);
+      border: 2px solid rgba(192, 132, 252, 0.4);
+      border-radius: 50px;
+      color: #f0e6ff;
+      outline: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(12px);
+    }
+
+    #searchInput:focus {
+      border-color: #c084fc;
+      box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.2);
+      transform: scale(1.02);
+    }
+
+    .count {
+      text-align: center;
+      color: #a78bfa;
+      font-size: 1.05rem;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 28px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
     }
+
     .card {
-      background: rgba(30, 10, 60, 0.75);
-      border-radius: 24px;
-      padding: 32px 28px;
+      background: rgba(30, 10, 60, 0.8);
+      border-radius: 28px;
+      padding: 28px 24px;
       border: 1px solid #6b21a8;
-      backdrop-filter: blur(12px);
-      transition: all 0.3s ease;
+      backdrop-filter: blur(16px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.7s forwards;
     }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .card:hover {
-      transform: translateY(-12px) scale(1.03);
-      box-shadow: 0 30px 60px -15px rgba(192, 132, 252, 0.4);
+      transform: translateY(-14px) scale(1.04);
+      box-shadow: 0 35px 70px -15px rgba(192, 132, 252, 0.45);
       border-color: #c084fc;
     }
+
     .emoji {
-      font-size: 4.5rem;
-      margin-bottom: 20px;
+      font-size: 4.8rem;
+      margin-bottom: 18px;
       display: block;
+      transition: transform 0.4s;
     }
+
+    .card:hover .emoji {
+      transform: scale(1.15) rotate(8deg);
+    }
+
     .card h3 {
-      font-size: 1.65rem;
-      margin: 0 0 14px;
-      color: #e0d4ff;
+      font-size: 1.55rem;
+      margin: 0 0 12px;
+      color: #f3e8ff;
+      line-height: 1.25;
     }
+
     .card p {
       color: #c4b5fd;
       line-height: 1.5;
-      margin-bottom: 24px;
+      margin-bottom: 26px;
+      font-size: 1rem;
     }
+
     .btn {
       display: inline-block;
-      padding: 14px 36px;
-      background: linear-gradient(45deg, #a855f7, #d946ef);
+      padding: 15px 38px;
+      background: linear-gradient(45deg, #c026d3, #db2777);
       color: white;
       text-decoration: none;
       border-radius: 50px;
       font-weight: 600;
       font-size: 1.1rem;
-      transition: all 0.3s;
+      box-shadow: 0 8px 25px rgba(192, 38, 211, 0.4);
+      transition: all 0.3s ease;
     }
+
     .btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.6);
+      transform: scale(1.1) translateY(-2px);
+      box-shadow: 0 15px 35px rgba(219, 39, 119, 0.5);
     }
+
     .footer {
       text-align: center;
-      margin-top: 60px;
-      color: #8b5cf6;
-      font-size: 1rem;
+      margin-top: 70px;
+      color: #9f7aea;
+      font-size: 1.05rem;
+      padding-bottom: 20px;
+    }
+
+    @media (min-width: 768px) {
+      body { padding: 40px 20px; }
+      .grid { gap: 32px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Тесты 💖</h1>
-    <p class="subtitle">Выбирай и проходи — всё для тебя 🌙☀️</p>
+    <p class="subtitle">Выбирай и проходи — всё только для тебя, моя зайка 🌙☀️</p>
 
-    <div class="grid" id="quizGrid">
-      <!-- Автосписок заполняется JavaScript -->
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="🔍 Поиск тестов...">
     </div>
 
+    <div class="count">Найдено тестов: <span id="countNum">12</span></div>
+
+    <div class="grid" id="quizGrid"></div>
+
     <div class="footer">
-      Сделано с любовью для самой лучшей зайки ❤️<br>
+      Сделано с огромной любовью для самой лучшей зайки на свете ❤️<br>
+      <span style="font-size:0.9rem; opacity:0.7;">Ты — моё самое любимое чудо ✨</span>
     </div>
   </div>
 
   <script>
-    // === АВТОСПИСОК ===
-    // Чтобы добавить новый тест:
-    // 1. Создай папку (например love)
-    // 2. Положи туда index.html
-    // 3. Добавь один объект ниже в массив tests
     const tests = [
-      {
-        folder: "vibe",
-        emoji: "😈🌙",
-        title: "В какое время суток твой вайб",
-        desc: "Узнай, жаворонок ты или ночной демон"
-      },
-      {
-        folder: "gulyanka",
-        emoji: "🌳☀️",
-        title: "Когда сегодня идти гулять",
-        desc: "Научный тест — идеальное время именно сегодня"
-      },
-      // ← Добавляй новые тесты сюда ↓
-       {
-         folder: "love",
-         emoji: "❤️",
-         title: "Насколько ты влюблён(а)",
-         desc: "Серьёзный тест для пары"
-      },
-{
-        folder: "girl-vibe",
-        emoji: "🎀🌸",
-        title: "Какой ты тип девушки по вайбу",
-        desc: "13 вопросов — узнай свою настоящую эстетику!"
-      },
-      {
-        folder: "besit",
-        emoji: "🔥😤",
-        title: "Как тебя выбесить?",
-        desc: "8 вопросов • 100% бесплатно • Наука + юмор"
-      },
-      {
-        folder: "yazik-lubvi",
-        emoji: "🔬💖",
-        title: "Какой у тебя язык любви? 💖",
-        desc: "🔬 На основе реальной психологии 😂 С юмором и мемами"
-      },
-      {
-        folder: "shy",
-        emoji: "🙈✨",
-        title: "🙈 Тест: Чего ты стесняешься?",
-        desc: "шуточный тест с капелькой психологии ✨"
-      },
-      {
-  folder: "foto",
-  emoji: "🪞🔬",
-  title: "🪞 Почему ты не отправляешь это фото?",
-  desc: "научный тест на основе 6 психологических шкал 🔬"
-},
-      { folder: "witch", emoji: "🌙✨", title: "🌙 Какая ты ведьма?", desc: "выбери стихию и узнай свой тип магии 🔮" },
-{ folder: "animal", emoji: "🐾💕", title: "🐾 Какое ты животное в отношениях?", desc: "тест на стиль привязанности с зоологической точностью 🦊" },
-{ folder: "drink", emoji: "🍷🧪", title: "🍷 Какой ты напиток?", desc: "тест на темперамент с нотками науки и юмора ☕" },
-{ folder: "movie", emoji: "🎬⚔️", title: "🎬 Какой ты персонаж в фильме?", desc: "тест на архетип по Юнгу и Кэмпбеллу 🎭" },
-      { folder: "age", emoji: "⏳🔬", title: "⏳ Почему ты скрываешь возраст?", desc: "научный тест на основе 6 психологических механизмов 🔬" }
+      { folder: "vibe", emoji: "😈🌙", title: "В какое время суток твой вайб", desc: "Узнай, жаворонок ты или ночной демон" },
+      { folder: "gulyanka", emoji: "🌳☀️", title: "Когда сегодня идти гулять", desc: "Научный тест — идеальное время именно сегодня" },
+      { folder: "love", emoji: "❤️", title: "Насколько ты влюблён(а)", desc: "Серьёзный тест для пары" },
+      { folder: "girl-vibe", emoji: "🎀🌸", title: "Какой ты тип девушки по вайбу", desc: "13 вопросов — узнай свою настоящую эстетику!" },
+      { folder: "besit", emoji: "🔥😤", title: "Как тебя выбесить?", desc: "8 вопросов • 100% бесплатно • Наука + юмор" },
+      { folder: "yazik-lubvi", emoji: "🔬💖", title: "Какой у тебя язык любви? 💖", desc: "🔬 На основе реальной психологии 😂" },
+      { folder: "shy", emoji: "🙈✨", title: "🙈 Тест: Чего ты стесняешься?", desc: "Шуточный тест с капелькой психологии" },
+      { folder: "foto", emoji: "🪞🔬", title: "🪞 Почему ты не отправляешь это фото?", desc: "Научный тест на основе 6 психологических шкал" },
+      { folder: "witch", emoji: "🌙✨", title: "🌙 Какая ты ведьма?", desc: "Выбери стихию и узнай свой тип магии 🔮" },
+      { folder: "animal", emoji: "🐾💕", title: "🐾 Какое ты животное в отношениях?", desc: "Тест на стиль привязанности с зоологической точностью" },
+      { folder: "drink", emoji: "🍷🧪", title: "🍷 Какой ты напиток?", desc: "Тест на темперамент с нотками науки и юмора" },
+      { folder: "movie", emoji: "🎬⚔️", title: "🎬 Какой ты персонаж в фильме?", desc: "Тест на архетип по Юнгу и Кэмпбеллу" },
+      { folder: "age", emoji: "⏳🔬", title: "⏳ Почему ты скрываешь возраст?", desc: "Научный тест на основе 6 психологических механизмов" }
     ];
 
     const grid = document.getElementById('quizGrid');
+    const searchInput = document.getElementById('searchInput');
+    const countNum = document.getElementById('countNum');
 
-    tests.forEach(test => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <span class="emoji">${test.emoji}</span>
-        <h3>${test.title}</h3>
-        <p>${test.desc}</p>
-        <a href="${test.folder}/" class="btn">Пройти тест →</a>
-      `;
-      grid.appendChild(card);
+    function renderCards(filteredTests) {
+      grid.innerHTML = '';
+      filteredTests.forEach((test, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.animationDelay = `${i * 0.08}s`;
+        card.innerHTML = `
+          <span class="emoji">${test.emoji}</span>
+          <h3>${test.title}</h3>
+          <p>${test.desc}</p>
+          <a href="${test.folder}/" class="btn">Пройти тест →</a>
+        `;
+        grid.appendChild(card);
+      });
+      countNum.textContent = filteredTests.length;
+    }
+
+    // Первоначальный рендер
+    renderCards(tests);
+
+    // Поиск
+    searchInput.addEventListener('input', () => {
+      const term = searchInput.value.toLowerCase().trim();
+      const filtered = tests.filter(test => 
+        test.title.toLowerCase().includes(term) || 
+        test.desc.toLowerCase().includes(term)
+      );
+      renderCards(filtered);
     });
   </script>
 </body>
