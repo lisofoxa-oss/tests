@@ -651,6 +651,7 @@ function showResults() {
     ${sorted[1][1] > 4 ? `<div class="r-card"><h3>🧬 Скрытый тип: ${second.emoji} ${second.name}</h3><p>${second.tagline} Этот тип тоже сильно проявился — ты переключаешься между ними в зависимости от ситуации.</p></div>` : ''}
     <div class="actions">
       <button class="btn-share" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>Поделиться</button>
+      <button class="btn-more" onclick="copyFull()" style="cursor:pointer">📋 Скопировать результат</button>
       <a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a>
       <button class="btn-retry" onclick="location.reload()">↻ Заново</button>
     </div>`;
@@ -663,6 +664,53 @@ function share() {
   const text = `${a.emoji} Я — ${a.name} в отношениях!\n\n${a.tagline}\n\nУзнай своё животное: https://lisofoxa-oss.github.io/tests/`;
   if (navigator.share) navigator.share({ title:'Какое ты животное в отношениях?', text }).catch(()=>{});
   else navigator.clipboard.writeText(text).then(() => { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); });
+}
+
+function copyFull() {
+  const sorted = Object.entries(sc).sort((a,b)=>b[1]-a[1]);
+  const type = sorted[0][0];
+  const a = animals[type];
+  const meters = Object.entries(a.meters).map(([k,v]) => `  ${k}: ${'█'.repeat(Math.round(v/10))}${'░'.repeat(10-Math.round(v/10))} ${v}%`).join('\n');
+  const second = animals[sorted[1][0]];
+  
+  const text = `🐾 КАКОЕ ТЫ ЖИВОТНОЕ В ОТНОШЕНИЯХ? — Результат
+
+${a.emoji}  Я — ${a.name}
+Стиль: ${a.style}
+
+«${a.tagline}»
+
+━━━━━━━━━━━━━━━━━
+
+🔬 Что это значит:
+
+${a.desc}
+
+━━━━━━━━━━━━━━━━━
+
+📊 Мой профиль:
+${meters}
+
+━━━━━━━━━━━━━━━━━
+
+🌘 Теневая сторона:
+
+${a.shadow}${sorted[1][1] > 4 ? `
+
+━━━━━━━━━━━━━━━━━
+
+🧬 Скрытый тип: ${second.emoji} ${second.name}
+${second.tagline}` : ''}
+
+━━━━━━━━━━━━━━━━━
+→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = '📋 Результат скопирован!';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  });
 }
 </script>
 </body>
