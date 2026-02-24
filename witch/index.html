@@ -1021,6 +1021,9 @@ function showResults() {
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
         Поделиться
       </button>
+      <button class="btn-more" onclick="copyFullResult()" style="cursor:pointer">
+        📋 Скопировать результат
+      </button>
       <a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">
         🧪 Пройти ещё тесты
       </a>
@@ -1045,6 +1048,53 @@ function shareResult() {
       setTimeout(() => t.classList.remove('show'), 2500);
     });
   }
+}
+
+function copyFullResult() {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const type = sorted[0][0];
+  const w = witchTypes[type];
+  const traits = Object.entries(w.traits).map(([k,v]) => `  ${k}: ${v}`).join('\n');
+  const compat = w.compat.map(c => `  ${c.emoji} ${c.name} — ${c.desc}`).join('\n');
+  
+  const text = `🌙✨ КАКАЯ ТЫ ВЕДЬМА? — Результат
+
+${w.emoji}  Я — ${w.label}
+Стихия: ${w.element}
+
+«${w.tagline}»
+
+━━━━━━━━━━━━━━━━━
+
+🔮 Моя магия (${w.archetype}):
+
+${w.description}
+
+━━━━━━━━━━━━━━━━━
+
+🌘 Теневая сторона:
+
+${w.shadow}
+
+━━━━━━━━━━━━━━━━━
+
+✦ Характеристики:
+${traits}
+
+━━━━━━━━━━━━━━━━━
+
+⚗️ Совместимость:
+${compat}
+
+━━━━━━━━━━━━━━━━━
+→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = '📋 Результат скопирован!';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  });
 }
 </script>
 </body>
