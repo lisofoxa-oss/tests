@@ -225,9 +225,17 @@ section.innerHTML=`<div class="r-hero"><span class="r-emoji">${d.emoji}</span><d
 <div class="r-card"><h3>⚗️ Твой рецепт</h3><div class="recipe"><div class="recipe-title">Состав</div>${d.recipe.map(r=>`<div class="recipe-item">· ${r}</div>`).join('')}</div></div>
 <div class="r-card"><h3>🌘 Обратная сторона</h3><p>${d.shadow}</p></div>
 ${sorted[1][1]>4?`<div class="r-card"><h3>🧬 С нотками: ${second.emoji} ${second.name}</h3><p>${second.tagline} Этот тип заметно проявился — ты не один напиток, а бленд.</p></div>`:''}
-<div class="actions"><button class="btn-share" style="background:${c.grad}" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>Поделиться</button><a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a><button class="btn-retry" onclick="location.reload()">↻ Заново</button></div>`;
+<div class="actions"><button class="btn-share" style="background:${c.grad}" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>Поделиться</button><button class="btn-more" onclick="copyFull()" style="cursor:pointer">📋 Скопировать результат</button><a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a><button class="btn-retry" onclick="location.reload()">↻ Заново</button></div>`;
 window.scrollTo({top:0,behavior:'smooth'})}
 function share(){const d=drinks[Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0]];const text=`${d.emoji} Я — ${d.name}!\n\n${d.tagline}\n\nУзнай свой напиток: https://lisofoxa-oss.github.io/tests/`;if(navigator.share)navigator.share({title:'Какой ты напиток?',text}).catch(()=>{});else navigator.clipboard.writeText(text).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)})}
+function copyFull(){
+  const sorted=Object.entries(sc).sort((a,b)=>b[1]-a[1]);
+  const type=sorted[0][0];const d=drinks[type];const second=drinks[sorted[1][0]];
+  const recipe=d.recipe.map(r=>`  · ${r}`).join('\n');
+  const tags=d.tags.join(' · ');
+  const text=`🍷 КАКОЙ ТЫ НАПИТОК? — Результат\n\n${d.emoji}  Я — ${d.name}\nТемперамент: ${d.temperament}\n\n«${d.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🔬 Мой темперамент:\n\n${d.desc}\n\n✦ ${tags}\n\n━━━━━━━━━━━━━━━━━\n\n⚗️ Мой рецепт:\n${recipe}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Обратная сторона:\n\n${d.shadow}${sorted[1][1]>4?`\n\n━━━━━━━━━━━━━━━━━\n\n🧬 С нотками: ${second.emoji} ${second.name}\n${second.tagline}`:''}\n\n━━━━━━━━━━━━━━━━━\n→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>{const t=document.getElementById('toast');t.textContent='📋 Результат скопирован!';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)});
+}
 </script>
 </body>
 </html>
