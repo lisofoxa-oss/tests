@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какой ты напиток? — Тест</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,800;1,9..144,400&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1a1117;--surface:#221a1f;--surface2:#2c222a;--text:#dbc9d4;--text-dim:#8e7a86;--text-bright:#f4e8ef;--border:rgba(219,180,200,0.1);--rose:#c97b8b;--amber:#d4a06a;--sage:#8bab8b;--plum:#9b7bb5;--coral:#d48b7a}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 60% at 20% 80%,rgba(201,123,139,0.05),transparent 60%),radial-gradient(ellipse 50% 50% at 80% 20%,rgba(212,160,106,0.04),transparent 60%);pointer-events:none}
+.container{max-width:660px;margin:0 auto;padding:20px 20px 60px;position:relative;z-index:1}
+
+.header{text-align:center;padding:55px 0 40px;animation:fadeUp .8s ease}
+.header-emoji{font-size:50px;display:block;margin-bottom:20px}
+h1{font-family:'Fraunces',serif;font-size:clamp(2rem,6vw,3rem);font-weight:800;color:var(--text-bright);line-height:1.15;margin-bottom:14px}
+h1 em{font-style:italic;color:var(--rose)}
+.subtitle{font-size:15px;color:var(--text-dim);max-width:420px;margin:0 auto;font-weight:300;line-height:1.7}
+
+.mood-section{margin-top:36px;animation:fadeUp .8s ease .2s both}
+.mood-section h2{font-family:'Fraunces',serif;font-size:20px;text-align:center;color:var(--text-bright);margin-bottom:6px;font-weight:400}
+.mood-hint{text-align:center;font-size:13px;color:var(--text-dim);margin-bottom:24px;font-weight:300}
+
+.mood-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mood-card{position:relative;border-radius:18px;padding:26px 18px;text-align:center;cursor:pointer;border:1px solid transparent;transition:all .35s ease;overflow:hidden;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mood-card::before{content:'';position:absolute;inset:0;border-radius:18px;opacity:.15;transition:opacity .3s}
+.mood-card:hover::before{opacity:.25}
+.mood-card:hover{transform:translateY(-3px)}
+.mood-card.selected{border-color:var(--mc);transform:translateY(-3px)}
+.mood-card.selected::before{opacity:.3}
+
+.mood-card[data-m="cozy"]{--mc:var(--amber);background:rgba(212,160,106,.06)}.mood-card[data-m="cozy"]::before{background:radial-gradient(circle at 50% 90%,var(--amber),transparent 70%)}
+.mood-card[data-m="bold"]{--mc:var(--coral);background:rgba(212,139,122,.06)}.mood-card[data-m="bold"]::before{background:radial-gradient(circle at 50% 90%,var(--coral),transparent 70%)}
+.mood-card[data-m="dreamy"]{--mc:var(--plum);background:rgba(155,123,181,.06)}.mood-card[data-m="dreamy"]::before{background:radial-gradient(circle at 50% 90%,var(--plum),transparent 70%)}
+.mood-card[data-m="fresh"]{--mc:var(--sage);background:rgba(139,171,139,.06)}.mood-card[data-m="fresh"]::before{background:radial-gradient(circle at 50% 90%,var(--sage),transparent 70%)}
+
+.mood-emoji{font-size:34px;margin-bottom:10px}
+.mood-name{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:4px}
+.mood-desc{font-size:11.5px;color:var(--text-dim);font-weight:300}
+
+.btn-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;margin-top:20px;border:none;border-radius:14px;font-family:'Karla',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;background:var(--surface2);color:var(--text-dim);pointer-events:none;opacity:.5}
+.btn-go.active{opacity:1;pointer-events:all;color:var(--bg);box-shadow:0 6px 24px rgba(201,123,139,.2)}
+.btn-go.active:hover{transform:translateY(-2px)}
+
+.progress-container{position:sticky;top:0;z-index:100;background:rgba(26,17,23,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:16px 0 12px;margin-bottom:24px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:10px}
+.progress-label{font-size:12px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;font-weight:300}
+.progress-count{font-size:13px;font-weight:600}
+.progress-bar{height:3px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;margin-bottom:16px;animation:fadeUp .5s ease}
+.q-num{font-size:11px;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;font-weight:500}
+.q-tag{display:inline-block;font-size:11px;color:var(--text-dim);padding:4px 10px;background:var(--surface2);border-radius:6px;margin-bottom:14px}
+.q-text{font-family:'Fraunces',serif;font-size:20px;font-weight:400;color:var(--text-bright);line-height:1.5;margin-bottom:22px;font-style:italic}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--surface2);border:1px solid transparent;border-radius:14px;cursor:pointer;transition:all .3s;font-size:14px;color:var(--text);user-select:none}
+.option:hover{border-color:var(--border)}
+.option.selected{border-color:var(--active-c);background:rgba(201,123,139,.08);color:var(--text-bright)}
+.option-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--text-dim);flex-shrink:0;transition:all .3s;position:relative}
+.option.selected .option-dot{border-color:var(--active-c);background:var(--active-c)}
+.option.selected .option-dot::after{content:'';position:absolute;inset:4px;background:var(--bg);border-radius:50%}
+.btn-next{width:100%;padding:15px;border:none;border-radius:14px;font-family:'Karla',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;margin-top:10px;background:var(--surface2);color:var(--text-dim);opacity:0;pointer-events:none}
+.btn-next.active{opacity:1;pointer-events:all;color:var(--bg)}
+.btn-next.active:hover{transform:translateY(-2px)}
+
+.results-section{display:none}.results-section.active{display:block;animation:fadeUp .8s ease}
+.r-hero{text-align:center;padding:50px 10px 30px}
+.r-emoji{font-size:68px;display:block;margin-bottom:18px}
+.r-label{font-size:11px;text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;font-weight:300}
+.r-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,5.5vw,2.4rem);font-weight:800;color:var(--text-bright);margin-bottom:12px}
+.r-tagline{font-family:'Fraunces',serif;font-size:16px;font-style:italic;color:var(--text-dim);max-width:400px;margin:0 auto;line-height:1.6}
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 24px;margin-bottom:14px}
+.r-card h3{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--text-bright);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.r-card p{font-size:13.5px;color:var(--text-dim);line-height:1.85;font-weight:300}
+.tag-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag-pill{font-size:12px;padding:6px 14px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim)}
+.recipe{margin-top:16px;padding:16px;background:var(--surface2);border-radius:12px}
+.recipe-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:8px;font-weight:500}
+.recipe-item{font-size:13px;color:var(--text);padding:4px 0;font-weight:300}
+
+.actions{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.btn-share{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border:none;border-radius:14px;color:var(--bg);font-family:'Karla',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none}
+.btn-share:hover{transform:translateY(-2px)}
+.btn-more{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border:1px solid var(--border);border-radius:14px;background:var(--surface);color:var(--text);font-family:'Karla',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .3s}
+.btn-retry{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border:1px solid var(--border);border-radius:14px;background:transparent;color:var(--text-dim);font-family:'Karla',sans-serif;font-size:14px;cursor:pointer;transition:all .3s}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1px solid var(--rose);color:var(--text-bright);padding:12px 24px;border-radius:12px;font-size:13px;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.mood-grid{gap:10px}.mood-card{padding:20px 14px;min-height:120px}.q-card,.r-card{padding:24px 18px}.q-text{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <span class="header-emoji">🍷</span>
+      <h1>Какой ты <em>напиток?</em></h1>
+      <p class="subtitle">Выбери свою эстетику — и мы определим твой темперамент через метафору напитка. С нотками науки и парой капель юмора.</p>
+    </div>
+    <div class="mood-section">
+      <h2>Твоя эстетика сегодня</h2>
+      <p class="mood-hint">Что откликается прямо сейчас?</p>
+      <div class="mood-grid">
+        <div class="mood-card" data-m="cozy" onclick="pickMood('cozy')"><div class="mood-emoji">🕯️</div><div class="mood-name">Уютный хаос</div><div class="mood-desc">Плед, свечи, книга, дождь</div></div>
+        <div class="mood-card" data-m="bold" onclick="pickMood('bold')"><div class="mood-emoji">🔥</div><div class="mood-name">Дерзкий вечер</div><div class="mood-desc">Красные губы, музыка, кураж</div></div>
+        <div class="mood-card" data-m="dreamy" onclick="pickMood('dreamy')"><div class="mood-emoji">🌙</div><div class="mood-name">Мечтательный побег</div><div class="mood-desc">Музыка, мысли, звёзды</div></div>
+        <div class="mood-card" data-m="fresh" onclick="pickMood('fresh')"><div class="mood-emoji">🌿</div><div class="mood-name">Чистый старт</div><div class="mood-desc">Утро, воздух, энергия, цели</div></div>
+      </div>
+      <button class="btn-go" id="btnGo" onclick="startTest()">Смешать коктейль ✦</button>
+    </div>
+  </div>
+  <div class="progress-container" id="progressBar"><div class="progress-top"><span class="progress-label">Дегустация</span><span class="progress-count" id="progressCount">1 / 10</span></div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast">🍷 Скопировано!</div>
+
+<script>
+let mood=null,curQ=0,selO=null;
+let sc={espresso:0,wine:0,matcha:0,cocktail:0,cocoa:0,lemonade:0};
+const moodColors={cozy:{main:'#d4a06a',grad:'linear-gradient(135deg,#d4a06a,#c9905a)'},bold:{main:'#d48b7a',grad:'linear-gradient(135deg,#d48b7a,#c97060)'},dreamy:{main:'#9b7bb5',grad:'linear-gradient(135deg,#9b7bb5,#8a6aa4)'},fresh:{main:'#8bab8b',grad:'linear-gradient(135deg,#8bab8b,#7a9a7a)'}};
+
+const questions=[
+  {tag:"Темперамент · Гиппократ 2.0",text:"Утро понедельника. Ты:",options:[
+    {text:"Уже всё спланировала и пью кофе с чувством превосходства",scores:{espresso:3,matcha:1}},
+    {text:"Нажимаю «отложить» 4 раза, потом бегу",scores:{cocktail:2,lemonade:1}},
+    {text:"Медленно раскачиваюсь — мне нужен ритуал пробуждения",scores:{cocoa:2,wine:1}},
+    {text:"Зависит от того, как прошли выходные",scores:{wine:2,cocktail:1}}
+  ]},
+  {tag:"Энергия",text:"Откуда ты берёшь энергию?",options:[
+    {text:"От людей — мне нужна компания, разговоры, движ",scores:{cocktail:3,lemonade:1}},
+    {text:"От тишины — книга, прогулка, мысли",scores:{matcha:2,wine:2}},
+    {text:"От цели — когда у меня есть задача, я машина",scores:{espresso:3}},
+    {text:"От уюта — еда, тепло, близкие рядом",scores:{cocoa:3}}
+  ]},
+  {tag:"Социальный стиль",text:"На вечеринке ты:",options:[
+    {text:"Душа компании — все знают, где я",scores:{cocktail:3}},
+    {text:"В глубоком разговоре с одним человеком в углу",scores:{wine:3,matcha:1}},
+    {text:"Ушла через 2 часа — мой лимит людей исчерпан",scores:{matcha:2,cocoa:1}},
+    {text:"Организовала эту вечеринку",scores:{espresso:2,lemonade:1}}
+  ]},
+  {tag:"Стресс-реакция",text:"Дедлайн завтра. Ты:",options:[
+    {text:"Сажусь и делаю — дедлайн = адреналин = продуктивность",scores:{espresso:3}},
+    {text:"Паникую, потом собираюсь и выдаю шедевр в 3 ночи",scores:{cocktail:2,wine:1}},
+    {text:"Делаю, но страдаю — «надо было раньше начать»",scores:{cocoa:2,matcha:1}},
+    {text:"Спокойно — у меня план, я же не вчера узнала",scores:{matcha:3}}
+  ]},
+  {tag:"Романтика",text:"Лучший подарок:",options:[
+    {text:"Сюрприз — неожиданный, эмоциональный, от души",scores:{cocktail:3,lemonade:1}},
+    {text:"Что-то осмысленное — книга с подписью, письмо",scores:{wine:3}},
+    {text:"Совместное время — вместе куда-то поехать",scores:{cocoa:2,lemonade:1}},
+    {text:"Полезное — то, что я хотела, но не покупала себе",scores:{espresso:2,matcha:1}}
+  ]},
+  {tag:"Настроение",text:"Какая музыка фоном у тебя чаще?",options:[
+    {text:"Энергичная — поп, электроника, что-то с битом",scores:{lemonade:3,cocktail:1}},
+    {text:"Атмосферная — инди, джаз, что-то ноющее и красивое",scores:{wine:3}},
+    {text:"Lo-fi или тишина — мне нужен фон, не отвлечение",scores:{matcha:3,cocoa:1}},
+    {text:"Всё подряд — плейлист как мой характер: хаотичный",scores:{cocktail:3}}
+  ]},
+  {tag:"Решения",text:"Как ты принимаешь решения?",options:[
+    {text:"Быстро и уверенно — долго думать = потерять момент",scores:{espresso:3,cocktail:1}},
+    {text:"Долго взвешиваю, консультируюсь, потом решаю",scores:{matcha:2,cocoa:1}},
+    {text:"Интуитивно — если чувствую, что правильно, значит так",scores:{wine:2,cocktail:1}},
+    {text:"Составляю плюсы/минусы, но потом всё равно слушаю сердце",scores:{cocoa:2,wine:1}}
+  ]},
+  {tag:"Дружба",text:"Ты в дружбе:",options:[
+    {text:"Та самая подруга, которой звонят в 3 ночи",scores:{cocoa:3,wine:1}},
+    {text:"Организатор — планирую встречи, помню дни рождения",scores:{espresso:2,lemonade:1}},
+    {text:"Немного друзей, но зато каких — на всю жизнь",scores:{wine:2,matcha:2}},
+    {text:"Весёлая — со мной не соскучишься",scores:{cocktail:3,lemonade:1}}
+  ]},
+  {tag:"Самокритика",text:"Твой внутренний голос чаще говорит:",options:[
+    {text:"«Давай, ты можешь лучше» — мотиватор с хлыстом",scores:{espresso:3}},
+    {text:"«А что подумают другие?» — тревожный аналитик",scores:{matcha:2,cocoa:1}},
+    {text:"«Ну и ладно» — я научилась не парить",scores:{lemonade:3}},
+    {text:"«Ты уникальная, просто мир пока не понял» — внутренний драматург",scores:{wine:2,cocktail:1}}
+  ]},
+  {tag:"Финальный вопрос",text:"Если бы жизнь была напитком, ты бы хотела, чтобы она была:",options:[
+    {text:"Крепкой и бодрящей — чтобы чувствовать каждый момент",scores:{espresso:3}},
+    {text:"Сложной и многослойной — с послевкусием",scores:{wine:3}},
+    {text:"Тёплой и сладкой — чтобы хотелось ещё",scores:{cocoa:3}},
+    {text:"Яркой и газированной — чтобы не было скучно ни секунды",scores:{cocktail:2,lemonade:2}}
+  ]}
+];
+
+const drinks={
+  espresso:{emoji:"☕",name:"Эспрессо",temperament:"Холерик-достигатор",tagline:"Ты — чистая концентрация. Маленькая чашка, максимум эффекта.",
+    desc:"Ты живёшь на скорости — и это не спешка, а ритм. Твоя энергия заразительна: когда ты входишь в «режим», всё вокруг ускоряется. В системе Гиппократа ты холерик, в MBTI — скорее J-тип. Ты не откладываешь, не сомневаешься и не оглядываешься. Люди либо вдохновляются тобой, либо устают.",
+    shadow:"Ты забываешь, что не все работают на твоей скорости. И иногда принимаешь занятость за жизнь. Твой вызов — научиться ничего не делать и не чувствовать вину.",
+    tags:["Амбиции","Продуктивность","Перфекционизм","Кофеин в крови"],recipe:["⅓ амбиций","⅓ дисциплины","⅓ нетерпения","щепотка скрытой тревоги"]},
+  wine:{emoji:"🍷",name:"Красное вино",temperament:"Меланхолик-эстет",tagline:"Ты — глубина. С послевкусием, которое остаётся надолго.",
+    desc:"Ты чувствуешь мир тоньше, чем большинство. Музыка, слова, взгляды — для тебя всё это имеет слои. Ты меланхолик в лучшем смысле: не грустная, а глубокая. Твоя эмоциональная чувствительность — суперсила, которая позволяет создавать, сопереживать и видеть красоту там, где другие видят обычный вторник.",
+    shadow:"Ты иногда романтизируешь страдание. И можешь застрять в красивой грусти, вместо того чтобы действовать. Твой вызов — не путать глубину с меланхолией.",
+    tags:["Глубина","Эстетика","Эмпатия","Драматизм"],recipe:["⅓ чувств","⅓ эстетики","⅓ ночных мыслей","капля драмы"]},
+  matcha:{emoji:"🍵",name:"Матча-латте",temperament:"Флегматик-мудрец",tagline:"Ты — спокойная сила. Тихая, но ощутимая.",
+    desc:"Ты из тех, кто не кричит, а действует. Твоя стабильность — якорь для окружающих. Флегматический темперамент часто недооценивают, но именно ты — тот человек, который держит всё вместе, пока остальные паникуют. Ты думаешь, прежде чем говоришь, и это делает каждое твоё слово весомым.",
+    shadow:"Ты можешь застрять в зоне комфорта и назвать это «осознанностью». А ещё твоё спокойствие иногда выглядит как безразличие. Вызов — позволить себе быть страстной.",
+    tags:["Осознанность","Стабильность","Минимализм","Внутренний мир"],recipe:["⅓ спокойствия","⅓ осознанности","⅓ перфекционизма","пенка из мудрости"]},
+  cocktail:{emoji:"🍹",name:"Коктейль-сюрприз",temperament:"Сангвиник-хаос",tagline:"С тобой никогда не знаешь, что будет — и в этом вся прелесть.",
+    desc:"Ты — воплощение сангвинического темперамента: общительная, энергичная, непредсказуемая. Твоя суперсила — умение превратить любую ситуацию в историю, которую потом будут пересказывать. Люди чувствуют себя живее рядом с тобой, потому что ты напоминаешь: жизнь — это приключение.",
+    shadow:"Ты можешь разбрасываться на 10 вещей и не закончить ни одну. А за весельем иногда прячется страх остаться наедине с собой. Вызов — научиться быть с собой в тишине.",
+    tags:["Харизма","Спонтанность","FOMO","Сюрприз"],recipe:["⅓ харизмы","⅓ хаоса","⅓ обаяния","зонтик сверху"]},
+  cocoa:{emoji:"🍫",name:"Горячий шоколад",temperament:"Флегматик-хранитель",tagline:"Ты — тепло в чистом виде. Рядом с тобой всем хорошо.",
+    desc:"Ты — человек, к которому хочется вернуться. Твоя забота искренняя, а присутствие — лечебное. В терминах темпераментов ты тёплый флегматик — стабильная, заботливая, надёжная. Ты создаёшь ту атмосферу безопасности, в которой люди могут быть собой.",
+    shadow:"Ты иногда заботишься о других в ущерб себе. И можешь принять чужие проблемы за свои. Вызов — поставить свою чашку первой (как в самолёте с кислородной маской).",
+    tags:["Тепло","Забота","Уют","Эмпатия"],recipe:["⅓ заботы","⅓ тепла","⅓ терпения","маршмеллоу сверху"]},
+  lemonade:{emoji:"🍋",name:"Домашний лимонад",temperament:"Сангвиник-оптимист",tagline:"Ты — свежесть и честность. Просто, ярко и без лишнего.",
+    desc:"Ты не притворяешься. Нет фильтров, нет ролей — ты такая, какая есть, и людям это нравится. Твой оптимизм — не наивность, а осознанный выбор. Исследования Селигмана показывают, что такой стиль мышления — один из главных предикторов психологического здоровья.",
+    shadow:"Ты можешь обесценивать негативные эмоции — свои и чужие. «Да всё нормально» — твоя защита. Вызов — позволить себе погрустить без попытки это исправить.",
+    tags:["Оптимизм","Честность","Лёгкость","Простота"],recipe:["⅓ оптимизма","⅓ честности","⅓ энергии","сахар по вкусу"]}
+};
+
+function pickMood(m){mood=m;document.querySelectorAll('.mood-card').forEach(c=>c.classList.remove('selected'));document.querySelector(`[data-m="${m}"]`).classList.add('selected');const b=document.getElementById('btnGo');b.classList.add('active');b.style.background=moodColors[m].grad}
+function startTest(){if(!mood)return;document.getElementById('headerSection').style.display='none';document.getElementById('progressBar').classList.add('active');const c=moodColors[mood];document.getElementById('progressFill').style.background=c.grad;document.getElementById('progressCount').style.color=c.main;document.documentElement.style.setProperty('--active-c',c.main);const bonus={cozy:{cocoa:2,wine:1},bold:{espresso:2,cocktail:1},dreamy:{wine:2,matcha:1},fresh:{lemonade:2,matcha:1}};for(const[k,v]of Object.entries(bonus[mood]))sc[k]+=v;showQ(0)}
+function showQ(i){const q=questions[i],c=moodColors[mood];document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num" style="color:${c.main}">Вопрос ${i+1} из ${questions.length}</div><div class="q-tag">${q.tag}</div><div class="q-text">${q.text}</div><div class="options">${q.options.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><div class="option-dot"></div><span>${o.text}</span></div>`).join('')}</div><button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать свой напиток ✦':'Дальше →'}</button></div>`;document.getElementById('progressCount').textContent=`${i+1} / ${questions.length}`;document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'})}
+function sel(el,i){document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selO=i;const b=document.getElementById('btnNext');b.classList.add('active');b.style.background=moodColors[mood].grad}
+function nxt(){if(selO===null)return;for(const[k,v]of Object.entries(questions[curQ].options[selO].scores))sc[k]+=v;selO=null;curQ++;curQ<questions.length?showQ(curQ):showResults()}
+function showResults(){document.getElementById('progressBar').classList.remove('active');document.getElementById('qContainer').innerHTML='';const sorted=Object.entries(sc).sort((a,b)=>b[1]-a[1]),type=sorted[0][0],d=drinks[type],second=drinks[sorted[1][0]],c=moodColors[mood];
+const section=document.getElementById('resultsSection');section.classList.add('active');
+section.innerHTML=`<div class="r-hero"><span class="r-emoji">${d.emoji}</span><div class="r-label" style="color:${c.main}">${d.temperament}</div><div class="r-title">Ты — ${d.name}</div><p class="r-tagline">${d.tagline}</p></div>
+<div class="r-card"><h3>🔬 Твой темперамент</h3><p>${d.desc}</p><div class="tag-grid">${d.tags.map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div></div>
+<div class="r-card"><h3>⚗️ Твой рецепт</h3><div class="recipe"><div class="recipe-title">Состав</div>${d.recipe.map(r=>`<div class="recipe-item">· ${r}</div>`).join('')}</div></div>
+<div class="r-card"><h3>🌘 Обратная сторона</h3><p>${d.shadow}</p></div>
+${sorted[1][1]>4?`<div class="r-card"><h3>🧬 С нотками: ${second.emoji} ${second.name}</h3><p>${second.tagline} Этот тип заметно проявился — ты не один напиток, а бленд.</p></div>`:''}
+<div class="actions"><button class="btn-share" style="background:${c.grad}" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>Поделиться</button><a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a><button class="btn-retry" onclick="location.reload()">↻ Заново</button></div>`;
+window.scrollTo({top:0,behavior:'smooth'})}
+function share(){const d=drinks[Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0]];const text=`${d.emoji} Я — ${d.name}!\n\n${d.tagline}\n\nУзнай свой напиток: https://lisofoxa-oss.github.io/tests/`;if(navigator.share)navigator.share({title:'Какой ты напиток?',text}).catch(()=>{});else navigator.clipboard.writeText(text).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)})}
+</script>
+</body>
+</html>
