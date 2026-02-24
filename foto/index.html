@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Психология уязвимости — Научный тест</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0e0c15;
+  --surface: #16131f;
+  --surface2: #1e1a2b;
+  --accent: #b48ead;
+  --accent2: #d4a0c0;
+  --accent3: #88c0d0;
+  --text: #e0dce6;
+  --text-dim: #9a93a8;
+  --text-bright: #f5f0fa;
+  --border: rgba(180, 142, 173, 0.15);
+  --glow: rgba(180, 142, 173, 0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(180,142,173,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(136,192,208,0.04) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 50px 0 40px;
+  animation: fadeUp 1s ease;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 28px;
+}
+
+.header-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+h1 span {
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 480px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+
+.theories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.theory-tag {
+  font-size: 10.5px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  background: rgba(180,142,173,0.04);
+}
+
+/* ─── Intro ─── */
+.intro-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  margin-bottom: 32px;
+  animation: fadeUp 1s ease 0.2s both;
+}
+
+.intro-card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 14px;
+}
+
+.intro-card p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.intro-card p:last-child { margin-bottom: 0; }
+
+.scales-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.scale-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface2);
+}
+
+.scale-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(14,12,21,0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 16px 0 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+
+.progress-container.active { display: block; }
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.progress-count {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.progress-bar {
+  height: 3px;
+  background: var(--surface2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  border-radius: 10px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+}
+
+/* ─── Questions ─── */
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  margin-bottom: 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.question-card[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.question-number {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.question-context {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  background: rgba(136,192,208,0.06);
+  border-radius: 8px;
+  display: inline-block;
+  letter-spacing: 0.3px;
+}
+
+.question-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--surface2);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  position: relative;
+  user-select: none;
+}
+
+.option:hover {
+  border-color: var(--border);
+  background: rgba(180,142,173,0.06);
+}
+
+.option.selected {
+  border-color: var(--accent);
+  background: rgba(180,142,173,0.1);
+  color: var(--text-bright);
+}
+
+.option-radio {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--text-dim);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.option.selected .option-radio {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(180,142,173,0.3);
+}
+
+.option.selected .option-radio::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  background: var(--bg);
+  border-radius: 50%;
+}
+
+/* ─── Buttons ─── */
+.btn-start, .btn-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, var(--accent), #9a7ea0);
+  color: var(--bg);
+  margin-top: 12px;
+  animation: fadeUp 1s ease 0.4s both;
+}
+
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(180,142,173,0.25); }
+
+.btn-next {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  margin-top: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+.btn-next.active {
+  opacity: 1;
+  pointer-events: all;
+  background: linear-gradient(135deg, var(--accent), #9a7ea0);
+  color: var(--bg);
+  border-color: transparent;
+}
+
+.btn-next.active:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(180,142,173,0.25); }
+
+/* ─── Results ─── */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp 0.8s ease; }
+
+.result-hero {
+  text-align: center;
+  padding: 48px 20px 36px;
+}
+
+.result-icon {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 24px;
+  position: relative;
+}
+
+.result-icon::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  animation: pulse 3s ease infinite;
+}
+
+.result-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.result-subtitle {
+  font-size: 14px;
+  color: var(--text-dim);
+  max-width: 420px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.result-detail-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+}
+
+.result-detail-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.result-detail-card p {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+.result-detail-card p:last-child { margin-bottom: 0; }
+
+/* Score bars */
+.score-bars { margin: 20px 0; }
+
+.score-row {
+  margin-bottom: 16px;
+}
+
+.score-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.score-name {
+  font-size: 12.5px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.score-value {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.score-bar-bg {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0;
+}
+
+/* ─── Spectrum ─── */
+.spectrum-container {
+  margin: 20px 0 10px;
+}
+
+.spectrum-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.spectrum-track {
+  height: 8px;
+  background: linear-gradient(90deg, var(--accent3), var(--accent), #d08770);
+  border-radius: 10px;
+  position: relative;
+}
+
+.spectrum-marker {
+  position: absolute;
+  top: -6px;
+  width: 20px; height: 20px;
+  background: var(--text-bright);
+  border-radius: 50%;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 10px rgba(180,142,173,0.4);
+  transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Footer buttons ─── */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.btn-share {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), #9a7ea0);
+  color: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-share:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(180,142,173,0.25); }
+
+.btn-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-more:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-retry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-retry:hover { color: var(--text); border-color: var(--text-dim); }
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  color: var(--text-bright);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 480px) {
+  .container { padding: 12px 14px 50px; }
+  .intro-card, .question-card, .result-detail-card { padding: 24px 18px; }
+  .scales-info { grid-template-columns: 1fr; }
+  .question-text { font-size: 18px; }
+  .option { padding: 12px 14px; font-size: 13.5px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ═══ HEADER ═══ -->
+  <div class="header" id="headerSection">
+    <div class="header-badge">Психологический анализ</div>
+    <h1>Почему ты <span>не отправляешь</span> это фото?</h1>
+    <p class="subtitle">Научно-обоснованный тест на основе 6 психологических шкал. 16 вопросов, которые объяснят настоящую причину.</p>
+    <div class="theories">
+      <span class="theory-tag">Теория самообъективации</span>
+      <span class="theory-tag">Когнитивная психология</span>
+      <span class="theory-tag">Теория привязанности</span>
+      <span class="theory-tag">Социальное сравнение</span>
+    </div>
+  </div>
+
+  <!-- ═══ INTRO ═══ -->
+  <div class="intro-card" id="introCard">
+    <h2>Что измеряет этот тест</h2>
+    <p>Исследования Фредриксон и Робертс (1997), а также теория социального сравнения Фестингера показывают: нежелание показывать тело — это не про лень или скромность. За этим всегда стоит конкретный психологический механизм.</p>
+    <p>Тест оценивает 6 научных шкал, чтобы найти именно твой:</p>
+    <div class="scales-info">
+      <div class="scale-item"><span class="scale-dot" style="background:#b48ead"></span>Внутренний критик</div>
+      <div class="scale-item"><span class="scale-dot" style="background:#88c0d0"></span>Социальное сравнение</div>
+      <div class="scale-item"><span class="scale-dot" style="background:#d08770"></span>Страх оценки</div>
+      <div class="scale-item"><span class="scale-dot" style="background:#a3be8c"></span>Фактор доверия</div>
+      <div class="scale-item"><span class="scale-dot" style="background:#ebcb8b"></span>Прошлый опыт</div>
+      <div class="scale-item"><span class="scale-dot" style="background:#81a1c1"></span>Личные границы</div>
+    </div>
+  </div>
+
+  <button class="btn-start" id="btnStart" onclick="startTest()">Начать тест →</button>
+
+  <!-- ═══ PROGRESS ═══ -->
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Прогресс</span>
+      <span class="progress-count" id="progressCount">1 / 16</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- ═══ QUESTIONS ═══ -->
+  <div id="questionsContainer"></div>
+
+  <!-- ═══ RESULTS ═══ -->
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Ссылка скопирована!</div>
+
+<script>
+const questions = [
+  {
+    context: "Теория самообъективации · Фредриксон, 1997",
+    text: "Ты смотришь на себя в зеркало перед выходом. Что происходит у тебя в голове?",
+    options: [
+      { text: "Нахожу кучу недостатков и пытаюсь их скрыть одеждой", scores: { critic: 3, comparison: 1 } },
+      { text: "Сравниваю себя с тем, как «должно быть»", scores: { critic: 2, comparison: 2 } },
+      { text: "Бросаю быстрый взгляд — ок, нормально, пошла", scores: { boundaries: 1 } },
+      { text: "Зависит от настроения — иногда нравлюсь, иногда нет", scores: { critic: 1, past: 1 } }
+    ]
+  },
+  {
+    context: "Когнитивная оценка · Бек, 1976",
+    text: "Подруга выложила фото в купальнике и получила кучу комплиментов. Первая мысль?",
+    options: [
+      { text: "Ей есть что показать, а мне — нет", scores: { critic: 2, comparison: 3 } },
+      { text: "Смелая, я бы так не смогла — слишком страшно", scores: { fear: 3, past: 1 } },
+      { text: "Круто, но я не хочу, чтобы меня так же обсуждали", scores: { fear: 1, boundaries: 2 } },
+      { text: "Рада за неё, у каждого свой комфорт", scores: { boundaries: 2 } }
+    ]
+  },
+  {
+    context: "Шкала доверия · Ремпел и Холмс, 1986",
+    text: "Близкий человек просит твоё фото. Что определяет, отправишь ты его или нет?",
+    options: [
+      { text: "Смогу ли я контролировать, что будет с фото дальше", scores: { trust: 3, fear: 1 } },
+      { text: "Как я выгляжу на фото — нужен идеальный ракурс", scores: { critic: 3, comparison: 1 } },
+      { text: "Насколько я доверяю этому человеку прямо сейчас", scores: { trust: 2, past: 1 } },
+      { text: "Вообще-то я просто не люблю отправлять такие фото", scores: { boundaries: 3 } }
+    ]
+  },
+  {
+    context: "Социальное сравнение · Фестингер, 1954",
+    text: "Ты листаешь ленту и видишь девушек в открытой одежде. Что чувствуешь?",
+    options: [
+      { text: "Автоматически сравниваю их тело со своим — не в мою пользу", scores: { comparison: 3, critic: 2 } },
+      { text: "Думаю: «Они смелее меня» или «Им проще»", scores: { comparison: 2, fear: 1 } },
+      { text: "Ничего особенного, листаю дальше", scores: { boundaries: 1 } },
+      { text: "Лёгкое раздражение — зачем это выставлять?", scores: { boundaries: 2, past: 1 } }
+    ]
+  },
+  {
+    context: "Теория привязанности · Боулби, 1969",
+    text: "Представь: ты отправила откровенное фото, а человек ответил просто «ок» или смайликом. Твоя реакция?",
+    options: [
+      { text: "Паника — наверное, я ему не понравилась", scores: { critic: 2, fear: 2, trust: 1 } },
+      { text: "Злость — я пожалела, что отправила", scores: { trust: 2, past: 2 } },
+      { text: "Ладно, не все умеют выражать эмоции словами", scores: { boundaries: 1, trust: 1 } },
+      { text: "Я бы и не отправила без уверенности в реакции", scores: { fear: 3, trust: 1 } }
+    ]
+  },
+  {
+    context: "Перфекционизм · Хьюитт и Флетт, 1991",
+    text: "Сколько фото ты обычно делаешь, прежде чем выбрать одно для отправки?",
+    options: [
+      { text: "1–2 максимум, и то если попросят", scores: { boundaries: 2 } },
+      { text: "Штук 10–20, потом выбираю лучшее", scores: { critic: 3, comparison: 1 } },
+      { text: "Делаю, но потом всё равно не отправляю — ни одно не нравится", scores: { critic: 3, fear: 1 } },
+      { text: "Стараюсь не зацикливаться, но иногда затягивает", scores: { critic: 1, fear: 1 } }
+    ]
+  },
+  {
+    context: "Когнитивные искажения · Бек, 1979",
+    text: "Какая мысль чаще всего останавливает тебя от отправки фото?",
+    options: [
+      { text: "«Я выгляжу хуже, чем другие»", scores: { comparison: 3, critic: 2 } },
+      { text: "«А вдруг он/она покажет кому-то» или «Это попадёт в интернет»", scores: { trust: 3, fear: 1 } },
+      { text: "«Он/она подумает что-то не то обо мне»", scores: { fear: 3, past: 1 } },
+      { text: "«Мне просто это некомфортно, и я не обязана это делать»", scores: { boundaries: 3 } }
+    ]
+  },
+  {
+    context: "Эмоциональная память · Ван дер Колк, 2014",
+    text: "Были ли ситуации, когда твоё тело комментировали негативно (даже «в шутку»)?",
+    options: [
+      { text: "Да, и я до сих пор помню конкретные слова", scores: { past: 3, critic: 1 } },
+      { text: "Иногда, но стараюсь не думать об этом", scores: { past: 2, fear: 1 } },
+      { text: "Нет, но я сама себя критикую жёстче любого", scores: { critic: 3 } },
+      { text: "Нет, дело не в прошлом", scores: { boundaries: 1 } }
+    ]
+  },
+  {
+    context: "Теория самоопределения · Деси и Райан, 1985",
+    text: "Когда тебя просят отправить фото, ты чувствуешь:",
+    options: [
+      { text: "Давление — как будто я «должна» это сделать", scores: { boundaries: 3, trust: 1 } },
+      { text: "Стыд — как будто со мной что-то не так, раз я не могу", scores: { critic: 2, fear: 2 } },
+      { text: "Тревогу — а вдруг потом пожалею", scores: { trust: 2, fear: 2 } },
+      { text: "Скорее равнодушие — просто не моё", scores: { boundaries: 2 } }
+    ]
+  },
+  {
+    context: "Воспринимаемая оценка · Лири, 2001",
+    text: "Что для тебя страшнее всего в том, чтобы отправить открытое фото?",
+    options: [
+      { text: "Что человек увидит мои реальные несовершенства", scores: { critic: 3, fear: 1 } },
+      { text: "Что фото станет инструментом контроля или шантажа", scores: { trust: 3 } },
+      { text: "Что я пойму — моё тело не соответствует стандартам", scores: { comparison: 3, critic: 1 } },
+      { text: "Что я потеряю уважение в его/её глазах", scores: { fear: 3, past: 1 } }
+    ]
+  },
+  {
+    context: "Самосострадание · Нефф, 2003",
+    text: "Если бы подруга сказала, что стесняется отправить фото, ты бы подумала:",
+    options: [
+      { text: "«Ей не о чем переживать, она красивая!» — но к себе я так отнестись не могу", scores: { critic: 3, comparison: 1 } },
+      { text: "«Понимаю, я тоже боюсь осуждения»", scores: { fear: 2, comparison: 1 } },
+      { text: "«Правильно делает, нужно быть осторожной»", scores: { trust: 2, boundaries: 1 } },
+      { text: "«Каждый сам решает, что ему комфортно»", scores: { boundaries: 2 } }
+    ]
+  },
+  {
+    context: "Телесная вовлечённость · Маккинли и Хайд, 1996",
+    text: "Как ты относишься к своему телу, если честно?",
+    options: [
+      { text: "Вижу в основном недостатки — то, что нужно исправить", scores: { critic: 3, comparison: 1 } },
+      { text: "Нормально, но показывать его — это другое", scores: { fear: 2, boundaries: 1 } },
+      { text: "Нейтрально, просто не чувствую потребности его демонстрировать", scores: { boundaries: 3 } },
+      { text: "Отношения сложные — зависит от дня", scores: { critic: 1, past: 1, comparison: 1 } }
+    ]
+  },
+  {
+    context: "Контроль и безопасность · Хорни, 1945",
+    text: "Ты чувствуешь себя увереннее, когда:",
+    options: [
+      { text: "Я полностью контролирую, кто и что видит", scores: { trust: 2, boundaries: 2 } },
+      { text: "Меня принимают до того, как видят моё тело", scores: { fear: 2, critic: 1 } },
+      { text: "Я точно знаю, что выгляжу хорошо прямо сейчас", scores: { critic: 2, comparison: 1 } },
+      { text: "Когда рядом те, кому я действительно доверяю", scores: { trust: 3 } }
+    ]
+  },
+  {
+    context: "Атрибуция · Вайнер, 1986",
+    text: "Почему, по-твоему, другим проще отправлять подобные фото?",
+    options: [
+      { text: "У них лучше фигура — объективно", scores: { comparison: 3, critic: 1 } },
+      { text: "Они не задумываются о последствиях", scores: { trust: 2, boundaries: 1 } },
+      { text: "Они увереннее в себе — это характер", scores: { fear: 2, comparison: 1 } },
+      { text: "У каждого свой порог комфорта, и это нормально", scores: { boundaries: 2 } }
+    ]
+  },
+  {
+    context: "Интернализация · Томпсон, 2004",
+    text: "Если ты видишь в соцсетях стандарт «идеального тела», то ты:",
+    options: [
+      { text: "Бессознательно примеряю его на себя и проигрываю", scores: { comparison: 3, critic: 2 } },
+      { text: "Понимаю, что это фильтры и ракурс, но всё равно неприятно", scores: { comparison: 2, critic: 1 } },
+      { text: "Мне скорее безразлично — я знаю, что это маркетинг", scores: { boundaries: 2 } },
+      { text: "Раздражаюсь из-за нереалистичных стандартов", scores: { boundaries: 1, past: 1 } }
+    ]
+  },
+  {
+    context: "Уязвимость · Браун, 2012",
+    text: "Последний вопрос. Если бы ты всё-таки отправила это фото — что было бы самым лучшим исходом?",
+    options: [
+      { text: "Человек сказал бы, что я красивая, и я бы ему поверила", scores: { critic: 2, fear: 1 } },
+      { text: "Ничего плохого бы не произошло — фото осталось бы только между нами", scores: { trust: 3 } },
+      { text: "Я бы почувствовала себя свободнее и смелее", scores: { fear: 2, comparison: 1 } },
+      { text: "Идеальный исход — когда мне не нужно это делать, чтобы чувствовать себя любимой", scores: { boundaries: 3, past: 1 } }
+    ]
+  }
+];
+
+const results = {
+  critic: {
+    icon: "🪞",
+    iconBg: "linear-gradient(135deg, rgba(180,142,173,0.2), rgba(180,142,173,0.05))",
+    title: "Внутренний критик",
+    subtitle: "Твой главный барьер — не внешний мир, а голос внутри, который говорит «недостаточно».",
+    science: "Самообъективация (Фредриксон и Робертс, 1997)",
+    scienceText: "Исследования показывают, что самообъективация — привычка оценивать себя глазами наблюдателя — напрямую связана с телесным стыдом и избеганием ситуаций, где тело «видно». Это не каприз: твой мозг буквально переключается в режим «оценки», и в этом режиме ты видишь каждый «недостаток» под увеличительным стеклом. При этом исследования Нефф (2003) по самосостраданию показывают, что люди с высоким внутренним критиком оценивают других гораздо мягче, чем себя. Ты наверняка замечала: подруге скажешь «ты красивая!», а к себе эти слова не применяются.",
+    advice: "Попробуй упражнение из когнитивно-поведенческой терапии: когда в голове появляется критика — запиши её и спроси: «Я бы сказала это своей подруге?» Разрыв между тем, как ты оцениваешь себя и других — это и есть точка роста."
+  },
+  comparison: {
+    icon: "📊",
+    iconBg: "linear-gradient(135deg, rgba(136,192,208,0.2), rgba(136,192,208,0.05))",
+    title: "Ловушка сравнения",
+    subtitle: "Ты не стесняешься себя — ты стесняешься себя на фоне тех, с кем сравниваешь.",
+    science: "Теория социального сравнения (Фестингер, 1954)",
+    scienceText: "Леон Фестингер доказал: люди инстинктивно оценивают себя через сравнение с другими. В эпоху соцсетей этот механизм стал токсичным — мы сравниваем своё обычное тело с отфильтрованными, позированными и обработанными изображениями. Исследование Фардули и др. (2015) показало, что всего 10 минут просмотра Instagram снижают удовлетворённость телом у 70% женщин. Ты не «хуже» — ты сравниваешь реальность с иллюзией, и это нечестная игра.",
+    advice: "Исследования рекомендуют «цифровую детоксикацию сравнения»: замечай моменты, когда автоматически сравниваешь себя, и сознательно говори себе: «Я вижу чужой лучший кадр из тысячи, а себя — без фильтров». Со временем этот навык становится автоматическим."
+  },
+  fear: {
+    icon: "🎭",
+    iconBg: "linear-gradient(135deg, rgba(208,135,112,0.2), rgba(208,135,112,0.05))",
+    title: "Страх оценки",
+    subtitle: "Дело не в теле — дело в том, что подумает другой человек.",
+    science: "Страх негативной оценки (Лири, 2001)",
+    scienceText: "Психолог Марк Лири показал, что страх оценки — это эволюционный механизм: для выживания нам важно, как нас воспринимает группа. В контексте отправки фото этот механизм активирует «систему обнаружения угроз» в миндалевидном теле мозга. Ты буквально чувствуешь физическую тревогу, потому что мозг воспринимает возможное осуждение как опасность. Исследования Гилберта (2009) показывают, что за этим часто стоит не реальный опыт отвержения, а антиципация — ожидание негатива, которое само по себе сильнее, чем реальная реакция.",
+    advice: "Спроси себя: «Какой худший реалистичный сценарий?» Обычно ответ гораздо мягче, чем то, что рисует тревожный мозг. Метод «декатастрофизации» — один из ключевых инструментов КПТ."
+  },
+  trust: {
+    icon: "🔐",
+    iconBg: "linear-gradient(135deg, rgba(163,190,140,0.2), rgba(163,190,140,0.05))",
+    title: "Вопрос доверия",
+    subtitle: "Ты не стесняешься — ты не уверена, что фото останется в безопасности.",
+    science: "Психология доверия (Ремпель, Холмс и Занна, 1985)",
+    scienceText: "Доверие в отношениях строится на трёх компонентах: предсказуемость, надёжность и вера (faith). Исследования показывают, что для готовности быть уязвимой нужен определённый «порог доверия» — и в цифровом мире этот порог выше, потому что последствия утечки необратимы. Твой мозг считает: риск (потеря контроля над изображением) > вознаграждение (близость, одобрение). И с точки зрения нейробиологии это рациональный расчёт. Исследования Готтмана показывают, что доверие строится через мелкие последовательные акты уязвимости — когда другой раз за разом доказывает, что он безопасен.",
+    advice: "Доверие не нужно давать авансом. Можно строить его постепенно — начинать с менее уязвимых вещей и наблюдать, как человек с ними обращается."
+  },
+  past: {
+    icon: "🌊",
+    iconBg: "linear-gradient(135deg, rgba(235,203,139,0.2), rgba(235,203,139,0.05))",
+    title: "Эхо прошлого опыта",
+    subtitle: "Кто-то когда-то дал тебе понять, что твоё тело — повод для стыда. И это застряло.",
+    science: "Эмоциональная память тела (Ван дер Колк, 2014)",
+    scienceText: "Бессел ван дер Колк в своём фундаментальном исследовании «Тело помнит всё» показал: негативный опыт, связанный с телом, буквально записывается в телесную память. Один неловкий комментарий в подростковом возрасте может десятилетиями влиять на то, как человек ощущает себя. Это работает через имплицитную память — ты можешь даже не помнить конкретный эпизод, но тело помнит чувство стыда и активирует его в похожих ситуациях. Исследования также показывают, что один негативный комментарий о теле «весит» в памяти в 5 раз больше, чем один комплимент.",
+    advice: "Осознание — первый шаг. Если ты замечаешь, что нынешний дискомфорт непропорционально сильный — возможно, это реакция не на текущую ситуацию, а на прошлую. Работа с психологом (особенно в подходах EMDR или соматической терапии) может помочь «обновить» эту запись."
+  },
+  boundaries: {
+    icon: "🛡️",
+    iconBg: "linear-gradient(135deg, rgba(129,161,193,0.2), rgba(129,161,193,0.05))",
+    title: "Здоровые границы",
+    subtitle: "У тебя нет проблемы. У тебя есть чёткое понимание своих границ — и это сила.",
+    science: "Теория самоопределения (Деси и Райан, 1985)",
+    scienceText: "Теория самоопределения утверждает: три базовые потребности — автономия, компетентность и связанность. Автономия означает право самой решать, что ты делаешь со своим телом и его изображением. Исследования показывают, что люди с сильным чувством автономии — более устойчивы психически и менее подвержены манипуляциям. Нежелание отправлять фото может быть не барьером, а здоровым выбором. Исследования Брене Браун (2012) подтверждают: уязвимость ценна, когда она добровольна, а не вынуждена.",
+    advice: "Граница — это не стена. Ты имеешь полное право решать, когда, кому и в какой форме показывать своё тело. Если кто-то давит — это красный флаг про них, а не про тебя."
+  }
+};
+
+const scaleColors = {
+  critic: '#b48ead',
+  comparison: '#88c0d0',
+  fear: '#d08770',
+  trust: '#a3be8c',
+  past: '#ebcb8b',
+  boundaries: '#81a1c1'
+};
+
+const scaleNames = {
+  critic: 'Внутренний критик',
+  comparison: 'Социальное сравнение',
+  fear: 'Страх оценки',
+  trust: 'Фактор доверия',
+  past: 'Прошлый опыт',
+  boundaries: 'Личные границы'
+};
+
+let currentQuestion = 0;
+let answers = [];
+let scores = { critic: 0, comparison: 0, fear: 0, trust: 0, past: 0, boundaries: 0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('introCard').style.display = 'none';
+  document.getElementById('btnStart').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  showQuestion(0);
+}
+
+function showQuestion(index) {
+  const q = questions[index];
+  const container = document.getElementById('questionsContainer');
+  
+  container.innerHTML = `
+    <div class="question-card" data-visible="true" style="animation-delay: 0.1s">
+      <div class="question-number">Вопрос ${index + 1} из ${questions.length}</div>
+      <div class="question-context">${q.context}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="options">
+        ${q.options.map((o, i) => `
+          <div class="option" onclick="selectOption(this, ${i})">
+            <div class="option-radio"></div>
+            <span>${o.text}</span>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">
+        ${index === questions.length - 1 ? 'Узнать результат' : 'Следующий вопрос'} →
+      </button>
+    </div>
+  `;
+
+  document.getElementById('progressCount').textContent = `${index + 1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${((index) / questions.length) * 100}%`;
+  
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop - 10, behavior: 'smooth' });
+}
+
+let selectedOptionIndex = null;
+
+function selectOption(el, index) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedOptionIndex = index;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nextQuestion() {
+  if (selectedOptionIndex === null) return;
+  
+  const q = questions[currentQuestion];
+  const chosen = q.options[selectedOptionIndex];
+  answers.push(selectedOptionIndex);
+  
+  for (const [key, val] of Object.entries(chosen.scores)) {
+    scores[key] += val;
+  }
+  
+  selectedOptionIndex = null;
+  currentQuestion++;
+  
+  if (currentQuestion < questions.length) {
+    showQuestion(currentQuestion);
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('questionsContainer').innerHTML = '';
+  
+  // Find dominant scale
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const dominant = sorted[0][0];
+  const second = sorted[1][0];
+  const maxScore = sorted[0][1];
+  const totalScore = sorted.reduce((sum, [, v]) => sum + v, 0);
+  
+  const r = results[dominant];
+  
+  // Build score bars HTML
+  const scoreBarsHTML = sorted.map(([key, val]) => {
+    const pct = totalScore > 0 ? Math.round((val / maxScore) * 100) : 0;
+    return `
+      <div class="score-row">
+        <div class="score-row-top">
+          <span class="score-name">${scaleNames[key]}</span>
+          <span class="score-value">${pct}%</span>
+        </div>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" style="background: ${scaleColors[key]}" data-width="${pct}"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Spectrum position
+  const spectrumPos = dominant === 'boundaries' 
+    ? 15 
+    : dominant === 'trust' 
+      ? 35
+      : dominant === 'fear' || dominant === 'past'
+        ? 60
+        : 82;
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="result-hero">
+      <div class="result-icon" style="background: ${r.iconBg}">${r.icon}</div>
+      <div class="result-title">${r.title}</div>
+      <p class="result-subtitle">${r.subtitle}</p>
+    </div>
+
+    <div class="result-detail-card">
+      <h3>📈 Твой профиль по 6 шкалам</h3>
+      <div class="score-bars">${scoreBarsHTML}</div>
+    </div>
+
+    <div class="result-detail-card">
+      <h3>🔬 Что говорит наука</h3>
+      <p style="font-size:11px; color:var(--accent); margin-bottom:8px; letter-spacing:0.5px;">${r.science}</p>
+      <p>${r.scienceText}</p>
+    </div>
+
+    <div class="result-detail-card">
+      <h3>🧭 Что с этим делать</h3>
+      <p>${r.advice}</p>
+    </div>
+
+    <div class="result-detail-card">
+      <h3>🌡️ Шкала уязвимости</h3>
+      <p style="font-size:13px; margin-bottom:16px;">Где ты находишься на спектре от осознанного выбора до внутреннего конфликта:</p>
+      <div class="spectrum-container">
+        <div class="spectrum-label">
+          <span>Осознанный выбор</span>
+          <span>Внутренний конфликт</span>
+        </div>
+        <div class="spectrum-track">
+          <div class="spectrum-marker" id="spectrumMarker" data-pos="${spectrumPos}"></div>
+        </div>
+      </div>
+    </div>
+
+    ${sorted[1][1] > 3 ? `
+    <div class="result-detail-card">
+      <h3>📌 Дополнительный фактор: ${results[second].title}</h3>
+      <p>${results[second].subtitle}</p>
+      <p style="font-size:12.5px; margin-top:8px;">Этот механизм тоже заметно проявился в твоих ответах и может усиливать основной фактор.</p>
+    </div>
+    ` : ''}
+
+    <div class="actions">
+      <button class="btn-share" onclick="shareResult()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться результатом
+      </button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">
+        🧪 Пройти ещё тесты
+      </a>
+      <button class="btn-retry" onclick="retryTest()">↻ Пройти заново</button>
+    </div>
+  `;
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width + '%';
+    });
+    const marker = document.getElementById('spectrumMarker');
+    if (marker) marker.style.left = `calc(${marker.dataset.pos}% - 10px)`;
+  }, 300);
+
+  document.getElementById('progressFill').style.width = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareResult() {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const dominant = sorted[0][0];
+  const r = results[dominant];
+  
+  const text = `Мой результат в тесте «Психология уязвимости»: ${r.title}\n\n${r.subtitle}\n\nПройти тест: https://lisofoxa-oss.github.io/tests/`;
+  
+  if (navigator.share) {
+    navigator.share({ title: 'Психология уязвимости — Результат', text: text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    });
+  }
+}
+
+function retryTest() {
+  currentQuestion = 0;
+  answers = [];
+  scores = { critic: 0, comparison: 0, fear: 0, trust: 0, past: 0, boundaries: 0 };
+  selectedOptionIndex = null;
+  
+  document.getElementById('resultsSection').classList.remove('active');
+  document.getElementById('resultsSection').innerHTML = '';
+  document.getElementById('headerSection').style.display = '';
+  document.getElementById('introCard').style.display = '';
+  document.getElementById('btnStart').style.display = '';
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
