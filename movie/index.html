@@ -228,9 +228,16 @@ section.innerHTML=`<div class="r-hero"><span class="r-emoji">${a.emoji}</span><d
 <div class="r-card"><h3>🎥 Твоя коронная сцена</h3><div class="scene-box"><div class="scene-label">INT. — НОЧЬ</div><div class="scene-text">${a.scene}</div></div></div>
 <div class="r-card"><h3>🌘 Сюжетный поворот</h3><p>${a.shadow}</p></div>
 ${sorted[1][1]>4?`<div class="r-card"><h3>🎭 Вторая роль: ${second.emoji} ${second.name}</h3><p>${second.tagline}</p></div>`:''}
-<div class="actions"><button class="btn-share" style="background:${c.grad}" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>ПОДЕЛИТЬСЯ</button><a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a><button class="btn-retry" onclick="location.reload()">↻ Заново</button></div>`;
+<div class="actions"><button class="btn-share" style="background:${c.grad}" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>ПОДЕЛИТЬСЯ</button><button class="btn-more" onclick="copyFull()" style="cursor:pointer">📋 СКОПИРОВАТЬ РЕЗУЛЬТАТ</button><a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a><button class="btn-retry" onclick="location.reload()">↻ Заново</button></div>`;
 window.scrollTo({top:0,behavior:'smooth'})}
 function share(){const a=archetypes[Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0]];const text=`${a.emoji} Я — ${a.name}!\n\n${a.tagline}\n\nУзнай свой архетип: https://lisofoxa-oss.github.io/tests/`;if(navigator.share)navigator.share({title:'Какой ты персонаж в фильме?',text}).catch(()=>{});else navigator.clipboard.writeText(text).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)})}
+function copyFull(){
+  const sorted=Object.entries(sc).sort((a,b)=>b[1]-a[1]);
+  const type=sorted[0][0];const a=archetypes[type];const second=archetypes[sorted[1][0]];
+  const credits=Object.entries(a.credits).map(([k,v])=>`  ${k}: ${v}`).join('\n');
+  const text=`🎬 КАКОЙ ТЫ ПЕРСОНАЖ В ФИЛЬМЕ? — Результат\n\n${a.emoji}  Я — ${a.name}\n${a.archetype}\n\n«${a.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🎬 Моя роль:\n\n${a.desc}\n\n━━━━━━━━━━━━━━━━━\n\n🎥 Коронная сцена:\n\n${a.scene}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Сюжетный поворот:\n\n${a.shadow}\n\n━━━━━━━━━━━━━━━━━\n\n🎞️ Титры:\n${credits}${sorted[1][1]>4?`\n\n━━━━━━━━━━━━━━━━━\n\n🎭 Вторая роль: ${second.emoji} ${second.name}\n${second.tagline}`:''}\n\n━━━━━━━━━━━━━━━━━\n→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>{const t=document.getElementById('toast');t.textContent='📋 Результат скопирован!';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)});
+}
 </script>
 </body>
 </html>
