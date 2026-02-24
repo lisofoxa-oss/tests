@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Почему ты скрываешь возраст? — Научный тест</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #f5f2ed;
+  --surface: #ffffff;
+  --surface2: #eae6df;
+  --surface3: #faf8f5;
+  --text: #2c2926;
+  --text-dim: #7c756b;
+  --text-bright: #1a1816;
+  --border: rgba(44,41,38,0.08);
+  --border2: rgba(44,41,38,0.15);
+  --accent: #8b5e3c;
+  --accent2: #a47250;
+  --accent-soft: rgba(139,94,60,0.08);
+  --ink: #3a3632;
+  --red: #b05050;
+  --teal: #4a7c72;
+  --amber: #a08040;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--teal), var(--amber));
+  z-index: 1000;
+}
+
+.container { max-width: 640px; margin: 0 auto; padding: 24px 20px 60px; }
+
+/* ─── Header ─── */
+.header {
+  padding: 48px 0 36px;
+  animation: fadeUp 0.8s ease;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.header-line { flex: 1; height: 1px; background: var(--border2); }
+
+.header-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  color: var(--text-bright);
+  line-height: 1.12;
+  margin-bottom: 18px;
+  font-weight: 400;
+}
+
+h1 em { font-style: italic; color: var(--accent); }
+
+.lead {
+  font-size: 16px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  font-weight: 300;
+  max-width: 520px;
+}
+
+/* ─── Intro card ─── */
+.intro {
+  border-top: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  padding: 28px 0;
+  margin: 24px 0 28px;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+
+.intro h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-bright);
+  margin-bottom: 14px;
+}
+
+.intro p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+.intro p:last-child { margin-bottom: 0; }
+
+.scales-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.scale-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  padding: 8px 12px;
+  background: var(--surface3);
+  border-radius: 8px;
+  font-weight: 400;
+}
+
+.scale-tag .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.btn-start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--text-bright);
+  border-radius: 10px;
+  background: var(--text-bright);
+  color: var(--bg);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: fadeUp 0.8s ease 0.4s both;
+}
+
+.btn-start:hover { background: var(--accent); border-color: var(--accent); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky;
+  top: 4px;
+  z-index: 99;
+  background: rgba(245,242,237,0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+
+.progress-container.active { display: block; }
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.progress-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.progress-count {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.progress-bar { height: 2px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+
+.progress-fill {
+  height: 100%;
+  background: var(--text-bright);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  width: 0;
+}
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s ease;
+  box-shadow: 0 1px 6px rgba(44,41,38,0.03);
+}
+
+.q-source {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.q-context {
+  display: inline-block;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  padding: 4px 10px;
+  background: var(--surface3);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+
+.q-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 21px;
+  font-weight: 400;
+  color: var(--text-bright);
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 15px 18px;
+  background: var(--surface3);
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.55;
+  user-select: none;
+}
+
+.option:hover { border-color: var(--border2); background: var(--surface); }
+
+.option.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.option-marker {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border2);
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.option.selected .option-marker {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.option.selected .option-marker::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: var(--surface);
+  border-radius: 50%;
+}
+
+.btn-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+  background: var(--surface);
+  color: var(--text-dim);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1;
+  pointer-events: all;
+  background: var(--text-bright);
+  color: var(--bg);
+  border-color: var(--text-bright);
+}
+
+.btn-next.active:hover { background: var(--accent); border-color: var(--accent); }
+
+/* ─── Results ─── */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp 0.8s ease; }
+
+.r-hero {
+  padding: 40px 0 28px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 28px;
+}
+
+.r-hero-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.r-emoji { font-size: 40px; }
+
+.r-meta {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.r-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(1.8rem, 5.5vw, 2.4rem);
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+
+.r-subtitle {
+  font-family: 'Instrument Serif', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 24px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 6px rgba(44,41,38,0.03);
+}
+
+.r-card h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-bright);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.r-card p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.85;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+.r-card p:last-child { margin-bottom: 0; }
+
+.r-science-ref {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+/* Score bars */
+.score-bars { margin: 18px 0 4px; }
+
+.score-row { margin-bottom: 14px; }
+
+.score-row-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.score-name { font-size: 12.5px; color: var(--text); font-weight: 500; }
+.score-val { font-size: 12px; font-weight: 600; }
+
+.score-bar-bg {
+  height: 5px;
+  background: var(--surface2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0;
+}
+
+/* Pullquote */
+.pullquote {
+  padding: 20px 24px;
+  border-left: 3px solid var(--accent);
+  margin: 16px 0 8px;
+  background: var(--surface3);
+  border-radius: 0 10px 10px 0;
+}
+
+.pullquote p {
+  font-family: 'Instrument Serif', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ─── Actions ─── */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border2);
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary {
+  background: var(--text-bright);
+  color: var(--bg);
+  border: 1px solid var(--text-bright);
+}
+
+.btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border2);
+}
+
+.btn-secondary:hover { border-color: var(--text-dim); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  font-weight: 400;
+}
+
+.btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--text-bright);
+  color: var(--bg);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 16px 14px 50px; }
+  .q-card, .r-card { padding: 24px 18px; }
+  .q-text { font-size: 19px; }
+  .option { padding: 13px 14px; font-size: 13.5px; }
+  .scales-list { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ═══ HEADER ═══ -->
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-top">
+        <div class="header-line"></div>
+        <div class="header-label">Психологический тест</div>
+        <div class="header-line"></div>
+      </div>
+      <h1>Почему ты не говоришь <em>свой возраст?</em></h1>
+      <p class="lead">Научный тест на основе 6 психологических механизмов. 14 вопросов — и честный ответ, что именно стоит за этим решением.</p>
+    </div>
+
+    <div class="intro">
+      <h2>Что измеряет этот тест</h2>
+      <p>Нежелание называть возраст — это никогда просто «не хочу». За ним стоит конкретный психологический механизм: от страха стереотипов (Steele & Aronson, 1995) до управления впечатлением (Goffman, 1959). Этот тест определит, какой из шести механизмов доминирует у тебя.</p>
+      <div class="scales-list">
+        <div class="scale-tag"><span class="dot" style="background:#8b5e3c"></span>Страх стереотипов</div>
+        <div class="scale-tag"><span class="dot" style="background:#4a7c72"></span>Разрыв идентичности</div>
+        <div class="scale-tag"><span class="dot" style="background:#a08040"></span>Контроль впечатления</div>
+        <div class="scale-tag"><span class="dot" style="background:#b05050"></span>Сравнение с нормой</div>
+        <div class="scale-tag"><span class="dot" style="background:#6a7c8c"></span>Экзистенциальный фактор</div>
+        <div class="scale-tag"><span class="dot" style="background:#7a6a8c"></span>Личная граница</div>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Начать тест →</button>
+  </div>
+
+  <!-- ═══ PROGRESS ═══ -->
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Прогресс</span>
+      <span class="progress-count" id="progressCount">1 / 14</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано</div>
+
+<script>
+const questions = [
+  {
+    source: "Вопрос 1 из 14",
+    context: "Угроза стереотипа · Steele & Aronson, 1995",
+    text: "Когда тебя спрашивают «Сколько тебе лет?» — что происходит внутри первую секунду?",
+    options: [
+      { text: "Напряжение — как будто сейчас будут судить", scores: { stereo: 3, impression: 1 } },
+      { text: "Мысленно прикидываю, что человек подумает", scores: { impression: 3 } },
+      { text: "Ощущение, что цифра не соответствует тому, кем я себя чувствую", scores: { identity: 3 } },
+      { text: "Раздражение — это не их дело", scores: { boundary: 3 } }
+    ]
+  },
+  {
+    source: "Вопрос 2 из 14",
+    context: "Самодискрепанция · Higgins, 1987",
+    text: "Если бы люди узнали твой возраст — что изменилось бы в их отношении к тебе?",
+    options: [
+      { text: "Стали бы относиться менее серьёзно — «слишком молод» или «уже старый»", scores: { stereo: 3, compare: 1 } },
+      { text: "Удивились бы — я выгляжу/веду себя не на свой возраст", scores: { identity: 3, impression: 1 } },
+      { text: "Начали бы мерить мои достижения по возрастной шкале", scores: { compare: 3, stereo: 1 } },
+      { text: "Ничего бы не изменилось, мне просто некомфортно это обсуждать", scores: { boundary: 2, existential: 1 } }
+    ]
+  },
+  {
+    source: "Вопрос 3 из 14",
+    context: "Управление впечатлением · Goffman, 1959",
+    text: "Ты знакомишься с новыми людьми. Что ты предпочитаешь — чтобы они узнали твой возраст:",
+    options: [
+      { text: "После того, как составят обо мне впечатление — не до", scores: { impression: 3, stereo: 1 } },
+      { text: "Никогда — это не важная информация", scores: { boundary: 3 } },
+      { text: "Когда угодно — но я заранее знаю, что удивлю", scores: { identity: 2, impression: 1 } },
+      { text: "Мне бы хотелось, чтобы возраст вообще не обсуждался", scores: { existential: 2, stereo: 1 } }
+    ]
+  },
+  {
+    source: "Вопрос 4 из 14",
+    context: "Социальное сравнение · Festinger, 1954",
+    text: "Бывает ли так, что ты сравниваешь свою жизнь с «нормой» для своего возраста?",
+    options: [
+      { text: "Да, и часто чувствую, что отстаю", scores: { compare: 3, stereo: 1 } },
+      { text: "Да, но я впереди — и не хочу, чтобы возраст обесценивал это", scores: { impression: 2, identity: 1 } },
+      { text: "Иногда, но стараюсь не зацикливаться", scores: { compare: 1, existential: 1 } },
+      { text: "Нет — у каждого свой путь, и я это понимаю", scores: { boundary: 2 } }
+    ]
+  },
+  {
+    source: "Вопрос 5 из 14",
+    context: "Эйджизм · Levy, 2009",
+    text: "Встречал(а) ли ты предвзятость из-за возраста — когда тебя оценивали «по цифре»?",
+    options: [
+      { text: "Да — «ты слишком молод(а), чтобы разбираться в этом»", scores: { stereo: 3, compare: 1 } },
+      { text: "Да — «в твоём возрасте пора бы уже...»", scores: { compare: 3, stereo: 1 } },
+      { text: "Не напрямую, но я чувствую это в отношении людей", scores: { stereo: 1, impression: 2 } },
+      { text: "Нет, дело не в опыте дискриминации", scores: { identity: 1, boundary: 1 } }
+    ]
+  },
+  {
+    source: "Вопрос 6 из 14",
+    context: "Теория идентичности · Erikson, 1968",
+    text: "Насколько твой возраст отражает то, кем ты себя чувствуешь?",
+    options: [
+      { text: "Совсем не отражает — внутри я другого возраста", scores: { identity: 3 } },
+      { text: "Частично — но цифра создаёт неправильное впечатление", scores: { identity: 2, impression: 1 } },
+      { text: "Нормально отражает, но я не хочу, чтобы меня через неё определяли", scores: { boundary: 2, impression: 1 } },
+      { text: "Возраст — это просто число, и оно не про меня", scores: { existential: 2, boundary: 1 } }
+    ]
+  },
+  {
+    source: "Вопрос 7 из 14",
+    context: "Terror Management · Greenberg et al., 1986",
+    text: "Когда ты думаешь о своём возрасте, что тебя беспокоит больше?",
+    options: [
+      { text: "Что время уходит, а я не там, где хотел(а) бы быть", scores: { existential: 2, compare: 2 } },
+      { text: "Что люди будут относиться иначе, узнав цифру", scores: { stereo: 2, impression: 2 } },
+      { text: "Что я теряю возможности, которые привязаны к возрасту", scores: { compare: 2, existential: 1 } },
+      { text: "Меня не беспокоит сам возраст — я просто не хочу его обсуждать", scores: { boundary: 3 } }
+    ]
+  },
+  {
+    source: "Вопрос 8 из 14",
+    context: "Когнитивная оценка · Beck, 1979",
+    text: "Какая мысль чаще приходит, когда кто-то настаивает узнать твой возраст?",
+    options: [
+      { text: "«Зачем тебе это? Чтобы навесить ярлык?»", scores: { stereo: 3, boundary: 1 } },
+      { text: "«Ты будешь считать, что я должен быть каким-то»", scores: { compare: 2, stereo: 1 } },
+      { text: "«Это моя личная информация, и я не обязан(а) ей делиться»", scores: { boundary: 3 } },
+      { text: "«Я хочу, чтобы меня воспринимали по делам, не по дате рождения»", scores: { impression: 3 } }
+    ]
+  },
+  {
+    source: "Вопрос 9 из 14",
+    context: "Самопрезентация · Schlenker, 1980",
+    text: "В профессиональной среде ты скорее:",
+    options: [
+      { text: "Скрываю возраст — чтобы оценивали компетенцию, а не стаж", scores: { impression: 3, stereo: 1 } },
+      { text: "Не скрываю, но и не афиширую — зачем лишний раз?", scores: { boundary: 2 } },
+      { text: "Чувствую, что возраст может работать против меня", scores: { stereo: 2, compare: 1 } },
+      { text: "Мне кажется, мой возраст не соответствует моей позиции", scores: { identity: 2, compare: 1 } }
+    ]
+  },
+  {
+    source: "Вопрос 10 из 14",
+    context: "Конечность · Yalom, 1980",
+    text: "Дни рождения для тебя — это:",
+    options: [
+      { text: "Приятный праздник — люблю внимание и поздравления", scores: { boundary: 1 } },
+      { text: "Нейтральное событие — ни радости, ни дискомфорта", scores: { boundary: 2 } },
+      { text: "Немного некомфортно — лишнее напоминание о возрасте", scores: { existential: 3 } },
+      { text: "Момент подведения итогов — и иногда итоги давят", scores: { compare: 2, existential: 2 } }
+    ]
+  },
+  {
+    source: "Вопрос 11 из 14",
+    context: "Субъективный возраст · Rubin & Berntsen, 2006",
+    text: "Если бы тебя попросили назвать «ощущаемый» возраст — он бы:",
+    options: [
+      { text: "Был бы сильно меньше реального", scores: { identity: 3, existential: 1 } },
+      { text: "Был бы немного меньше — на пару лет", scores: { identity: 1, impression: 1 } },
+      { text: "Примерно совпал бы", scores: { boundary: 1, compare: 1 } },
+      { text: "Был бы больше — я чувствую себя старше", scores: { identity: 2, existential: 1 } }
+    ]
+  },
+  {
+    source: "Вопрос 12 из 14",
+    context: "Интернализация стандартов · Thompson, 2004",
+    text: "Есть ли у тебя внутренний «таймлайн» — к какому возрасту что нужно достичь?",
+    options: [
+      { text: "Да, и я от него отстаю — это давит", scores: { compare: 3, existential: 1 } },
+      { text: "Да, но я его пересматриваю — жизнь сложнее графиков", scores: { compare: 1, boundary: 1 } },
+      { text: "Раньше был, но я от него отказался(ась)", scores: { boundary: 2 } },
+      { text: "Нет — я не мерю жизнь дедлайнами", scores: { boundary: 2, identity: 1 } }
+    ]
+  },
+  {
+    source: "Вопрос 13 из 14",
+    context: "Контроль нарратива · McAdams, 2001",
+    text: "Если бы ты мог(ла) контролировать одну вещь в том, как люди тебя воспринимают:",
+    options: [
+      { text: "Чтобы видели мои реальные способности, а не возрастные ожидания", scores: { impression: 3, stereo: 1 } },
+      { text: "Чтобы не было «ну ты ещё молодой» или «ну ты уже...»", scores: { stereo: 3 } },
+      { text: "Чтобы воспринимали меня как я есть, без привязки к цифрам", scores: { identity: 2, boundary: 2 } },
+      { text: "Чтобы никто не лез в личное без приглашения", scores: { boundary: 3 } }
+    ]
+  },
+  {
+    source: "Вопрос 14 из 14",
+    context: "Подлинность · Rogers, 1961",
+    text: "Последний вопрос. Если бы завтра возраст перестал существовать как понятие — что бы изменилось лично для тебя?",
+    options: [
+      { text: "Стало бы легче — никто не будет судить по цифре", scores: { stereo: 3, impression: 1 } },
+      { text: "Я бы наконец чувствовал(а) себя на равных с другими", scores: { compare: 3 } },
+      { text: "Ничего — для меня и так возраст не определяющий фактор", scores: { boundary: 3 } },
+      { text: "Исчез бы этот тикающий счётчик в голове", scores: { existential: 3 } }
+    ]
+  }
+];
+
+const scaleNames = {
+  stereo: 'Страх стереотипов',
+  identity: 'Разрыв идентичности',
+  impression: 'Контроль впечатления',
+  compare: 'Сравнение с нормой',
+  existential: 'Экзистенциальный фактор',
+  boundary: 'Личная граница'
+};
+
+const scaleColors = {
+  stereo: '#8b5e3c',
+  identity: '#4a7c72',
+  impression: '#a08040',
+  compare: '#b05050',
+  existential: '#6a7c8c',
+  boundary: '#7a6a8c'
+};
+
+const results = {
+  stereo: {
+    emoji: "🏷️",
+    title: "Защита от ярлыков",
+    subtitle: "Ты скрываешь возраст, потому что знаешь: люди судят по цифре раньше, чем по человеку.",
+    science: "Угроза стереотипа (Steele & Aronson, 1995)",
+    scienceText: "Стил и Аронсон доказали: когда человек знает, что его могут оценить через призму стереотипа, это само по себе влияет на поведение и самоощущение. В контексте возраста это работает в обе стороны: «слишком молодой — значит некомпетентный» и «слишком старый — значит не в теме». Исследования Леви (2009) показали, что интернализация возрастных стереотипов снижает когнитивные функции и даже продолжительность жизни. Твоё нежелание называть возраст — это, по сути, защита от того, чтобы стереотип определял, как к тебе относятся.",
+    advice: "Осознай: ты защищаешь не число — ты защищаешь право быть увиденным как личность. Это здоровая стратегия. Но стоит задуматься: если стереотип так сильно давит — возможно, ты сам(а) его интернализировал(а) сильнее, чем кажется. Иногда лучший способ обезоружить стереотип — назвать его вслух.",
+    quote: "Стереотип силён только тогда, когда его боятся. Когда его называют — он теряет власть."
+  },
+  identity: {
+    emoji: "🪞",
+    title: "Возрастной разрыв",
+    subtitle: "Цифра в паспорте и человек в зеркале — это два разных возраста. И ты это знаешь.",
+    science: "Субъективный возраст (Rubin & Berntsen, 2006) и самодискрепанция (Higgins, 1987)",
+    scienceText: "Исследования показывают, что после 25 лет большинство людей чувствуют себя моложе своего хронологического возраста — в среднем на 20%. Это нормально. Но когда разрыв между «ощущаемым» и «паспортным» возрастом слишком велик, возникает когнитивный диссонанс: ты знаешь, что тебе X, но чувствуешь себя на Y — и не хочешь, чтобы окружающие привязывали тебя к X. Хиггинс назвал это «самодискрепанцией» — разрывом между тем, кто ты есть, и тем, кем тебя считают.",
+    advice: "Разрыв между субъективным и реальным возрастом — не проблема, а особенность. Исследования показывают, что люди с более молодым субъективным возрастом дольше сохраняют когнитивную гибкость. Ты не врёшь — ты просто знаешь себя лучше, чем цифра.",
+    quote: "Возраст — это биология. То, как ты себя чувствуешь — это психология. И второе важнее."
+  },
+  impression: {
+    emoji: "🎭",
+    title: "Управление образом",
+    subtitle: "Ты не скрываешь возраст — ты контролируешь порядок, в котором люди узнают о тебе.",
+    science: "Управление впечатлением (Goffman, 1959; Schlenker, 1980)",
+    scienceText: "Ирвинг Гоффман описал социальное взаимодействие как «театр» — мы все управляем впечатлением, которое производим. Возраст — один из самых мощных «ярлыков первого впечатления»: узнав цифру, мозг автоматически активирует набор ожиданий. Ты это понимаешь и хочешь, чтобы люди сначала увидели тебя, а потом — цифру. Шленкер (1980) показал, что это не манипуляция, а социальная компетентность: умение контролировать нарратив о себе.",
+    advice: "Ты стратег коммуникации, и это навык. Но задай себе вопрос: если бы люди сначала узнали возраст — действительно ли их отношение изменилось бы? Иногда мы переоцениваем влияние одной цифры на целое впечатление.",
+    quote: "Мы все режиссёры собственной истории. Контролировать порядок раскрытия информации — это не ложь, это нарратив."
+  },
+  compare: {
+    emoji: "📐",
+    title: "Давление «нормы»",
+    subtitle: "Дело не в возрасте. Дело в том, что «в этом возрасте уже пора» — и ты это слышишь.",
+    science: "Социальное сравнение (Festinger, 1954) и социальные часы (Neugarten, 1965)",
+    scienceText: "Бернис Нойгартен ввела понятие «социальных часов» — неписаного расписания, когда нужно закончить учёбу, построить карьеру, завести семью, купить квартиру. Фестингер показал, что мы постоянно сравниваем себя с этим расписанием. Когда ты чувствуешь, что «отстаёшь» — называть возраст означает обнажить этот разрыв. Исследования показывают, что давление «социальных часов» сильнее всего между 25 и 45 годами — именно тогда общество максимально жёстко оценивает «достижения по возрасту».",
+    advice: "«Социальные часы» были актуальны, когда карьера была одна, брак — один, и жизнь была линейной. Сегодня это устаревшая модель. Исследования показывают, что самые успешные люди часто выбиваются из «нормального» графика. Твоя задача — перестать сравнивать свой черновик с чужим финальным кадром.",
+    quote: "Не бывает опозданий в жизни, которую ты сам(а) проектируешь."
+  },
+  existential: {
+    emoji: "⏳",
+    title: "Тикающий счётчик",
+    subtitle: "Возраст для тебя — не просто число. Это напоминание о конечности, и ты предпочитаешь не смотреть на часы.",
+    science: "Terror Management Theory (Greenberg, Solomon & Pyszczynski, 1986)",
+    scienceText: "Теория управления страхом смерти (TMT) утверждает: осознание конечности жизни — базовая экзистенциальная тревога, и мы используем массу стратегий, чтобы её подавить. Возраст — одно из самых прямых напоминаний о том, что время идёт. Ялом (1980) описал это как «экзистенциальную данность»: мы все знаем, что конечны, но предпочитаем не думать об этом. Нежелание называть возраст может быть одной из форм «защиты от смертности» — способом не фиксировать тикание часов.",
+    advice: "Это одна из самых глубоких причин — и самая человечная. Ирвин Ялом писал: «Осознание смерти может стать лучшим мотиватором для подлинной жизни». Возраст — не враг. Это свидетельство того, что ты жив(а) и продолжаешь идти.",
+    quote: "Время не забирает жизнь. Оно забирает только ту жизнь, которую ты не прожил(а)."
+  },
+  boundary: {
+    emoji: "🚪",
+    title: "Осознанная граница",
+    subtitle: "У тебя нет проблемы с возрастом. У тебя есть чёткое понимание того, какую информацию ты готов(а) раскрывать — а какую нет.",
+    science: "Теория управления конфиденциальностью (Petronio, 2002) и автономия (Deci & Ryan, 1985)",
+    scienceText: "Сандра Петронио разработала теорию коммуникативных границ: каждый человек имеет «информационные границы» — невидимые линии того, что он готов раскрывать. Возраст для тебя попадает в категорию информации, которой ты распоряжаешься по собственному усмотрению. Это не защитная реакция — это проявление автономии. Деси и Райан (1985) показали, что люди с сильным чувством автономии — психологически устойчивее и менее подвержены манипуляциям.",
+    advice: "Ты один(а) из немногих, кому нечего «преодолевать». Твоя позиция — зрелая и осознанная. Возраст — это личная информация, и у тебя есть полное право решать, кому и когда её открывать. Если кто-то настаивает — это говорит о них, а не о тебе.",
+    quote: "Граница — это не стена. Это дверь, ключ от которой только у тебя."
+  }
+};
+
+let curQ = 0, selOpt = null;
+let scores = { stereo: 0, identity: 0, impression: 0, compare: 0, existential: 0, boundary: 0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-source">${q.source}</div>
+      <div class="q-context">${q.context}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">${q.options.map((o, j) => `
+        <div class="option" onclick="sel(this,${j})">
+          <div class="option-marker"></div>
+          <span>${o.text}</span>
+        </div>
+      `).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i === questions.length - 1 ? 'Узнать результат →' : 'Следующий вопрос →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${i + 1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i / questions.length) * 100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop - 10, behavior: 'smooth' });
+}
+
+function sel(el, i) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if (selOpt === null) return;
+  for (const [k, v] of Object.entries(questions[curQ].options[selOpt].scores)) scores[k] += v;
+  selOpt = null;
+  curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML = '';
+
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const type = sorted[0][0];
+  const second = sorted[1][0];
+  const maxVal = sorted[0][1];
+  const r = results[type];
+
+  const barsHTML = sorted.map(([key, val]) => {
+    const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
+    return `<div class="score-row"><div class="score-row-top"><span class="score-name">${scaleNames[key]}</span><span class="score-val" style="color:${scaleColors[key]}">${pct}%</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="background:${scaleColors[key]}" data-w="${pct}"></div></div></div>`;
+  }).join('');
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="r-hero">
+      <div class="r-hero-top">
+        <span class="r-emoji">${r.emoji}</span>
+        <span class="r-meta">Твой результат</span>
+      </div>
+      <div class="r-title">${r.title}</div>
+      <p class="r-subtitle">${r.subtitle}</p>
+    </div>
+
+    <div class="r-card">
+      <h3>📊 Профиль по 6 шкалам</h3>
+      <div class="score-bars">${barsHTML}</div>
+    </div>
+
+    <div class="r-card">
+      <h3>🔬 Что говорит наука</h3>
+      <div class="r-science-ref">${r.science}</div>
+      <p>${r.scienceText}</p>
+    </div>
+
+    <div class="r-card">
+      <h3>🧭 Что с этим делать</h3>
+      <p>${r.advice}</p>
+      <div class="pullquote"><p>${r.quote}</p></div>
+    </div>
+
+    ${sorted[1][1] > 3 ? `
+    <div class="r-card">
+      <h3>📌 Дополнительный фактор: ${results[second].title}</h3>
+      <p>${results[second].subtitle}</p>
+    </div>` : ''}
+
+    <div class="actions">
+      <button class="btn-action btn-primary" onclick="shareShort()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться
+      </button>
+      <button class="btn-action btn-secondary" onclick="copyFull()">
+        📋 Скопировать результат
+      </button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-action btn-secondary">
+        🧪 Пройти ещё тесты
+      </a>
+      <button class="btn-action btn-ghost" onclick="location.reload()">↻ Пройти заново</button>
+    </div>`;
+
+  setTimeout(() => document.querySelectorAll('.score-bar-fill').forEach(b => b.style.width = b.dataset.w + '%'), 300);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareShort() {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const r = results[sorted[0][0]];
+  const text = `${r.emoji} Мой результат: ${r.title}\n\n${r.subtitle}\n\nПройти тест: https://lisofoxa-oss.github.io/tests/`;
+  if (navigator.share) navigator.share({ title: 'Почему ты скрываешь возраст?', text }).catch(() => {});
+  else navigator.clipboard.writeText(text).then(() => showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const type = sorted[0][0];
+  const second = sorted[1][0];
+  const r = results[type];
+  const maxVal = sorted[0][1];
+
+  const bars = sorted.map(([key, val]) => {
+    const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
+    return `  ${scaleNames[key]}: ${'█'.repeat(Math.round(pct / 10))}${'░'.repeat(10 - Math.round(pct / 10))} ${pct}%`;
+  }).join('\n');
+
+  const text = `⏳ ПОЧЕМУ ТЫ СКРЫВАЕШЬ ВОЗРАСТ? — Результат
+
+${r.emoji}  ${r.title}
+
+«${r.subtitle}»
+
+━━━━━━━━━━━━━━━━━
+
+📊 Профиль по 6 шкалам:
+${bars}
+
+━━━━━━━━━━━━━━━━━
+
+🔬 Что говорит наука (${r.science}):
+
+${r.scienceText}
+
+━━━━━━━━━━━━━━━━━
+
+🧭 Что с этим делать:
+
+${r.advice}
+
+💬 «${r.quote}»${sorted[1][1] > 3 ? `
+
+━━━━━━━━━━━━━━━━━
+
+📌 Дополнительный фактор: ${results[second].title}
+${results[second].subtitle}` : ''}
+
+━━━━━━━━━━━━━━━━━
+→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
