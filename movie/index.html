@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какой ты персонаж в фильме? — Тест</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c0c0e;--surface:#141416;--surface2:#1c1c20;--text:#c8c4d0;--text-dim:#6e6a7a;--text-bright:#eeeaf5;--border:rgba(200,196,208,.08);--red:#c94040;--gold:#c9a84c;--blue:#4a7cc9;--green:#4caa6e;--accent:var(--red)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(200,170,76,.04),transparent 50%),radial-gradient(ellipse 60% 60% at 50% 100%,rgba(201,64,64,.03),transparent 50%);pointer-events:none}
+.container{max-width:660px;margin:0 auto;padding:20px 20px 60px;position:relative;z-index:1}
+
+.header{text-align:center;padding:50px 0 36px;animation:fadeUp .8s ease}
+.clapboard{font-size:50px;display:block;margin-bottom:20px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,8vw,3.6rem);color:var(--text-bright);line-height:1.05;margin-bottom:14px;letter-spacing:2px;text-transform:uppercase}
+h1 span{color:var(--gold)}
+.subtitle{font-size:15px;color:var(--text-dim);max-width:440px;margin:0 auto;font-weight:300;line-height:1.7}
+
+.genre-section{margin-top:36px;animation:fadeUp .8s ease .2s both}
+.genre-section h2{font-family:'Bebas Neue',sans-serif;font-size:22px;text-align:center;color:var(--text-bright);letter-spacing:2px;margin-bottom:6px}
+.genre-hint{text-align:center;font-size:13px;color:var(--text-dim);margin-bottom:24px;font-weight:300}
+.genre-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.genre-card{position:relative;border-radius:16px;padding:26px 16px;text-align:center;cursor:pointer;border:1px solid transparent;transition:all .35s ease;overflow:hidden;background:var(--surface);min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.genre-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.genre-card:hover{transform:translateY(-3px);border-color:var(--border)}
+.genre-card.selected{border-color:var(--gc)}
+.genre-card.selected::before{opacity:1}
+.genre-card[data-g="romcom"]{--gc:var(--red)}.genre-card[data-g="romcom"]::before{background:radial-gradient(circle at 50% 90%,rgba(201,64,64,.12),transparent 60%)}
+.genre-card[data-g="thriller"]{--gc:var(--blue)}.genre-card[data-g="thriller"]::before{background:radial-gradient(circle at 50% 90%,rgba(74,124,201,.12),transparent 60%)}
+.genre-card[data-g="fantasy"]{--gc:var(--gold)}.genre-card[data-g="fantasy"]::before{background:radial-gradient(circle at 50% 90%,rgba(201,168,76,.12),transparent 60%)}
+.genre-card[data-g="drama"]{--gc:var(--green)}.genre-card[data-g="drama"]::before{background:radial-gradient(circle at 50% 90%,rgba(76,170,110,.12),transparent 60%)}
+.genre-emoji{font-size:34px;margin-bottom:10px}
+.genre-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--text-bright);margin-bottom:4px}
+.genre-desc{font-size:11.5px;color:var(--text-dim);font-weight:300}
+
+.btn-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;margin-top:20px;border:none;border-radius:12px;font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;background:var(--surface2);color:var(--text-dim);pointer-events:none;opacity:.5;text-transform:uppercase;letter-spacing:1px}
+.btn-go.active{opacity:1;pointer-events:all;color:var(--bg)}
+.btn-go.active:hover{transform:translateY(-2px)}
+
+.progress-container{position:sticky;top:0;z-index:100;background:rgba(12,12,14,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:16px 0 12px;margin-bottom:24px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:10px}
+.progress-label{font-size:12px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;font-weight:300}
+.progress-count{font-size:13px;font-weight:600}
+.progress-bar{height:3px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;margin-bottom:16px;animation:fadeUp .5s ease}
+.q-num{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;margin-bottom:4px}
+.q-tag{display:inline-block;font-size:11px;color:var(--text-dim);padding:4px 10px;background:var(--surface2);border-radius:6px;margin-bottom:14px}
+.q-text{font-size:19px;font-weight:600;color:var(--text-bright);line-height:1.5;margin-bottom:22px}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--surface2);border:1px solid transparent;border-radius:12px;cursor:pointer;transition:all .3s;font-size:14px;color:var(--text);user-select:none}
+.option:hover{border-color:var(--border)}
+.option.selected{border-color:var(--accent);background:rgba(201,64,64,.06);color:var(--text-bright)}
+.option-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--text-dim);flex-shrink:0;transition:all .3s;position:relative}
+.option.selected .option-dot{border-color:var(--accent);background:var(--accent)}
+.option.selected .option-dot::after{content:'';position:absolute;inset:4px;background:var(--bg);border-radius:50%}
+.btn-next{width:100%;padding:15px;border:none;border-radius:12px;font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;margin-top:10px;background:var(--surface2);color:var(--text-dim);opacity:0;pointer-events:none;text-transform:uppercase;letter-spacing:1px}
+.btn-next.active{opacity:1;pointer-events:all;color:var(--bg)}
+
+.results-section{display:none}.results-section.active{display:block;animation:fadeUp .8s ease}
+.r-hero{text-align:center;padding:50px 10px 30px}
+.r-emoji{font-size:64px;display:block;margin-bottom:16px}
+.r-label{font-size:11px;text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;font-weight:300}
+.r-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,2.8rem);color:var(--text-bright);margin-bottom:10px;letter-spacing:2px}
+.r-tagline{font-size:16px;font-style:italic;color:var(--text-dim);max-width:420px;margin:0 auto;line-height:1.6;font-weight:300}
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px;margin-bottom:14px}
+.r-card h3{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--text-bright);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.r-card p{font-size:13.5px;color:var(--text-dim);line-height:1.85;font-weight:300}
+.scene-box{margin-top:16px;padding:18px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--accent)}
+.scene-label{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:6px}
+.scene-text{font-size:13px;color:var(--text);line-height:1.7;font-style:italic;font-weight:300}
+.credits{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.credit{padding:10px 14px;background:var(--surface2);border-radius:10px;text-align:center}
+.credit-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:3px}
+.credit-val{font-size:14px;color:var(--text-bright);font-weight:500}
+
+.actions{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+.btn-share{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border:none;border-radius:12px;color:var(--bg);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;text-transform:uppercase;letter-spacing:1px}
+.btn-share:hover{transform:translateY(-2px)}
+.btn-more{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .3s}
+.btn-retry{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border:1px solid var(--border);border-radius:12px;background:transparent;color:var(--text-dim);font-family:'Source Sans 3',sans-serif;font-size:14px;cursor:pointer;transition:all .3s}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1px solid var(--accent);color:var(--text-bright);padding:12px 24px;border-radius:12px;font-size:13px;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.genre-grid{gap:10px}.genre-card{padding:20px 12px;min-height:120px}.q-card,.r-card{padding:24px 18px}.q-text{font-size:17px}.credits{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <span class="clapboard">🎬</span>
+      <h1>Какой ты <span>персонаж</span> в фильме?</h1>
+      <p class="subtitle">Выбери жанр — и мы определим твой архетип по Юнгу, Кэмпбеллу и здравому смыслу. С сюжетным поворотом в финале.</p>
+    </div>
+    <div class="genre-section">
+      <h2>Выбери свой жанр</h2>
+      <p class="genre-hint">В каком фильме ты бы хотела оказаться?</p>
+      <div class="genre-grid">
+        <div class="genre-card" data-g="romcom" onclick="pickGenre('romcom')"><div class="genre-emoji">💕</div><div class="genre-name">Ромком</div><div class="genre-desc">Любовь, хаос и хэппи-энд</div></div>
+        <div class="genre-card" data-g="thriller" onclick="pickGenre('thriller')"><div class="genre-emoji">🔍</div><div class="genre-name">Триллер</div><div class="genre-desc">Загадки, напряжение, правда</div></div>
+        <div class="genre-card" data-g="fantasy" onclick="pickGenre('fantasy')"><div class="genre-emoji">⚔️</div><div class="genre-name">Фэнтези</div><div class="genre-desc">Магия, квесты, судьба</div></div>
+        <div class="genre-card" data-g="drama" onclick="pickGenre('drama')"><div class="genre-emoji">🎭</div><div class="genre-name">Драма</div><div class="genre-desc">Глубина, рост, катарсис</div></div>
+      </div>
+      <button class="btn-go" id="btnGo" onclick="startTest()">МОТОР! ▸</button>
+    </div>
+  </div>
+  <div class="progress-container" id="progressBar"><div class="progress-top"><span class="progress-label">Сцена</span><span class="progress-count" id="progressCount">1 / 10</span></div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast">🎬 Скопировано!</div>
+
+<script>
+let genre=null,curQ=0,selO=null;
+let sc={hero:0,mentor:0,rebel:0,lover:0,trickster:0,mystic:0};
+const gColors={romcom:{main:'#c94040',grad:'linear-gradient(135deg,#c94040,#d96060)'},thriller:{main:'#4a7cc9',grad:'linear-gradient(135deg,#4a7cc9,#6a9ce0)'},fantasy:{main:'#c9a84c',grad:'linear-gradient(135deg,#c9a84c,#dfc070)'},drama:{main:'#4caa6e',grad:'linear-gradient(135deg,#4caa6e,#6cc48e)'}};
+
+const questions=[
+  {tag:"Путь героя · Кэмпбелл",text:"Судьба звонит в дверь. Что ты делаешь?",options:[
+    {text:"Открываю — если это приключение, я внутри",scores:{hero:3,rebel:1}},
+    {text:"Смотрю в глазок и оцениваю риски",scores:{mentor:2,mystic:1}},
+    {text:"Выхожу через чёрный ход — у меня свой маршрут",scores:{rebel:3}},
+    {text:"Зову кого-нибудь — вместе веселее (и безопаснее)",scores:{lover:2,trickster:1}}
+  ]},
+  {tag:"Роль в группе",text:"В команде ты обычно:",options:[
+    {text:"Лидер — беру ответственность и веду",scores:{hero:3}},
+    {text:"Мозг — продумываю стратегию за всех",scores:{mentor:3}},
+    {text:"Бунтарь — ломаю правила, если они тупые",scores:{rebel:3}},
+    {text:"Клей — держу всех вместе эмоционально",scores:{lover:2,trickster:1}}
+  ]},
+  {tag:"Мотивация",text:"Что двигает тобой больше всего?",options:[
+    {text:"Справедливость — мир должен быть лучше",scores:{hero:3,mentor:1}},
+    {text:"Свобода — никто не решает за меня",scores:{rebel:3}},
+    {text:"Любовь и близость — ради людей я на всё",scores:{lover:3}},
+    {text:"Любопытство — мне интересно, как всё устроено",scores:{mystic:2,trickster:1}}
+  ]},
+  {tag:"Реакция на опасность",text:"Злодей наставил на тебя пистолет (метафорически). Ты:",options:[
+    {text:"Встаю между ним и друзьями — инстинкт",scores:{hero:3}},
+    {text:"Говорю с ним — нахожу слабое место в его аргументах",scores:{mentor:3}},
+    {text:"Шучу — «Серьёзно? Это лучшее, что у тебя есть?»",scores:{trickster:3}},
+    {text:"Убегаю, но потом возвращаюсь с планом",scores:{rebel:2,mystic:1}}
+  ]},
+  {tag:"Слабость",text:"Твой главный «фатальный недостаток» (как в хорошем кино)?",options:[
+    {text:"Беру на себя слишком много и не прошу о помощи",scores:{hero:3}},
+    {text:"Слишком много думаю — паралич анализом",scores:{mentor:2,mystic:2}},
+    {text:"Не могу промолчать, даже когда надо",scores:{rebel:2,trickster:1}},
+    {text:"Слишком сильно привязываюсь к людям",scores:{lover:3}}
+  ]},
+  {tag:"Суперсила",text:"Твоя скрытая суперспособность:",options:[
+    {text:"Вдохновлять людей — рядом со мной все становятся смелее",scores:{hero:2,lover:1}},
+    {text:"Видеть паттерны — замечаю то, что другие пропускают",scores:{mystic:3,mentor:1}},
+    {text:"Выкручиваться — из любой ситуации нахожу выход",scores:{trickster:3}},
+    {text:"Говорить неудобную правду — мягко, но метко",scores:{mentor:2,rebel:1}}
+  ]},
+  {tag:"Отношение к правилам",text:"Правила — это:",options:[
+    {text:"Фундамент — без них хаос",scores:{hero:2,mentor:1}},
+    {text:"Рекомендации — применяю по ситуации",scores:{trickster:2,mystic:1}},
+    {text:"Клетка — созданы, чтобы их ломать",scores:{rebel:3}},
+    {text:"Зависит от того, кто их написал и зачем",scores:{mentor:2,mystic:1}}
+  ]},
+  {tag:"Финальная битва",text:"В кульминации фильма ты бы:",options:[
+    {text:"Произнесла мотивирующую речь и повела в бой",scores:{hero:3}},
+    {text:"Разгадала замысел злодея и обернула его план против него",scores:{mentor:3,mystic:1}},
+    {text:"Сделала что-то безумное, что никто не ожидал",scores:{trickster:3,rebel:1}},
+    {text:"Пожертвовала чем-то ради тех, кого любишь",scores:{lover:3}}
+  ]},
+  {tag:"После титров",text:"Чем заканчивается твой фильм?",options:[
+    {text:"Я ухожу в закат — впереди новое приключение",scores:{hero:2,rebel:1}},
+    {text:"Я нашла дом и людей, ради которых стоит остаться",scores:{lover:3}},
+    {text:"Я поняла что-то важное о себе — тихий, но мощный финал",scores:{mystic:3}},
+    {text:"Сцена после титров: я уже планирую что-то новое",scores:{trickster:2,mentor:1}}
+  ]},
+  {tag:"Мета-вопрос",text:"Если бы ты смотрела фильм про себя — что бы ты подумала о главной героине?",options:[
+    {text:"«Она крутая, но ей бы научиться просить о помощи»",scores:{hero:3}},
+    {text:"«Она умнее, чем показывает, и добрее, чем думает»",scores:{mentor:2,mystic:1}},
+    {text:"«Она хаотичная, но за ней интересно наблюдать»",scores:{trickster:2,rebel:1}},
+    {text:"«Она слишком много любит — и в этом её сила и слабость»",scores:{lover:3}}
+  ]}
+];
+
+const archetypes={
+  hero:{emoji:"⚔️",name:"Героиня",archetype:"Архетип Героя · Кэмпбелл, Юнг",tagline:"Ты — та, кто встаёт, когда все сели. Не потому что не страшно — а потому что кто-то должен.",
+    desc:"Ты берёшь ответственность не потому что хочешь власти, а потому что не можешь смотреть, как всё разваливается. Кэмпбелл описал «Путь героя» как цикл: зов → испытание → трансформация → возвращение. Ты проходишь этот цикл постоянно — на работе, в отношениях, в жизни. Люди идут за тобой, потому что ты первая идёшь вперёд.",
+    shadow:"Синдром спасателя. Ты так привыкла быть сильной, что забыла: герои тоже нуждаются в спасении. Твой сюжетный поворот — позволить кому-то спасти тебя.",
+    scene:"Все в панике. Ты встаёшь. Пауза. Один глубокий вдох. «Я знаю, что делать.» И ты правда знаешь.",
+    credits:{"Жанр":"Эпик / Экшен","Саундтрек":"Hans Zimmer","Суперсила":"Смелость","Слабость":"Гордость"}},
+  mentor:{emoji:"📚",name:"Мудрец",archetype:"Архетип Мудреца · Юнг",tagline:"Ты — тот персонаж, который знает ответ, но даёт герою найти его самому.",
+    desc:"Ты наблюдаешь, анализируешь и понимаешь больше, чем говоришь. Юнг описал Мудреца как архетип знания — того, кто видит структуру за хаосом. Ты та подруга, к которой приходят за советом, и тот коллега, который молчит на совещании, а потом говорит одну фразу — и всё встаёт на места.",
+    shadow:"Ты можешь прятаться за знаниями, избегая действий. «Я ещё не готова» — твоя любимая отговорка. Сюжетный поворот — понять, что готовности не существует.",
+    scene:"Полутёмная комната. Ты спокойно смотришь на карту/экран/доску. Все ждут. «Мы искали не там. Ответ вот здесь.»",
+    credits:{"Жанр":"Детектив / Sci-fi","Саундтрек":"Ludovico Einaudi","Суперсила":"Проницательность","Слабость":"Нерешительность"}},
+  rebel:{emoji:"🔥",name:"Бунтарка",archetype:"Архетип Бунтаря · Юнг",tagline:"Ты не ломаешь правила ради хаоса — ты ломаешь те, которые не работают.",
+    desc:"Ты — тот персонаж, который говорит то, что все думают, но боятся сказать. Юнг описал Бунтаря как силу, разрушающую устаревшие системы. Ты не против правил — ты против глупых правил. За твоей дерзостью стоит чёткое понимание справедливости и нетерпимость к лицемерию.",
+    shadow:"Ты можешь бунтовать по привычке, даже когда правила имеют смысл. И иногда отталкиваешь людей, которые хотят быть рядом. Сюжетный поворот — научиться строить, а не только ломать.",
+    scene:"Все кивают начальнику. Ты поднимаешь руку. «Нет. Это не работает. И все в этой комнате это знают.» Тишина. Потом аплодисменты (не сразу).",
+    credits:{"Жанр":"Триллер / Нуар","Саундтрек":"Billie Eilish","Суперсила":"Правдорубство","Слабость":"Импульсивность"}},
+  lover:{emoji:"💫",name:"Хранительница",archetype:"Архетип Любящего · Юнг",tagline:"Ты — сердце любого фильма. Без тебя сюжет работает, но не трогает.",
+    desc:"Ты строишь мосты между людьми. Юнг описал архетип Любящего как силу связи — ту, что делает жизнь осмысленной. Ты не обязательно про романтику — ты про глубокие связи. Ты помнишь детали, чувствуешь настроение, и ради близких готова на всё. В фильме ты — причина, по которой зритель плачет.",
+    shadow:"Ты можешь растворяться в других и терять себя. Или оставаться в токсичных ситуациях, потому что «я же люблю». Сюжетный поворот — понять, что любить себя — это не эгоизм.",
+    scene:"Все уже сдались. Герой собирается уйти. Ты берёшь его за руку. «Я никуда не ухожу.» И это меняет всё.",
+    credits:{"Жанр":"Ромком / Драма","Саундтрек":"Florence + The Machine","Суперсила":"Эмпатия","Слабость":"Самопожертвование"}},
+  trickster:{emoji:"🃏",name:"Трикстер",archetype:"Архетип Трикстера · Юнг",tagline:"Ты — тот персонаж, чья безумная идея в итоге спасает всех.",
+    desc:"Ты живёшь не по сценарию — и в этом твоя сила. Юнг описал Трикстера как разрушителя ожиданий. Ты разряжаешь обстановку шуткой, находишь нестандартные решения и делаешь непредсказуемое предсказуемо гениальным. Режиссёр бы тебя обожал — ты делаешь каждую сцену интереснее.",
+    shadow:"За юмором иногда прячется страх быть серьёзной. И твои «безумные идеи» не всегда безопасны — для тебя и окружающих. Сюжетный поворот — когда ты впервые говоришь без маски.",
+    scene:"План провалился. Все в отчаянии. Ты: «Окей, а что если мы...» — и предлагаешь что-то настолько абсурдное, что это работает.",
+    credits:{"Жанр":"Комедия / Хейст","Саундтрек":"Arctic Monkeys","Суперсила":"Импровизация","Слабость":"Избегание глубины"}},
+  mystic:{emoji:"🌌",name:"Мистик",archetype:"Архетип Искателя · Юнг",tagline:"Ты — тот персонаж, который видит то, что скрыто от остальных.",
+    desc:"Ты чувствуешь подтекст, замечаешь символы, и у тебя бывают моменты «я это уже видела». Юнг описал Искателя как того, кто ищет не приключения, а смысл. Ты задаёшь вопросы, которые меняют весь сюжет: «А что, если злодей — не тот, кого мы считаем злодеем?»",
+    shadow:"Ты можешь настолько погрузиться в поиск смысла, что забудешь жить. Или видеть знаки там, где их нет. Сюжетный поворот — понять, что иногда роза — это просто роза.",
+    scene:"Ночь. Все спят. Ты стоишь у окна. И вдруг видишь связь, которую никто не заметил. «Всё это время мы смотрели не туда.»",
+    credits:{"Жанр":"Sci-fi / Мистика","Саундтрек":"Radiohead","Суперсила":"Интуиция","Слабость":"Отрыв от реальности"}}
+};
+
+function pickGenre(g){genre=g;document.querySelectorAll('.genre-card').forEach(c=>c.classList.remove('selected'));document.querySelector(`[data-g="${g}"]`).classList.add('selected');const b=document.getElementById('btnGo');b.classList.add('active');b.style.background=gColors[g].grad;document.documentElement.style.setProperty('--accent',gColors[g].main)}
+function startTest(){if(!genre)return;document.getElementById('headerSection').style.display='none';document.getElementById('progressBar').classList.add('active');const c=gColors[genre];document.getElementById('progressFill').style.background=c.grad;document.getElementById('progressCount').style.color=c.main;const bonus={romcom:{lover:2,trickster:1},thriller:{mentor:2,mystic:1},fantasy:{hero:2,mystic:1},drama:{lover:1,mentor:1,mystic:1}};for(const[k,v]of Object.entries(bonus[genre]))sc[k]+=v;showQ(0)}
+function showQ(i){const q=questions[i],c=gColors[genre];document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num" style="color:${c.main}">Сцена ${i+1} из ${questions.length}</div><div class="q-tag">${q.tag}</div><div class="q-text">${q.text}</div><div class="options">${q.options.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><div class="option-dot"></div><span>${o.text}</span></div>`).join('')}</div><button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'ФИНАЛ ▸':'СЛЕДУЮЩАЯ СЦЕНА ▸'}</button></div>`;document.getElementById('progressCount').textContent=`${i+1} / ${questions.length}`;document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'})}
+function sel(el,i){document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selO=i;const b=document.getElementById('btnNext');b.classList.add('active');b.style.background=gColors[genre].grad}
+function nxt(){if(selO===null)return;for(const[k,v]of Object.entries(questions[curQ].options[selO].scores))sc[k]+=v;selO=null;curQ++;curQ<questions.length?showQ(curQ):showResults()}
+function showResults(){document.getElementById('progressBar').classList.remove('active');document.getElementById('qContainer').innerHTML='';const sorted=Object.entries(sc).sort((a,b)=>b[1]-a[1]),type=sorted[0][0],a=archetypes[type],second=archetypes[sorted[1][0]],c=gColors[genre];
+const section=document.getElementById('resultsSection');section.classList.add('active');
+section.innerHTML=`<div class="r-hero"><span class="r-emoji">${a.emoji}</span><div class="r-label" style="color:${c.main}">${a.archetype}</div><div class="r-title">${a.name}</div><p class="r-tagline">${a.tagline}</p></div>
+<div class="r-card"><h3>🎬 Твоя роль</h3><p>${a.desc}</p><div class="credits">${Object.entries(a.credits).map(([k,v])=>`<div class="credit"><div class="credit-label">${k}</div><div class="credit-val">${v}</div></div>`).join('')}</div></div>
+<div class="r-card"><h3>🎥 Твоя коронная сцена</h3><div class="scene-box"><div class="scene-label">INT. — НОЧЬ</div><div class="scene-text">${a.scene}</div></div></div>
+<div class="r-card"><h3>🌘 Сюжетный поворот</h3><p>${a.shadow}</p></div>
+${sorted[1][1]>4?`<div class="r-card"><h3>🎭 Вторая роль: ${second.emoji} ${second.name}</h3><p>${second.tagline}</p></div>`:''}
+<div class="actions"><button class="btn-share" style="background:${c.grad}" onclick="share()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>ПОДЕЛИТЬСЯ</button><a href="https://lisofoxa-oss.github.io/tests/" class="btn-more">🧪 Пройти ещё тесты</a><button class="btn-retry" onclick="location.reload()">↻ Заново</button></div>`;
+window.scrollTo({top:0,behavior:'smooth'})}
+function share(){const a=archetypes[Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0]];const text=`${a.emoji} Я — ${a.name}!\n\n${a.tagline}\n\nУзнай свой архетип: https://lisofoxa-oss.github.io/tests/`;if(navigator.share)navigator.share({title:'Какой ты персонаж в фильме?',text}).catch(()=>{});else navigator.clipboard.writeText(text).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)})}
+</script>
+</body>
+</html>
