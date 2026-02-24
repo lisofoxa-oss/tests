@@ -15,10 +15,16 @@
         <span class="theme-picker-label">Тема:</span>
         <button class="theme-btn active" data-theme="dark" title="Тёмная" onclick="setTheme('dark')"></button>
         <button class="theme-btn" data-theme="light" title="Светлая" onclick="setTheme('light')"></button>
+        <button class="theme-btn" data-theme="latte" title="Латте" onclick="setTheme('latte')"></button>
+        <button class="theme-btn" data-theme="coral" title="Коралл" onclick="setTheme('coral')"></button>
+        <button class="theme-btn" data-theme="rosegold" title="Розовое золото" onclick="setTheme('rosegold')"></button>
+        <button class="theme-btn" data-theme="lavender" title="Лаванда" onclick="setTheme('lavender')"></button>
+        <button class="theme-btn" data-theme="sage" title="Шалфей" onclick="setTheme('sage')"></button>
+        <button class="theme-btn" data-theme="pink" title="Розовая" onclick="setTheme('pink')"></button>
         <button class="theme-btn" data-theme="ocean" title="Океан" onclick="setTheme('ocean')"></button>
+        <button class="theme-btn" data-theme="sunset" title="Закат" onclick="setTheme('sunset')"></button>
         <button class="theme-btn" data-theme="neon" title="Неон" onclick="setTheme('neon')"></button>
         <button class="theme-btn" data-theme="gray" title="Серая" onclick="setTheme('gray')"></button>
-        <button class="theme-btn" data-theme="pink" title="Розовая" onclick="setTheme('pink')"></button>
       </div>
     </div>
 
@@ -60,7 +66,6 @@
       try { localStorage.setItem('theme', name); } catch(e) {}
     }
 
-    // Restore saved theme
     try {
       const saved = localStorage.getItem('theme');
       if (saved) setTheme(saved);

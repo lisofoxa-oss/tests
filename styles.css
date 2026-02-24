@@ -2,9 +2,9 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ═══════════════════════════════════════
-   THEMES
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   T H E M E S
+   ═══════════════════════════════════════════════ */
 
 /* ─── Dark (default) ─── */
 :root, [data-theme="dark"] {
@@ -28,7 +28,6 @@
   --topbar-stripe: linear-gradient(90deg, #c084fc, #f472b6, #818cf8);
   --picker-bg: rgba(255,255,255,0.05);
   --picker-border: rgba(255,255,255,0.08);
-  --cat-bg: transparent;
 }
 
 /* ─── Light ─── */
@@ -53,7 +52,6 @@
   --topbar-stripe: linear-gradient(90deg, #8b5e3c, #c17d54, #a08040);
   --picker-bg: rgba(0,0,0,0.03);
   --picker-border: rgba(0,0,0,0.08);
-  --cat-bg: transparent;
 }
 
 /* ─── Ocean ─── */
@@ -78,7 +76,6 @@
   --topbar-stripe: linear-gradient(90deg, #3b82f6, #38bdf8, #6366f1);
   --picker-bg: rgba(100,180,255,0.05);
   --picker-border: rgba(100,180,255,0.1);
-  --cat-bg: transparent;
 }
 
 /* ─── Neon ─── */
@@ -103,7 +100,6 @@
   --topbar-stripe: linear-gradient(90deg, #00ff88, #00e5ff, #bf00ff);
   --picker-bg: rgba(0,255,136,0.04);
   --picker-border: rgba(0,255,136,0.1);
-  --cat-bg: transparent;
 }
 
 /* ─── Gray ─── */
@@ -128,7 +124,6 @@
   --topbar-stripe: linear-gradient(90deg, #71717a, #a1a1aa, #52525b);
   --picker-bg: rgba(255,255,255,0.04);
   --picker-border: rgba(255,255,255,0.08);
-  --cat-bg: transparent;
 }
 
 /* ─── Pink ─── */
@@ -153,13 +148,160 @@
   --topbar-stripe: linear-gradient(90deg, #ec4899, #fb7185, #f472b6);
   --picker-bg: rgba(255,100,180,0.05);
   --picker-border: rgba(255,100,180,0.1);
-  --cat-bg: transparent;
+}
+
+/* ═══════════════════════════════════════════════
+   N E W   T H E M E S
+   ═══════════════════════════════════════════════ */
+
+/* ─── Latte — тёплый бежевый, кофейня, уют ─── */
+[data-theme="latte"] {
+  --bg: #f5efe6;
+  --bg-rgb: 245,239,230;
+  --surface: rgba(160,120,80,0.04);
+  --surface2: rgba(160,120,80,0.07);
+  --surface3: rgba(160,120,80,0.10);
+  --text: #5c4f42;
+  --text-dim: #9c8e7e;
+  --text-bright: #2e2520;
+  --border: rgba(160,120,80,0.10);
+  --accent: #a0755a;
+  --accent2: #c49070;
+  --accent-rgb: 160,117,90;
+  --glow1: rgba(160,117,90,0.08);
+  --glow2: rgba(196,144,112,0.06);
+  --card-shadow: 0 1px 5px rgba(80,60,40,0.05);
+  --search-bg: rgba(160,120,80,0.06);
+  --search-focus: rgba(160,117,90,0.1);
+  --topbar-stripe: linear-gradient(90deg, #a0755a, #c49070, #d4a882);
+  --picker-bg: rgba(160,120,80,0.05);
+  --picker-border: rgba(160,120,80,0.1);
+}
+
+/* ─── Coral — персиковый закат, мягкий коралл ─── */
+[data-theme="coral"] {
+  --bg: #faf3f0;
+  --bg-rgb: 250,243,240;
+  --surface: rgba(220,120,100,0.04);
+  --surface2: rgba(220,120,100,0.06);
+  --surface3: rgba(220,120,100,0.09);
+  --text: #6b4a44;
+  --text-dim: #ad8a82;
+  --text-bright: #3a2420;
+  --border: rgba(220,120,100,0.10);
+  --accent: #e07860;
+  --accent2: #f0a090;
+  --accent-rgb: 224,120,96;
+  --glow1: rgba(224,120,96,0.08);
+  --glow2: rgba(240,160,144,0.06);
+  --card-shadow: 0 1px 5px rgba(180,80,60,0.04);
+  --search-bg: rgba(220,120,100,0.05);
+  --search-focus: rgba(224,120,96,0.1);
+  --topbar-stripe: linear-gradient(90deg, #e07860, #f0a090, #f4b8a8);
+  --picker-bg: rgba(220,120,100,0.04);
+  --picker-border: rgba(220,120,100,0.1);
+}
+
+/* ─── Lavender — мечтательная лаванда, мягкий сиреневый ─── */
+[data-theme="lavender"] {
+  --bg: #f4f0f8;
+  --bg-rgb: 244,240,248;
+  --surface: rgba(160,130,200,0.04);
+  --surface2: rgba(160,130,200,0.07);
+  --surface3: rgba(160,130,200,0.10);
+  --text: #564a64;
+  --text-dim: #9488a4;
+  --text-bright: #2a2234;
+  --border: rgba(160,130,200,0.10);
+  --accent: #9678b8;
+  --accent2: #b898d4;
+  --accent-rgb: 150,120,184;
+  --glow1: rgba(150,120,184,0.08);
+  --glow2: rgba(184,152,212,0.06);
+  --card-shadow: 0 1px 5px rgba(100,70,140,0.05);
+  --search-bg: rgba(160,130,200,0.06);
+  --search-focus: rgba(150,120,184,0.1);
+  --topbar-stripe: linear-gradient(90deg, #9678b8, #b898d4, #c8a8e0);
+  --picker-bg: rgba(160,130,200,0.05);
+  --picker-border: rgba(160,130,200,0.1);
+}
+
+/* ─── Sage — ботаника, свежая зелень, утро ─── */
+[data-theme="sage"] {
+  --bg: #f0f4f0;
+  --bg-rgb: 240,244,240;
+  --surface: rgba(100,140,100,0.04);
+  --surface2: rgba(100,140,100,0.06);
+  --surface3: rgba(100,140,100,0.09);
+  --text: #4a5a48;
+  --text-dim: #7e907c;
+  --text-bright: #222c22;
+  --border: rgba(100,140,100,0.10);
+  --accent: #6a9a6a;
+  --accent2: #8aba8a;
+  --accent-rgb: 106,154,106;
+  --glow1: rgba(106,154,106,0.07);
+  --glow2: rgba(138,186,138,0.05);
+  --card-shadow: 0 1px 5px rgba(40,80,40,0.04);
+  --search-bg: rgba(100,140,100,0.05);
+  --search-focus: rgba(106,154,106,0.1);
+  --topbar-stripe: linear-gradient(90deg, #6a9a6a, #8aba8a, #a0cc9e);
+  --picker-bg: rgba(100,140,100,0.04);
+  --picker-border: rgba(100,140,100,0.1);
+}
+
+/* ─── Rose Gold — роскошь, тёплый металлик ─── */
+[data-theme="rosegold"] {
+  --bg: #f8f2f0;
+  --bg-rgb: 248,242,240;
+  --surface: rgba(190,140,130,0.05);
+  --surface2: rgba(190,140,130,0.08);
+  --surface3: rgba(190,140,130,0.11);
+  --text: #6a5550;
+  --text-dim: #a0908a;
+  --text-bright: #3a2a26;
+  --border: rgba(190,140,130,0.10);
+  --accent: #c4908a;
+  --accent2: #d4a8a0;
+  --accent-rgb: 196,144,138;
+  --glow1: rgba(196,144,138,0.08);
+  --glow2: rgba(212,168,160,0.06);
+  --card-shadow: 0 1px 5px rgba(140,80,70,0.05);
+  --search-bg: rgba(190,140,130,0.06);
+  --search-focus: rgba(196,144,138,0.1);
+  --topbar-stripe: linear-gradient(90deg, #c4908a, #d4a8a0, #e0beb8);
+  --picker-bg: rgba(190,140,130,0.04);
+  --picker-border: rgba(190,140,130,0.1);
+}
+
+/* ─── Sunset — тёмный закат, тёплая глубина ─── */
+[data-theme="sunset"] {
+  --bg: #170e0a;
+  --bg-rgb: 23,14,10;
+  --surface: rgba(240,140,80,0.04);
+  --surface2: rgba(240,140,80,0.07);
+  --surface3: rgba(240,140,80,0.10);
+  --text: #c8a898;
+  --text-dim: #7a6458;
+  --text-bright: #f4e4d8;
+  --border: rgba(240,140,80,0.08);
+  --accent: #e8944c;
+  --accent2: #f0b478;
+  --accent-rgb: 232,148,76;
+  --glow1: rgba(232,148,76,0.12);
+  --glow2: rgba(240,100,70,0.06);
+  --card-shadow: none;
+  --search-bg: rgba(240,140,80,0.07);
+  --search-focus: rgba(232,148,76,0.12);
+  --topbar-stripe: linear-gradient(90deg, #e06840, #e8944c, #f0b478);
+  --picker-bg: rgba(240,140,80,0.05);
+  --picker-border: rgba(240,140,80,0.1);
 }
 
 
-/* ═══════════════════════════════════════
-   BASE
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   B A S E   S T Y L E S
+   ═══════════════════════════════════════════════ */
 
 html {
   scroll-behavior: smooth;
@@ -190,7 +332,6 @@ body::before {
   transition: background 0.4s ease;
 }
 
-/* Top stripe */
 body::after {
   content: '';
   position: fixed;
@@ -198,6 +339,7 @@ body::after {
   height: 3px;
   background: var(--topbar-stripe);
   z-index: 1000;
+  transition: background 0.4s ease;
 }
 
 .page {
@@ -210,9 +352,9 @@ body::after {
 }
 
 
-/* ═══════════════════════════════════════
-   THEME PICKER
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   T H E M E   P I C K E R
+   ═══════════════════════════════════════════════ */
 
 .theme-picker-wrap {
   display: flex;
@@ -221,14 +363,17 @@ body::after {
 }
 
 .theme-picker {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
+  gap: 6px;
+  padding: 8px 12px;
   background: var(--picker-bg);
   border: 1px solid var(--picker-border);
   border-radius: 100px;
   transition: all 0.3s ease;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 360px;
 }
 
 .theme-picker-label {
@@ -236,43 +381,52 @@ body::after {
   color: var(--text-dim);
   font-weight: 500;
   letter-spacing: 0.5px;
-  margin-right: 4px;
+  margin-right: 2px;
+  transition: color 0.3s ease;
 }
 
 .theme-btn {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   position: relative;
   -webkit-tap-highlight-color: transparent;
   outline: none;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .theme-btn:hover {
-  transform: scale(1.15);
+  transform: scale(1.2);
 }
 
 .theme-btn.active {
   border-color: var(--text-bright);
-  transform: scale(1.15);
-  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.3);
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.3);
 }
 
-.theme-btn[data-theme="dark"]  { background: linear-gradient(135deg, #1a1625, #2d2540); }
-.theme-btn[data-theme="light"] { background: linear-gradient(135deg, #f0ece5, #e0d8cc); }
-.theme-btn[data-theme="ocean"] { background: linear-gradient(135deg, #0c1a30, #1a3050); }
-.theme-btn[data-theme="neon"]  { background: linear-gradient(135deg, #050a08, #0a1a10); box-shadow: inset 0 0 6px rgba(0,255,136,0.3); }
-.theme-btn[data-theme="gray"]  { background: linear-gradient(135deg, #28282c, #3a3a40); }
-.theme-btn[data-theme="pink"]  { background: linear-gradient(135deg, #2a1020, #401830); }
+/* Theme button colors */
+.theme-btn[data-theme="dark"]     { background: linear-gradient(135deg, #1a1625, #2d2540); }
+.theme-btn[data-theme="light"]    { background: linear-gradient(135deg, #f0ece5, #ddd6c8); }
+.theme-btn[data-theme="ocean"]    { background: linear-gradient(135deg, #0c1a30, #1a3050); }
+.theme-btn[data-theme="neon"]     { background: linear-gradient(135deg, #050a08, #0a1a10); box-shadow: inset 0 0 4px rgba(0,255,136,0.3); }
+.theme-btn[data-theme="gray"]     { background: linear-gradient(135deg, #28282c, #3a3a40); }
+.theme-btn[data-theme="pink"]     { background: linear-gradient(135deg, #2a1020, #401830); }
+.theme-btn[data-theme="latte"]    { background: linear-gradient(135deg, #e8dcc8, #d4c4aa); }
+.theme-btn[data-theme="coral"]    { background: linear-gradient(135deg, #f0c8bc, #e8a898); }
+.theme-btn[data-theme="lavender"] { background: linear-gradient(135deg, #d8c8e8, #c4b0d8); }
+.theme-btn[data-theme="sage"]     { background: linear-gradient(135deg, #c0d4c0, #a8c4a8); }
+.theme-btn[data-theme="rosegold"] { background: linear-gradient(135deg, #e0c4be, #d0aca4); }
+.theme-btn[data-theme="sunset"]   { background: linear-gradient(135deg, #2a1608, #4a2810); }
 
 
-/* ═══════════════════════════════════════
-   HEADER
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   H E A D E R
+   ═══════════════════════════════════════════════ */
 
 .header {
   padding: 28px 0 32px;
@@ -336,25 +490,23 @@ h1 span {
 }
 
 
-/* ═══════════════════════════════════════
-   SEARCH
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   S E A R C H
+   ═══════════════════════════════════════════════ */
 
 .search-wrap {
   position: sticky;
   top: 3px;
   z-index: 50;
   padding: 12px 0;
-  background: rgba(var(--bg-rgb), 0.85);
+  background: rgba(var(--bg-rgb), 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   margin-bottom: 8px;
   transition: background 0.3s ease;
 }
 
-.search-inner {
-  position: relative;
-}
+.search-inner { position: relative; }
 
 .search-icon {
   position: absolute;
@@ -409,9 +561,9 @@ h1 span {
 }
 
 
-/* ═══════════════════════════════════════
-   CARDS
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   C A R D S
+   ═══════════════════════════════════════════════ */
 
 .grid {
   display: flex;
@@ -448,9 +600,7 @@ h1 span {
   transform: translateY(-2px);
 }
 
-.card:active {
-  transform: scale(0.98);
-}
+.card:active { transform: scale(0.98); }
 
 .card-emoji {
   font-size: 28px;
@@ -465,14 +615,9 @@ h1 span {
   transition: all 0.3s ease;
 }
 
-.card:hover .card-emoji {
-  transform: scale(1.08) rotate(4deg);
-}
+.card:hover .card-emoji { transform: scale(1.08) rotate(4deg); }
 
-.card-body {
-  flex: 1;
-  min-width: 0;
-}
+.card-body { flex: 1; min-width: 0; }
 
 .card-title {
   font-size: 14.5px;
@@ -505,9 +650,9 @@ h1 span {
 }
 
 
-/* ═══════════════════════════════════════
-   CATEGORIES
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   C A T E G O R I E S
+   ═══════════════════════════════════════════════ */
 
 .category-label {
   font-size: 11px;
@@ -519,14 +664,12 @@ h1 span {
   transition: color 0.3s ease;
 }
 
-.category-label:first-of-type {
-  padding-top: 8px;
-}
+.category-label:first-of-type { padding-top: 8px; }
 
 
-/* ═══════════════════════════════════════
-   EMPTY / FOOTER
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   E M P T Y  /  F O O T E R
+   ═══════════════════════════════════════════════ */
 
 .empty {
   text-align: center;
@@ -561,9 +704,9 @@ h1 span {
 }
 
 
-/* ═══════════════════════════════════════
-   RESPONSIVE — GRID ON WIDER SCREENS
-   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   R E S P O N S I V E
+   ═══════════════════════════════════════════════ */
 
 @media (min-width: 520px) {
   .grid {
@@ -589,18 +732,12 @@ h1 span {
   .card-arrow { display: none; }
   .card-title { font-size: 15px; }
   .card-desc { font-size: 13px; }
-
-  .category-label {
-    grid-column: 1 / -1;
-  }
+  .category-label { grid-column: 1 / -1; }
 }
 
 @media (min-width: 640px) {
   .page { padding: 0 24px; }
   .header { padding: 32px 0 36px; }
-
-  .theme-btn {
-    width: 28px;
-    height: 28px;
-  }
+  .theme-btn { width: 26px; height: 26px; }
+  .theme-picker { gap: 7px; padding: 8px 16px; }
 }
