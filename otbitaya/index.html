@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Насколько ты отбитая? — Тест 🤪</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #fef5f0;
+  --bg-rgb: 254,245,240;
+  --surface: #ffffff;
+  --surface2: #fff0ea;
+  --surface3: #ffe8de;
+  --text: #4a3530;
+  --text-dim: #a08078;
+  --text-bright: #2a1510;
+  --border: rgba(200,100,70,0.10);
+  --accent: #e85d3a;
+  --accent2: #ff8c6b;
+  --accent-soft: rgba(232,93,58,0.08);
+  --pink: #f472b6;
+  --coral: #fb7185;
+  --orange: #f59e0b;
+  --electric: #c026d3;
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Фоновые пятна — контролируемый хаос */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 40% 40% at 10% 20%, rgba(244,114,182,0.08), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 90% 70%, rgba(232,93,58,0.06), transparent 50%),
+    radial-gradient(ellipse 30% 50% at 50% 90%, rgba(192,38,211,0.04), transparent 50%);
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--coral), var(--accent), var(--orange), var(--electric), var(--pink));
+  z-index: 1000;
+}
+
+.container { max-width: 660px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 1; }
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 44px 0 32px;
+  animation: fadeUp .8s ease;
+}
+
+.header-emoji {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 16px;
+  animation: wobble 2s ease-in-out infinite;
+}
+
+@keyframes wobble {
+  0%,100% { transform: rotate(0deg); }
+  15% { transform: rotate(12deg); }
+  30% { transform: rotate(-10deg); }
+  45% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(2deg); }
+}
+
+h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+h1 em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  background: linear-gradient(135deg, var(--accent), var(--electric));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lead {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ─── Intro scales ─── */
+.intro {
+  border-top: 2px dashed var(--border);
+  border-bottom: 2px dashed var(--border);
+  padding: 24px 0;
+  margin: 20px 0 28px;
+  animation: fadeUp .8s ease .2s both;
+}
+
+.intro p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  text-align: center;
+}
+
+.scales-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.scale-pill {
+  font-size: 11.5px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.btn-start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 17px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--coral));
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .3s ease;
+  animation: fadeUp .8s ease .4s both;
+  box-shadow: 0 6px 24px rgba(232,93,58,0.25);
+}
+
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(232,93,58,0.35); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky;
+  top: 4px;
+  z-index: 99;
+  background: rgba(var(--bg-rgb), 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+.progress-count { font-size: 12px; color: var(--accent); font-weight: 700; }
+.progress-bar { height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--coral), var(--pink)); border-radius: 10px; transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  margin-bottom: 16px;
+  animation: fadeUp .5s ease;
+  box-shadow: 0 2px 10px rgba(200,100,70,0.04);
+}
+
+.q-num {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.q-tag {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 4px 10px;
+  background: var(--surface2);
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+
+.q-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 21px;
+  font-weight: 400;
+  color: var(--text-bright);
+  line-height: 1.4;
+  margin-bottom: 22px;
+}
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface2);
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all .25s ease;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  user-select: none;
+}
+
+.option:hover { border-color: var(--border); background: var(--surface); }
+.option.selected { border-color: var(--accent); background: var(--accent-soft); }
+
+.opt-dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(200,100,70,0.25);
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all .25s ease;
+  position: relative;
+}
+
+.option.selected .opt-dot { border-color: var(--accent); background: var(--accent); }
+.option.selected .opt-dot::after { content: ''; position: absolute; inset: 4px; background: #fff; border-radius: 50%; }
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 12px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, var(--accent), var(--coral));
+  color: #fff; box-shadow: 0 4px 16px rgba(232,93,58,0.2);
+}
+
+.btn-next.active:hover { transform: translateY(-2px); }
+
+/* ─── Results ─── */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+.r-hero { text-align: center; padding: 40px 0 28px; }
+.r-big { font-size: 72px; display: block; margin-bottom: 16px; animation: wobble 2s ease-in-out infinite; }
+.r-label { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+
+.r-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.7rem, 5.5vw, 2.3rem);
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.r-tagline {
+  font-family: 'Instrument Serif', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-dim);
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Meter */
+.meter-wrap { margin: 24px 0; text-align: center; }
+.meter-label { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; font-weight: 500; }
+.meter-outer {
+  height: 20px;
+  background: var(--surface2);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+.meter-inner {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--orange), var(--accent), var(--coral), var(--pink), var(--electric));
+  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+  width: 0;
+}
+.meter-val {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 10px;
+  display: block;
+}
+
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(200,100,70,0.04);
+}
+
+.r-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; }
+
+/* Score bars */
+.sc-bars { margin: 14px 0 4px; }
+.sc-row { margin-bottom: 12px; }
+.sc-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.sc-name { font-size: 12.5px; color: var(--text); font-weight: 500; }
+.sc-val { font-size: 12px; font-weight: 700; color: var(--accent); }
+.sc-bg { height: 5px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.sc-fill { height: 100%; border-radius: 10px; transition: width 1.2s ease; width: 0; }
+
+/* Verdict badge */
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 8px 0 16px;
+}
+
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; padding-top: 28px; border-top: 2px dashed var(--border); }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+}
+
+.btn-primary { background: linear-gradient(135deg, var(--accent), var(--coral)); color: #fff; border: none; box-shadow: 0 4px 16px rgba(232,93,58,0.2); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 500; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--text-bright); color: var(--bg); padding: 12px 24px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 12px 14px 50px; }
+  .q-card, .r-card { padding: 24px 16px; }
+  .q-text { font-size: 19px; }
+  .option { padding: 12px 14px; font-size: 13.5px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <span class="header-emoji">🤪</span>
+      <h1>Насколько ты <em>отбитая?</em></h1>
+      <p class="lead">Научный (ну почти) тест на 16 вопросов. Проверим, насколько ты хаотичный гений или нормальный человек.</p>
+    </div>
+
+    <div class="intro">
+      <p>Тест измеряет 5 компонентов «отбитости» — каждый подтверждён настоящими исследованиями. Ну, мы их немного адаптировали. Совсем чуть-чуть. 🫠</p>
+      <div class="scales-row">
+        <span class="scale-pill">💥 Импульсивность</span>
+        <span class="scale-pill">🎢 Кайф от хаоса</span>
+        <span class="scale-pill">🫠 Социальная неадекватность</span>
+        <span class="scale-pill">🌪️ Спонтанность</span>
+        <span class="scale-pill">🧠 Креативный бред</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Проверить свою отбитость 🚀</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Допрос</span>
+      <span class="progress-count" id="progressCount">1 / 16</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано!</div>
+
+<script>
+const questions = [
+  {
+    tag: "Импульсивность · Barratt, 1995",
+    text: "3 часа ночи. Ты не спишь. Что ты делаешь?",
+    options: [
+      { text: "Сплю. Я ложусь вовремя как нормальный человек", pts: 1 },
+      { text: "Смотрю видео, как чувак прыгает с крыши в бассейн. Третий час подряд", pts: 2 },
+      { text: "Заказываю доставку суши и решаю перекрасить волосы", pts: 3 },
+      { text: "Уже еду куда-то. Зачем — разберусь по дороге", pts: 4 }
+    ]
+  },
+  {
+    tag: "Сенсационализм · Zuckerman, 1979",
+    text: "Друг предлагает прыгнуть с парашютом. Твоя реакция?",
+    options: [
+      { text: "Нет, спасибо. Я хочу дожить до пенсии", pts: 1 },
+      { text: "Может быть... если всё безопасно и есть страховка", pts: 2 },
+      { text: "КОГДА? ГДЕ? Я уже гуглю расписание", pts: 3 },
+      { text: "Парашют — это для новичков. Давай без него", pts: 4 }
+    ]
+  },
+  {
+    tag: "Социальные нормы · Goffman, 1959",
+    text: "В магазине играет твоя любимая песня. Ты:",
+    options: [
+      { text: "Тихонько подпеваю про себя", pts: 1 },
+      { text: "Напеваю в полголоса, пританцовывая корзинкой", pts: 2 },
+      { text: "Танцую между полками и не стесняюсь", pts: 3 },
+      { text: "Пою в полный голос и пытаюсь вовлечь кассира", pts: 4 }
+    ]
+  },
+  {
+    tag: "Спонтанность · Csikszentmihalyi, 1990",
+    text: "У тебя свободные выходные. Планы?",
+    options: [
+      { text: "Конечно есть — я распланировала ещё в среду", pts: 1 },
+      { text: "Примерно знаю, но могу поменять", pts: 2 },
+      { text: "Буду импровизировать, как обычно", pts: 3 },
+      { text: "Какие планы? Я проснусь и посмотрю, что подскажет вселенная", pts: 4 }
+    ]
+  },
+  {
+    tag: "Дивергентное мышление · Guilford, 1967",
+    text: "Что можно сделать с одним носком?",
+    options: [
+      { text: "Найти второй. Носки ходят парами", pts: 1 },
+      { text: "Надеть как варежку или протереть экран", pts: 2 },
+      { text: "Сделать кукольный театр для кота", pts: 3 },
+      { text: "Использовать как кошелёк. Или сумку для телефона. Или капюшон для хомяка. Я могу продолжать", pts: 4 }
+    ]
+  },
+  {
+    tag: "Эмоциональная экспрессия · Gross, 1998",
+    text: "Тебе сказали очень смешную шутку в тихом месте. Ты:",
+    options: [
+      { text: "Улыбаюсь, сдерживаю смех", pts: 1 },
+      { text: "Хихикаю, прикрывая рот рукой", pts: 2 },
+      { text: "Ржу в голос, пока все не обернутся", pts: 3 },
+      { text: "Падаю, хрюкаю, плачу, привлекаю охрану", pts: 4 }
+    ]
+  },
+  {
+    tag: "Импульсивные покупки · Rook, 1987",
+    text: "Ты зашла в магазин за хлебом. Вышла с:",
+    options: [
+      { text: "Хлебом. Я хожу строго по списку", pts: 1 },
+      { text: "Хлебом и парой мелочей — ну шоколадка, ну йогурт", pts: 2 },
+      { text: "Без хлеба, но с ароматической свечкой и набором для суши", pts: 3 },
+      { text: "С надувным фламинго. Не спрашивай", pts: 4 }
+    ]
+  },
+  {
+    tag: "Нонконформизм · Asch, 1956",
+    text: "Все в компании говорят, что фильм отличный. Тебе он не понравился. Ты:",
+    options: [
+      { text: "Соглашаюсь — зачем спорить?", pts: 1 },
+      { text: "Мягко говорю, что «ну не знаю, мне так себе»", pts: 2 },
+      { text: "Говорю прямо: «Извините, но это было ужасно»", pts: 3 },
+      { text: "Произношу 20-минутную речь о том, почему это кинопреступление", pts: 4 }
+    ]
+  },
+  {
+    tag: "Риск и дофамин · Zuckerman, 1994",
+    text: "Как ты относишься к дедлайнам?",
+    options: [
+      { text: "Делаю заранее — стресс мне не друг", pts: 1 },
+      { text: "Начинаю за пару дней, нормально успеваю", pts: 2 },
+      { text: "За ночь до. Паника — мой лучший мотиватор", pts: 3 },
+      { text: "Иногда забываю, что дедлайн был вчера. И как-то выкручиваюсь", pts: 4 }
+    ]
+  },
+  {
+    tag: "Социальная смелость · Eysenck, 1967",
+    text: "Ты случайно зашла не в тот кабинет / помещение. Твои действия?",
+    options: [
+      { text: "Извиняюсь и быстро выхожу, краснея", pts: 1 },
+      { text: "Говорю «ой, не туда» и спокойно ухожу", pts: 2 },
+      { text: "Делаю вид, что так и надо, и сижу пока не поймут", pts: 3 },
+      { text: "Представляюсь, вступаю в беседу и ухожу через 20 минут с новыми друзьями", pts: 4 }
+    ]
+  },
+  {
+    tag: "Отвлекаемость · Barratt Impulsiveness Scale",
+    text: "Ты начала готовить ужин. Через 40 минут ты:",
+    options: [
+      { text: "Ужинаю — всё готово, как по рецепту", pts: 1 },
+      { text: "Ужин почти готов, но я параллельно ещё и торт замутила", pts: 2 },
+      { text: "Сижу в телефоне, ужин подгорел, заказала доставку", pts: 3 },
+      { text: "Я в ванне с пеной. Ужин? Какой ужин?", pts: 4 }
+    ]
+  },
+  {
+    tag: "Толерантность к абсурду · Barron, 1963",
+    text: "Если бы ты могла издать один закон, это был бы:",
+    options: [
+      { text: "Что-то разумное — бесплатное образование, например", pts: 1 },
+      { text: "Пятница — официальный день пижамы", pts: 2 },
+      { text: "Все обязаны здороваться с кошками на улице", pts: 3 },
+      { text: "Носки — это обувь. Официально. С каблуками.", pts: 4 }
+    ]
+  },
+  {
+    tag: "Самоконтроль · Tangney, 2004",
+    text: "Ты нашла деньги, которые спрятала от себя. Что дальше?",
+    options: [
+      { text: "Кладу обратно — они на что-то важное", pts: 1 },
+      { text: "Половину потрачу, половину верну", pts: 2 },
+      { text: "Они уже потрачены в моей голове. Осталось только дойти до магазина", pts: 3 },
+      { text: "Я забыла, что прятала деньги. Это сюрприз от прошлой меня. Спасибо, прошлая я!", pts: 4 }
+    ]
+  },
+  {
+    tag: "Креативная дерзость · Sternberg, 1999",
+    text: "Тебе нужно придумать подарок другу за 30 минут. Ты:",
+    options: [
+      { text: "Покупаю сертификат — просто и надёжно", pts: 1 },
+      { text: "Нахожу что-то милое в ближайшем магазине", pts: 2 },
+      { text: "Делаю что-то руками — открытку, коллаж, мем-альбом", pts: 3 },
+      { text: "Пишу рэп-посвящение и исполняю его лично. Может плохо, но зато от души", pts: 4 }
+    ]
+  },
+  {
+    tag: "Граница комфорта · Yerkes-Dodson, 1908",
+    text: "Друг говорит: «Ты отбитая». Твоя реакция?",
+    options: [
+      { text: "Обижаюсь — это грубо", pts: 1 },
+      { text: "Смеюсь — ну ладно, может немного", pts: 2 },
+      { text: "Говорю «спасибо» и ставлю это на аватарку", pts: 3 },
+      { text: "Требую сертификат с печатью", pts: 4 }
+    ]
+  },
+  {
+    tag: "Финальный вопрос · Мета-анализ",
+    text: "Этот тест. Зачем ты его проходишь?",
+    options: [
+      { text: "Мне скинули ссылку, я из вежливости", pts: 1 },
+      { text: "Интересно, что скажут — ну и прикольно", pts: 2 },
+      { text: "Я уже знаю ответ, но хочу подтверждение", pts: 3 },
+      { text: "Я прохожу все тесты. Вообще все. Это мой образ жизни", pts: 4 }
+    ]
+  }
+];
+
+const scaleNames = {
+  impulse: 'Импульсивность',
+  chaos: 'Кайф от хаоса',
+  social: 'Социальная неадекватность',
+  spontan: 'Спонтанность',
+  creative: 'Креативный бред'
+};
+
+const scaleColors = {
+  impulse: '#e85d3a',
+  chaos: '#f472b6',
+  social: '#c026d3',
+  spontan: '#f59e0b',
+  creative: '#3b82f6'
+};
+
+// Which scales each question maps to
+const qScales = [
+  ['impulse','spontan'],['chaos','impulse'],['social','chaos'],['spontan','impulse'],
+  ['creative','chaos'],['social','impulse'],['impulse','spontan'],['social','creative'],
+  ['chaos','impulse'],['social','creative'],['impulse','spontan'],['creative','chaos'],
+  ['impulse','spontan'],['creative','social'],['social','chaos'],['chaos','creative']
+];
+
+const levels = [
+  { min: 16, max: 26, emoji: "😇", title: "Адекватный человек", pct: 15,
+    tagline: "Ты стабильна, как Wi-Fi в Швейцарии. Люди рядом с тобой чувствуют покой.",
+    desc: "По шкале Цукермана (1979), твой уровень поиска ощущений — ниже среднего. Это не скучность — это зрелая нервная система, которая не нуждается в адреналине для счастья. Исследования Тангни (2004) показывают, что высокий самоконтроль связан с лучшими отношениями и карьерой. Ты — тот человек, у которого всегда заряжен телефон.",
+    shadow: "Но иногда... можно и безумствовать. Хотя бы чуть-чуть. Мир не рухнет.",
+    verdict: "✅ Сертификат нормальности выдан", verdictBg: "rgba(74,170,110,0.1)", verdictColor: "#2a8a50" },
+  { min: 27, max: 37, emoji: "😏", title: "Лёгкая степень отбитости", pct: 35,
+    tagline: "Ты как нормальный человек, но с сюрпризами. Предсказуемая — до определённого момента.",
+    desc: "Твоя импульсивность по Барратту — умеренная. Ты знаешь правила, но иногда сознательно их нарушаешь — потому что жизнь слишком коротка для пресного. Исследования Чиксентмихайи показывают, что именно такой уровень спонтанности оптимален для состояния «потока» — когда ты делаешь что-то и теряешь счёт времени.",
+    shadow: "Ты балансируешь на грани. Иногда тебя заносит — но обычно ты вовремя тормозишь. Обычно.",
+    verdict: "⚡ Лёгкий уровень хаоса", verdictBg: "rgba(245,158,11,0.1)", verdictColor: "#b07a08" },
+  { min: 38, max: 48, emoji: "🤪", title: "Ощутимо отбитая", pct: 65,
+    tagline: "С тобой не скучно. Никогда. Вообще никогда. Иногда хочется, но нет.",
+    desc: "Твой уровень поиска ощущений — выше среднего (Zuckerman, 1994). Ты генерируешь дофамин не от стабильности, а от новизны. Исследования Стернберга (1999) связывают такой стиль мышления с творческой дерзостью — способностью «ломать рамки» не ради хаоса, а ради нового. Ты — тот друг, который превращает скучный вечер в историю на годы.",
+    shadow: "Твоя суперсила — непредсказуемость. Твоя слабость — тоже непредсказуемость. Остальные привыкли.",
+    verdict: "🔥 Отбитость подтверждена", verdictBg: "rgba(232,93,58,0.1)", verdictColor: "#c04428" },
+  { min: 49, max: 56, emoji: "🫠", title: "Абсолютно отбитая", pct: 90,
+    tagline: "Ты — стихийное бедствие с обаянием. Ураган, который все хотят пригласить на вечеринку.",
+    desc: "По всем шкалам — ты в верхнем перцентиле. Барратт, Цукерман и Айзенк смотрят на твои результаты и нервно пьют валерьянку. Но! Исследования Баррона (1963) показали, что толерантность к абсурду и хаосу — один из главных маркеров креативности. Гении и «отбитые» — ближе, чем кажется. Разница в том, что ты знаешь, что делаешь. Ну, иногда.",
+    shadow: "Ты — тот человек, про которого друзья рассказывают истории, начиная со слов «ты не поверишь». Каждый раз.",
+    verdict: "🏆 Диагноз: восхитительно отбитая", verdictBg: "rgba(192,38,211,0.1)", verdictColor: "#9020a0" },
+  { min: 57, max: 64, emoji: "👑🤯", title: "Легенда. За гранью шкалы.", pct: 100,
+    tagline: "Шкала закончилась. Ты вышла за пределы измеримого. Учёные в замешательстве.",
+    desc: "Ты набрала максимум по каждой шкале. Это или анекдот, или ты действительно живёшь по принципу «а что если?» — каждый день, каждый час. Цукерман не предусматривал такой результат. Барратт бы попросил пересдачу. Но знаешь что? Исследования показывают, что люди с экстремальной открытостью к опыту — самые интересные собеседники, лучшие импровизаторы и те, кто действительно проживает жизнь, а не смотрит на неё из окна.",
+    shadow: "Ты не живёшь — ты устраиваешь перформанс. И билеты всегда sold out.",
+    verdict: "💀 За пределами классификации", verdictBg: "rgba(192,38,211,0.15)", verdictColor: "#8020a0" }
+];
+
+let curQ = 0, selOpt = null, total = 0;
+let scaleScores = { impulse: 0, chaos: 0, social: 0, spontan: 0, creative: 0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">Вопрос ${i+1} из ${questions.length}</div>
+      <div class="q-tag">${q.tag}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">${q.options.map((o,j) => `
+        <div class="option" onclick="sel(this,${j})">
+          <div class="opt-dot"></div>
+          <span>${o.text}</span>
+        </div>
+      `).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i === questions.length-1 ? 'Узнать свой уровень 🤪' : 'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${i+1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i/questions.length)*100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop - 10, behavior: 'smooth' });
+}
+
+function sel(el, i) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if (selOpt === null) return;
+  const pts = questions[curQ].options[selOpt].pts;
+  total += pts;
+  const scales = qScales[curQ];
+  scaleScores[scales[0]] += pts;
+  if (scales[1]) scaleScores[scales[1]] += Math.round(pts * 0.6);
+  selOpt = null;
+  curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML = '';
+
+  const lvl = levels.find(l => total >= l.min && total <= l.max) || levels[levels.length - 1];
+  const maxScale = Math.max(...Object.values(scaleScores));
+
+  const barsHTML = Object.entries(scaleScores).sort((a,b) => b[1]-a[1]).map(([key, val]) => {
+    const pct = maxScale > 0 ? Math.round((val / maxScale) * 100) : 0;
+    return `<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${scaleNames[key]}</span><span class="sc-val" style="color:${scaleColors[key]}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" style="background:${scaleColors[key]}" data-w="${pct}"></div></div></div>`;
+  }).join('');
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="r-hero">
+      <span class="r-big">${lvl.emoji}</span>
+      <div class="r-label">Твой диагноз</div>
+      <div class="r-title">${lvl.title}</div>
+      <p class="r-tagline">${lvl.tagline}</p>
+      <div class="meter-wrap">
+        <div class="meter-label">Шкала отбитости</div>
+        <div class="meter-outer"><div class="meter-inner" id="mainMeter" data-w="${lvl.pct}"></div></div>
+        <span class="meter-val">${lvl.pct}%</span>
+      </div>
+      <div class="verdict" style="background:${lvl.verdictBg};color:${lvl.verdictColor}">${lvl.verdict}</div>
+    </div>
+
+    <div class="r-card">
+      <h3>🔬 Научный анализ</h3>
+      <p>${lvl.desc}</p>
+    </div>
+
+    <div class="r-card">
+      <h3>📊 Профиль по 5 шкалам</h3>
+      <div class="sc-bars">${barsHTML}</div>
+    </div>
+
+    <div class="r-card">
+      <h3>🫠 Побочные эффекты</h3>
+      <p>${lvl.shadow}</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться
+      </button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Пройти ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(() => {
+    document.querySelectorAll('.sc-fill').forEach(b => b.style.width = b.dataset.w + '%');
+    document.getElementById('mainMeter').style.width = lvl.pct + '%';
+  }, 400);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareShort() {
+  const lvl = levels.find(l => total >= l.min && total <= l.max) || levels[levels.length - 1];
+  const text = `${lvl.emoji} Мой уровень отбитости: ${lvl.pct}%\n\n${lvl.title}\n${lvl.tagline}\n\nПроверь себя: https://lisofoxa-oss.github.io/tests/`;
+  if (navigator.share) navigator.share({ title: 'Насколько ты отбитая?', text }).catch(() => {});
+  else navigator.clipboard.writeText(text).then(() => showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const lvl = levels.find(l => total >= l.min && total <= l.max) || levels[levels.length - 1];
+  const maxScale = Math.max(...Object.values(scaleScores));
+  const bars = Object.entries(scaleScores).sort((a,b) => b[1]-a[1]).map(([key, val]) => {
+    const pct = maxScale > 0 ? Math.round((val / maxScale) * 100) : 0;
+    return `  ${scaleNames[key]}: ${'█'.repeat(Math.round(pct/10))}${'░'.repeat(10-Math.round(pct/10))} ${pct}%`;
+  }).join('\n');
+
+  const text = `🤪 НАСКОЛЬКО ТЫ ОТБИТАЯ? — Результат
+
+${lvl.emoji}  ${lvl.title}
+Уровень отбитости: ${lvl.pct}%
+
+«${lvl.tagline}»
+
+━━━━━━━━━━━━━━━━━
+
+${lvl.verdict}
+
+━━━━━━━━━━━━━━━━━
+
+🔬 Научный анализ:
+
+${lvl.desc}
+
+━━━━━━━━━━━━━━━━━
+
+📊 Профиль по 5 шкалам:
+${bars}
+
+━━━━━━━━━━━━━━━━━
+
+🫠 Побочные эффекты:
+
+${lvl.shadow}
+
+━━━━━━━━━━━━━━━━━
+→ Проверь себя: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
