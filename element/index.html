@@ -1111,16 +1111,23 @@ function showResults() {
 }
 
 function buildShells(shells) {
-  const sizes = [50, 90, 130, 160, 180, 200];
-  let html = '<div class="electron-viz"><div class="nucleus"></div>';
+  const maxShells = shells.length;
+  const baseSize = maxShells <= 2 ? 60 : maxShells <= 4 ? 45 : 36;
+  const step = maxShells <= 2 ? 50 : maxShells <= 4 ? 38 : 28;
+  const center = maxShells <= 4 ? 80 : 90;
+  const vizSize = maxShells <= 4 ? 160 : 180;
+  
+  let html = `<div class="electron-viz" style="width:${vizSize}px;height:${vizSize}px"><div class="nucleus"></div>`;
   shells.forEach((count, i) => {
-    html += `<div class="shell" style="width:${sizes[i]}px;height:${sizes[i]}px"></div>`;
-    const r = sizes[i] / 2;
-    for (let j = 0; j < Math.min(count, 8); j++) {
-      const angle = (j / Math.min(count, 8)) * Math.PI * 2 - Math.PI / 2;
-      const x = 80 + r * Math.cos(angle) - 3;
-      const y = 80 + r * Math.sin(angle) - 3;
-      html += `<div class="electron" style="left:${x}px;top:${y}px"></div>`;
+    const size = baseSize + step * i;
+    html += `<div class="shell" style="width:${size}px;height:${size}px"></div>`;
+    const r = size / 2;
+    const dotSize = count > 18 ? 4 : count > 10 ? 5 : 6;
+    for (let j = 0; j < count; j++) {
+      const angle = (j / count) * Math.PI * 2 - Math.PI / 2;
+      const x = center + r * Math.cos(angle) - dotSize / 2;
+      const y = center + r * Math.sin(angle) - dotSize / 2;
+      html += `<div class="electron" style="left:${x}px;top:${y}px;width:${dotSize}px;height:${dotSize}px"></div>`;
     }
   });
   html += `<div class="shell-label">${shells.join(' · ')}</div></div>`;
