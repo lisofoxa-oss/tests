@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какой ты элемент? — Периодический тест ⚗️</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #08080c;
+  --surface: rgba(255,255,255,0.03);
+  --surface2: rgba(255,255,255,0.06);
+  --surface3: rgba(255,255,255,0.09);
+  --text: #a8a4b4;
+  --text-dim: #5c5868;
+  --text-bright: #eae8f0;
+  --border: rgba(255,255,255,0.06);
+  --el-color: #60a5fa;
+  --el-glow: rgba(96,165,250,0.15);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ambient glow */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 20% 20%, var(--el-glow), transparent 60%),
+    radial-gradient(ellipse 40% 50% at 80% 80%, rgba(139,92,246,0.06), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 1s ease;
+}
+
+.container { max-width: 660px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 1; }
+
+/* ─── Mono font for element symbols ─── */
+.mono { font-family: 'Space Mono', monospace; }
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 52px 0 32px;
+  animation: fadeUp .8s ease;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.header-badge .dot {
+  width: 6px; height: 6px;
+  background: #8b5cf6;
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* Mini periodic tile in header */
+.header-tile {
+  width: 80px; height: 80px;
+  border: 1.5px solid rgba(139,92,246,0.3);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  background: rgba(139,92,246,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.header-tile::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(from 0deg, rgba(139,92,246,0.3), rgba(96,165,250,0.3), rgba(236,72,153,0.3), rgba(139,92,246,0.3));
+  border-radius: 14px;
+  z-index: -1;
+  animation: rotateBorder 6s linear infinite;
+}
+
+@keyframes rotateBorder { to { transform: rotate(360deg); } }
+
+.header-tile .num { font-size: 10px; color: var(--text-dim); font-family: 'Space Mono', monospace; }
+.header-tile .sym { font-size: 32px; font-family: 'Space Mono', monospace; font-weight: 700; color: var(--text-bright); }
+.header-tile .label { font-size: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+h1 {
+  font-size: clamp(2rem, 6.5vw, 2.8rem);
+  font-weight: 800;
+  color: var(--text-bright);
+  line-height: 1.12;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+h1 span {
+  background: linear-gradient(135deg, #8b5cf6, #60a5fa, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lead {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 460px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ─── Intro ─── */
+.intro {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  margin: 24px 0 28px;
+  animation: fadeUp .8s ease .15s both;
+  text-align: center;
+}
+
+.intro p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+
+.elements-preview {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.el-mini {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
+.el-mini .s {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ─── Reaction Picker (initial selection) ─── */
+.picker-section {
+  display: none;
+  animation: fadeUp .6s ease;
+}
+
+.picker-section.active { display: block; }
+
+.picker-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.picker-q {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-bright);
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.3;
+}
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.picker-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.picker-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .3s ease;
+  border-radius: 16px;
+}
+
+.picker-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-4px); }
+.picker-card:hover::before { opacity: 1; }
+
+.picker-card[data-pick="explosion"]::before { background: radial-gradient(circle at 50% 80%, rgba(255,107,107,0.08), transparent 60%); }
+.picker-card[data-pick="glow"]::before { background: radial-gradient(circle at 50% 80%, rgba(139,92,246,0.08), transparent 60%); }
+.picker-card[data-pick="flow"]::before { background: radial-gradient(circle at 50% 80%, rgba(78,205,196,0.08), transparent 60%); }
+.picker-card[data-pick="crystal"]::before { background: radial-gradient(circle at 50% 80%, rgba(255,215,0,0.08), transparent 60%); }
+
+.picker-card .p-emoji { font-size: 36px; display: block; margin-bottom: 12px; }
+.picker-card .p-name { font-size: 15px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
+.picker-card .p-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+.picker-card.selected { border-color: var(--el-color); }
+.picker-card.selected::before { opacity: 1; }
+
+.btn-go {
+  width: 100%; padding: 16px; border: none; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 16px;
+  background: var(--surface2); color: var(--text-dim);
+  opacity: 0; pointer-events: none;
+}
+
+.btn-go.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, #8b5cf6, #60a5fa);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(139,92,246,0.25);
+}
+
+.btn-go.active:hover { transform: translateY(-2px); }
+
+/* ─── Btn Start ─── */
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #8b5cf6, #60a5fa);
+  color: #fff; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 6px 24px rgba(139,92,246,0.2);
+}
+
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(139,92,246,0.3); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(8,8,12,0.92);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+.progress-count { font-size: 12px; color: #8b5cf6; font-weight: 700; font-family: 'Space Mono', monospace; }
+.progress-bar { height: 2px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #8b5cf6, #60a5fa, #ec4899); border-radius: 10px; transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .5s ease;
+}
+
+.q-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 2px;
+  color: #8b5cf6; font-weight: 700; margin-bottom: 4px;
+}
+
+.q-tag {
+  display: inline-block; font-size: 11px; color: var(--text-dim);
+  padding: 4px 10px; background: var(--surface2); border-radius: 6px; margin-bottom: 14px;
+}
+
+.q-text {
+  font-size: 20px; font-weight: 600; color: var(--text-bright);
+  line-height: 1.4; margin-bottom: 22px;
+}
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .25s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover { border-color: rgba(255,255,255,0.08); background: var(--surface3); }
+.option.selected { border-color: #8b5cf6; background: rgba(139,92,246,0.08); }
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.12);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot { border-color: #8b5cf6; background: #8b5cf6; }
+.option.selected .opt-dot::after { content:''; position:absolute; inset:3px; background:#fff; border-radius:50%; }
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 12px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, #8b5cf6, #60a5fa);
+  color: #fff; box-shadow: 0 4px 16px rgba(139,92,246,0.2);
+}
+
+/* ═══════════════════════════════════════
+   R E S U L T S
+   ═══════════════════════════════════════ */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+/* ─── Element Card ─── */
+.el-card-wrap {
+  display: flex; justify-content: center;
+  padding: 40px 0 28px;
+}
+
+.el-card {
+  width: 200px; height: 240px;
+  border-radius: 20px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.el-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(from 0deg, var(--el-color), rgba(139,92,246,0.5), var(--el-color));
+  border-radius: 22px;
+  z-index: -1;
+  animation: rotateBorder 4s linear infinite;
+}
+
+.el-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06), transparent 50%);
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.el-card .el-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px; color: var(--text-dim);
+  position: absolute; top: 14px; left: 16px;
+}
+
+.el-card .el-mass {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  position: absolute; top: 14px; right: 16px;
+}
+
+.el-card .el-symbol {
+  font-family: 'Space Mono', monospace;
+  font-size: 72px; font-weight: 700;
+  color: var(--el-color);
+  line-height: 1;
+  text-shadow: 0 0 40px var(--el-glow);
+}
+
+.el-card .el-name {
+  font-size: 14px;
+  color: var(--text-bright);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.el-card .el-name-en {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.el-card .el-group {
+  font-size: 9px;
+  color: var(--text-dim);
+  position: absolute;
+  bottom: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ─── Result text ─── */
+.r-center { text-align: center; margin-bottom: 28px; }
+
+.r-tagline {
+  font-size: 18px; font-weight: 300;
+  color: var(--text); line-height: 1.6;
+  max-width: 460px; margin: 0 auto;
+  font-style: italic;
+}
+
+.r-label {
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 3px; font-weight: 600; margin-bottom: 8px;
+}
+
+/* ─── Electron Shells Visualization ─── */
+.electron-wrap {
+  display: flex; justify-content: center;
+  padding: 20px 0 28px;
+}
+
+.electron-viz {
+  position: relative;
+  width: 160px; height: 160px;
+}
+
+.shell {
+  position: absolute;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.shell-1 { width: 50px; height: 50px; }
+.shell-2 { width: 90px; height: 90px; }
+.shell-3 { width: 130px; height: 130px; }
+.shell-4 { width: 160px; height: 160px; }
+
+.nucleus {
+  position: absolute;
+  width: 16px; height: 16px;
+  background: var(--el-color);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px var(--el-glow);
+}
+
+.electron {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--el-color);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--el-glow);
+}
+
+.shell-label {
+  position: absolute;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  bottom: -4px;
+  width: 100%;
+  text-align: center;
+}
+
+/* ─── Result cards ─── */
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+}
+
+.r-card h3 {
+  font-size: 15px; font-weight: 700;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+/* Properties meters */
+.prop-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 14px 0 4px;
+}
+
+.prop-item {}
+.prop-name { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+.prop-bar-bg { height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.prop-bar-fill { height: 100%; border-radius: 10px; background: var(--el-color); transition: width 1.2s ease; width: 0; }
+.prop-val { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--el-color); margin-top: 3px; }
+
+/* Chemistry fact box */
+.chem-box {
+  background: rgba(139,92,246,0.04);
+  border: 1px solid rgba(139,92,246,0.1);
+  border-radius: 14px;
+  padding: 20px;
+  margin: 14px 0 6px;
+}
+
+.chem-box .chem-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 2px; color: #8b5cf6;
+  margin-bottom: 8px; font-weight: 700;
+}
+
+.chem-box p { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+/* Compatibility */
+.compat-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+.compat-tag {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 10px;
+  font-size: 12px; color: var(--text);
+}
+
+.compat-tag .ct-sym {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700; font-size: 14px;
+}
+
+/* Pullquote */
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--el-color);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 12px 12px 0;
+}
+
+.pullquote p { font-size: 14px; font-style: italic; color: var(--text-bright); line-height: 1.6; margin: 0; font-weight: 400; }
+
+/* ─── Actions ─── */
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--border); }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+}
+
+.btn-primary { background: linear-gradient(135deg, #8b5cf6, #60a5fa); color: #fff; border: none; box-shadow: 0 4px 16px rgba(139,92,246,0.2); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: #8b5cf6; color: #8b5cf6; }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 500; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--text-bright); color: var(--bg); padding: 12px 24px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+@media (max-width:480px) {
+  .container { padding: 12px 14px 50px; }
+  .q-card,.r-card { padding: 24px 16px; }
+  .q-text { font-size: 18px; }
+  .option { padding: 12px 14px; font-size: 13px; }
+  .el-card { width: 170px; height: 210px; }
+  .el-card .el-symbol { font-size: 60px; }
+  .prop-grid { grid-template-columns: 1fr; }
+  .picker-grid { gap: 10px; }
+  .picker-card { padding: 20px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ═══ HEADER ═══ -->
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge"><span class="dot"></span>Периодический тест</div>
+      <div class="header-tile">
+        <span class="num">?</span>
+        <span class="sym">Ты</span>
+        <span class="label">mystery</span>
+      </div>
+      <h1>Какой ты <span>элемент?</span></h1>
+      <p class="lead">14 вопросов о твоём характере — и мы определим, какой химический элемент описывает тебя с точностью до электрона. С реальной химией и наукой.</p>
+    </div>
+
+    <div class="intro">
+      <p>Каждый элемент таблицы Менделеева имеет характер: литий взрывается от воды, золото ни с кем не реагирует, гелий улетает от всех. 8 элементов — 8 типов личности.</p>
+      <div class="elements-preview">
+        <span class="el-mini"><span class="s" style="color:#ff6b6b">Li</span> Литий</span>
+        <span class="el-mini"><span class="s" style="color:#ffd700">Au</span> Золото</span>
+        <span class="el-mini"><span class="s" style="color:#a0d8ef">He</span> Гелий</span>
+        <span class="el-mini"><span class="s" style="color:#b0b8c8">Fe</span> Железо</span>
+        <span class="el-mini"><span class="s" style="color:#a78bfa">I</span> Йод</span>
+        <span class="el-mini"><span class="s" style="color:#4ecdc4">Hg</span> Ртуть</span>
+        <span class="el-mini"><span class="s" style="color:#e0e0e0">C</span> Углерод</span>
+        <span class="el-mini"><span class="s" style="color:#ff6ec7">Ne</span> Неон</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Определить свой элемент ⚗️</button>
+  </div>
+
+  <!-- ═══ PICKER ═══ -->
+  <div class="picker-section" id="pickerSection">
+    <div style="padding:32px 0 8px">
+      <div class="picker-title">Вопрос 0</div>
+      <div class="picker-q">Какая химическая реакция тебя завораживает?</div>
+    </div>
+    <div class="picker-grid">
+      <div class="picker-card" data-pick="explosion" onclick="pick(this,'explosion')">
+        <span class="p-emoji">💥</span>
+        <div class="p-name">Взрыв</div>
+        <div class="p-desc">Металл падает в воду — и вспышка. Мощь и скорость.</div>
+      </div>
+      <div class="picker-card" data-pick="glow" onclick="pick(this,'glow')">
+        <span class="p-emoji">✨</span>
+        <div class="p-name">Свечение</div>
+        <div class="p-desc">Люминесценция, фосфор в темноте. Тихая магия.</div>
+      </div>
+      <div class="picker-card" data-pick="flow" onclick="pick(this,'flow')">
+        <span class="p-emoji">🌊</span>
+        <div class="p-name">Текучесть</div>
+        <div class="p-desc">Ртуть катается по столу. Красиво и непредсказуемо.</div>
+      </div>
+      <div class="picker-card" data-pick="crystal" onclick="pick(this,'crystal')">
+        <span class="p-emoji">💎</span>
+        <div class="p-name">Кристаллизация</div>
+        <div class="p-desc">Хаос становится идеальной структурой. Порядок из ничего.</div>
+      </div>
+    </div>
+    <button class="btn-go" id="btnGo" onclick="beginQuestions()">Начать тест →</button>
+  </div>
+
+  <!-- ═══ PROGRESS ═══ -->
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Эксперимент</span>
+      <span class="progress-count" id="progressCount">01 / 14</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано!</div>
+
+<script>
+/* ═══════════════════════════════════════
+   E L E M E N T   D A T A
+   ═══════════════════════════════════════ */
+const elements = {
+  Li: {
+    number: 3, symbol: "Li", name: "Литий", nameEn: "Lithium",
+    group: "Щелочной металл", mass: "6.941",
+    color: "#ff6b6b", glow: "rgba(255,107,107,0.2)",
+    shells: [2, 1],
+    tagline: "Лёгкий, взрывной — заряжаешь всех вокруг, иногда буквально.",
+    personality: "Ты — чистая энергия. Лёгкий на подъём, мгновенно загораешься новыми идеями и заражаешь ими окружающих. Как литий в воде — тебе достаточно контакта с реальностью, чтобы выдать вспышку. Люди рядом с тобой чувствуют заряд — ты буквально их батарейка. Не случайно литий используют в аккумуляторах: ты тот человек, который даёт энергию всем вокруг.",
+    chemistry: "Литий — самый лёгкий металл на Земле. Он настолько реактивен, что воспламеняется при контакте с водой, окрашивая пламя в карминовый красный. При этом литий используется в батареях каждого смартфона — без него современный мир буквально разрядился бы.",
+    props: { reactivity: 95, stability: 20, rarity: 30, toxicity: 15, brilliance: 80 },
+    shadow: "Ты горишь ярко — но быстро. Тебе трудно держать стабильный темп. Иногда твоя реактивность — это не сила, а побег от тишины. Литий тоже используют как стабилизатор настроения — может, тебе стоит стабилизировать свой?",
+    compat: [
+      { sym: "Fe", name: "Железо", desc: "Заземляет твою энергию" },
+      { sym: "Ne", name: "Неон", desc: "Ваша яркость удваивается" }
+    ],
+    quote: "Энергия — это не то, что у тебя есть. Это то, чем ты являешься."
+  },
+  Au: {
+    number: 79, symbol: "Au", name: "Золото", nameEn: "Aurum",
+    group: "Переходный металл", mass: "196.97",
+    color: "#ffd700", glow: "rgba(255,215,0,0.2)",
+    shells: [2, 8, 18, 32, 18, 1],
+    tagline: "Не окисляешься, не обесцениваешься, не меняешься ради других.",
+    personality: "Ты — стабильность в мире хаоса. Как золото, ты не реагируешь на внешние раздражители: не ржавеешь от критики, не тускнеешь от времени, не теряешь ценность в кризис. Люди тянутся к тебе, потому что ты — настоящий. Без примесей. Золото тысячелетиями считается эталоном — и ты тоже задаёшь стандарт.",
+    chemistry: "Золото — один из немногих элементов, которые встречаются в чистом виде. Оно не окисляется, не ржавеет и не реагирует с большинством кислот. Единственное, что может растворить золото — «царская водка» (смесь азотной и соляной кислот). Всё золото Земли прилетело из космоса — при столкновении нейтронных звёзд.",
+    props: { reactivity: 5, stability: 100, rarity: 85, toxicity: 5, brilliance: 95 },
+    shadow: "Твоя стабильность иногда переходит в неприступность. Ты так боишься «окислиться» от чужого влияния, что не подпускаешь близко. Золото красиво — но холодно. Иногда нужно позволить себе реакцию.",
+    compat: [
+      { sym: "Hg", name: "Ртуть", desc: "Растворяет твою жёсткость (амальгама)" },
+      { sym: "C", name: "Углерод", desc: "Два вида совершенства рядом" }
+    ],
+    quote: "Настоящее золото не боится огня. Огонь только подтверждает его природу."
+  },
+  He: {
+    number: 2, symbol: "He", name: "Гелий", nameEn: "Helium",
+    group: "Благородный газ", mass: "4.003",
+    color: "#a0d8ef", glow: "rgba(160,216,239,0.2)",
+    shells: [2],
+    tagline: "Лёгкий, свободный, не привязываешься — и улетаешь вверх.",
+    personality: "Ты — воплощение независимости. Как гелий, ты не вступаешь в реакции ни с кем, если не хочешь. Твоя электронная оболочка полна — тебе не нужно «заимствовать» у других, чтобы чувствовать себя целым. Ты лёгок, свободен и всегда стремишься вверх. Люди не могут тебя удержать — и это не делает тебя плохим, это делает тебя гелием.",
+    chemistry: "Гелий — второй по распространённости элемент во Вселенной после водорода. Он образуется в недрах звёзд при термоядерном синтезе. На Земле гелий настолько лёгкий, что улетает в космос — мы буквально его теряем. Гелий невозможно заморозить при обычном давлении. Единственный элемент, который сопротивляется абсолютному нулю.",
+    props: { reactivity: 0, stability: 90, rarity: 40, toxicity: 0, brilliance: 30 },
+    shadow: "Свобода — это красиво. Но гелий не может создать ни одной связи. Вообще ни одной. Если ты никому не нужен, это независимость. Если ты нужен, но не можешь остаться — это одиночество.",
+    compat: [
+      { sym: "Li", name: "Литий", desc: "Его энергия — единственное, что тебя задерживает" },
+      { sym: "Au", name: "Золото", desc: "Вы оба цените дистанцию" }
+    ],
+    quote: "Свобода — это не отсутствие привязанностей. Это когда привязанности — твой выбор, а не потребность."
+  },
+  Fe: {
+    number: 26, symbol: "Fe", name: "Железо", nameEn: "Ferrum",
+    group: "Переходный металл", mass: "55.845",
+    color: "#b0b8c8", glow: "rgba(176,184,200,0.2)",
+    shells: [2, 8, 14, 2],
+    tagline: "Надёжный, прочный — основа всего. И да, ты магнитишь людей.",
+    personality: "Ты — несущая конструкция. Как железо, ты там, где нужна сила и надёжность: в стержнях мостов, в фундаментах зданий, в крови каждого живого существа. Без тебя всё рассыпается. Ты не блестишь как золото, но зато реально держишь мир. И да — ты магнитишь людей. Буквально: железо — единственный распространённый ферромагнетик.",
+    chemistry: "Железо — основа земной коры и центра нашей планеты. Ядро Земли — раскалённый шар из железа, который создаёт магнитное поле, защищающее нас от солнечного ветра. В крови железо входит в состав гемоглобина — без него кислород не попадёт к клеткам. Железо буквально несёт жизнь.",
+    props: { reactivity: 40, stability: 85, rarity: 10, toxicity: 5, brilliance: 35 },
+    shadow: "Ты так привык быть опорой, что забываешь: железо ржавеет. Ты берёшь на себя слишком много и не просишь помощи. Коррозия — это не слабость, это сигнал, что пора позаботиться о себе.",
+    compat: [
+      { sym: "C", name: "Углерод", desc: "Вместе вы — сталь. Буквально" },
+      { sym: "Li", name: "Литий", desc: "Заряжает и разгоняет тебя" }
+    ],
+    quote: "Сила — это не отсутствие трещин. Это когда ты держишь, несмотря на них."
+  },
+  I: {
+    number: 53, symbol: "I", name: "Йод", nameEn: "Iodine",
+    group: "Галоген", mass: "126.90",
+    color: "#a78bfa", glow: "rgba(167,139,250,0.2)",
+    shells: [2, 8, 18, 18, 7],
+    tagline: "Редкий, целебный, испаряешься фиолетовым дымом — и все смотрят.",
+    personality: "Ты — загадка. Как йод, ты существуешь между состояниями: твёрдый кристалл мгновенно превращается в фиолетовый газ, минуя жидкость. Ты не бываешь «обычным». Твоя редкость — не баг, а фича: йод необходим для жизни, но в микро-дозах. Ты целитель по натуре — интуитивно чувствуешь, кому плохо, и знаешь, что делать.",
+    chemistry: "Йод уникален: он совершает сублимацию — переход из твёрдого состояния сразу в газ, минуя жидкую фазу. Его пары — насыщенного фиолетового цвета (отсюда и название — от греческого ιώδης, «фиалковый»). Йод критически важен для щитовидной железы — без него организм буквально перестаёт регулировать себя.",
+    props: { reactivity: 55, stability: 45, rarity: 70, toxicity: 40, brilliance: 75 },
+    shadow: "Ты лечишь других, но забываешь о себе. И как йод — в больших дозах ты токсичен: твоя забота может превращаться в контроль. Помни: сублимация красива, но иногда нужно просто побыть в одном состоянии.",
+    compat: [
+      { sym: "Fe", name: "Железо", desc: "Ты лечишь его раны, он даёт тебе основу" },
+      { sym: "He", name: "Гелий", desc: "Его лёгкость уравновешивает твою глубину" }
+    ],
+    quote: "Исцеление — это не подвиг. Это побочный эффект внимательности."
+  },
+  Hg: {
+    number: 80, symbol: "Hg", name: "Ртуть", nameEn: "Hydrargyrum",
+    group: "Переходный металл", mass: "200.59",
+    color: "#4ecdc4", glow: "rgba(78,205,196,0.2)",
+    shells: [2, 8, 18, 32, 18, 2],
+    tagline: "Жидкая, красивая, ускользающая — тебя невозможно удержать в руках.",
+    personality: "Ты — текучесть в человеческой форме. Как ртуть, ты завораживаешь с первого взгляда: серебристая, подвижная, не принимающая ничью форму навсегда. Ты адаптируешься к любому контексту, но не растворяешься в нём. Тебя буквально невозможно схватить — и в этом твоя сила. Люди хотят тебя понять — и не могут. И это их притягивает.",
+    chemistry: "Ртуть — единственный металл, жидкий при комнатной температуре. Её латинское название Hydrargyrum означает «жидкое серебро». Ртуть растворяет золото, серебро и многие другие металлы, образуя амальгамы. Она использовалась в термометрах, зеркалах и алхимии — считалась «первоматерией» всех металлов.",
+    props: { reactivity: 35, stability: 30, rarity: 60, toxicity: 85, brilliance: 90 },
+    shadow: "Ты красива, но опасна — прежде всего для себя. Ртуть токсична: долгий контакт разрушает. Твоя изменчивость может быть бегством от собственной сути. Иногда нужно принять форму и остаться в ней — не потому что ты слабая, а потому что ты наконец выбрала.",
+    compat: [
+      { sym: "Au", name: "Золото", desc: "Ты — единственная, кто может его изменить" },
+      { sym: "I", name: "Йод", desc: "Две загадки — одно зеркало" }
+    ],
+    quote: "Те, кого нельзя удержать, помнят дольше всех."
+  },
+  C: {
+    number: 6, symbol: "C", name: "Углерод", nameEn: "Carbon",
+    group: "Неметалл", mass: "12.011",
+    color: "#e0e0e0", glow: "rgba(224,224,224,0.15)",
+    shells: [2, 4],
+    tagline: "Алмаз или графит — зависит от давления. И ты это знаешь.",
+    personality: "Ты — сама многогранность. Один и тот же элемент может быть мягким графитом карандаша или твёрдейшим алмазом — всё зависит от условий. Ты основа всего живого: каждая молекула ДНК, каждый белок, каждая клетка построена на тебе. Без тебя нет жизни — буквально. Ты тот человек, вокруг которого строится всё остальное.",
+    chemistry: "Углерод — основа всей органической химии и всей жизни на Земле. Он образует больше соединений, чем все остальные элементы вместе взятые. Алмаз (самый твёрдый материал) и графит (один из мягчайших) — это один и тот же элемент, просто с разной кристаллической решёткой. Разница между алмазом и карандашом — только структура.",
+    props: { reactivity: 50, stability: 70, rarity: 5, toxicity: 5, brilliance: 85 },
+    shadow: "Ты такой разный, что иногда сам не знаешь, кто ты — алмаз или графит. Это не гибкость, это потерянность. Твоя суперсила становится слабостью, когда ты меняешь форму ради других, а не ради себя.",
+    compat: [
+      { sym: "Fe", name: "Железо", desc: "Вместе — сталь: прочнее, чем по отдельности" },
+      { sym: "Au", name: "Золото", desc: "Два вида совершенства" }
+    ],
+    quote: "Давление либо ломает тебя, либо делает алмазом. Элемент тот же — решётка другая."
+  },
+  Ne: {
+    number: 10, symbol: "Ne", name: "Неон", nameEn: "Neon",
+    group: "Благородный газ", mass: "20.180",
+    color: "#ff6ec7", glow: "rgba(255,110,199,0.25)",
+    shells: [2, 8],
+    tagline: "Ты светишься, привлекаешь внимание — и остаёшься собой.",
+    personality: "Ты — свет в темноте. Как неон, ты не реагируешь с другими, но пропусти через тебя энергию — и ты засияешь так, что видно с другого конца улицы. Неоновые вывески существуют уже 100 лет, и они до сих пор красивее любых LED. Почему? Потому что неон светится изнутри. Как и ты — ты не отражаешь чужой свет, ты излучаешь свой.",
+    chemistry: "Неон — благородный газ с полностью заполненной электронной оболочкой. Он не образует соединений ни с одним элементом. Но при пропускании электрического тока через неон он излучает характерное красно-оранжевое свечение — отсюда неоновые вывески. Его название в переводе с греческого — «новый» (νέον).",
+    props: { reactivity: 0, stability: 85, rarity: 50, toxicity: 0, brilliance: 100 },
+    shadow: "Ты сияешь только при стимуляции. Без внешней энергии (внимания, событий, людей) ты невидимый инертный газ. Твоя яркость зависит от контекста — и это пугает. Что будет, если выключат ток?",
+    compat: [
+      { sym: "Li", name: "Литий", desc: "Он — ток, ты — свечение. Вместе вы ярче" },
+      { sym: "Hg", name: "Ртуть", desc: "Два вида завораживающей красоты" }
+    ],
+    quote: "Свет изнутри не нуждается в разрешении. Он просто есть."
+  }
+};
+
+const pickBonus = {
+  explosion: { Li: 3, Fe: 1 },
+  glow: { I: 2, Ne: 2 },
+  flow: { Hg: 3, He: 1 },
+  crystal: { Au: 2, C: 2 }
+};
+
+const questions = [
+  { tag: "Реактивность · Eysenck", text: "Кто-то говорит тебе что-то обидное. Твоя первая реакция?",
+    opts: [
+      { text: "Вспыхиваю моментально — потом жалею", sc: { Li: 3, Ne: 1 } },
+      { text: "Чувствую, но не показываю. Переварю потом", sc: { Au: 2, Fe: 1 } },
+      { text: "Пытаюсь понять, почему человек так сказал", sc: { I: 2, C: 1 } },
+      { text: "Ускользаю из разговора — не мои проблемы", sc: { He: 2, Hg: 2 } }
+    ] },
+  { tag: "Социальная связь · Bowlby", text: "Большая вечеринка. Ты:",
+    opts: [
+      { text: "В центре — энергия, танцы, все на мне", sc: { Li: 2, Ne: 2 } },
+      { text: "С парой близких друзей в углу — мне так лучше", sc: { Au: 2, I: 1 } },
+      { text: "Перемещаюсь между группами, нигде не задерживаюсь", sc: { Hg: 3, He: 1 } },
+      { text: "Рядом с тем, кому нужна поддержка", sc: { Fe: 2, C: 1 } }
+    ] },
+  { tag: "Стабильность · Big Five", text: "Как ты справляешься с неопределённостью?",
+    opts: [
+      { text: "Создаю план и иду по нему — хаос не для меня", sc: { Fe: 3, Au: 1 } },
+      { text: "Адаптируюсь по ходу — мне даже нравится", sc: { Hg: 2, C: 2 } },
+      { text: "Паникую, потом собираюсь и действую", sc: { Li: 2, I: 1 } },
+      { text: "Отпускаю — что будет, то будет", sc: { He: 3 } }
+    ] },
+  { tag: "Давление · Yerkes-Dodson", text: "Под давлением ты становишься:",
+    opts: [
+      { text: "Жёстче и прочнее — давление меня закаляет", sc: { C: 3, Fe: 1 } },
+      { text: "Ярче — стресс зажигает что-то внутри", sc: { Ne: 3, Li: 1 } },
+      { text: "Как обычно — я стабилен при любых условиях", sc: { Au: 3 } },
+      { text: "Испаряюсь — буквально выхожу из ситуации", sc: { I: 2, He: 2 } }
+    ] },
+  { tag: "Роль в группе · Belbin", text: "Твоя роль в компании друзей?",
+    opts: [
+      { text: "Заводила — без меня скучно", sc: { Li: 2, Ne: 2 } },
+      { text: "Опора — все знают, что на меня можно положиться", sc: { Fe: 3 } },
+      { text: "Мудрец — ко мне приходят за советом", sc: { Au: 1, I: 2 } },
+      { text: "Хамелеон — в каждой компании я разный", sc: { C: 2, Hg: 2 } }
+    ] },
+  { tag: "Привязанность · Bartholomew", text: "В отношениях ты скорее:",
+    opts: [
+      { text: "Горю ярко — влюбляюсь с головой и быстро", sc: { Li: 3 } },
+      { text: "Надёжный партнёр — стабильность важнее страсти", sc: { Fe: 2, Au: 1 } },
+      { text: "Свободный — мне нужно пространство", sc: { He: 2, Hg: 1 } },
+      { text: "Глубокий — мне нужно время, но я привязываюсь навсегда", sc: { I: 2, C: 1 } }
+    ] },
+  { tag: "Творчество · Guilford", text: "Как ты решаешь проблемы?",
+    opts: [
+      { text: "Логика, факты, проверенный метод", sc: { Fe: 2, Au: 1 } },
+      { text: "Интуиция и креативность — нестандартно", sc: { Hg: 2, Ne: 1 } },
+      { text: "Перебираю все варианты — я очень гибкий", sc: { C: 3 } },
+      { text: "Нахожу корень проблемы, остальное само решается", sc: { I: 2, He: 1 } }
+    ] },
+  { tag: "Утро · Хронотип", text: "Твоё утро — это:",
+    opts: [
+      { text: "Энергия! Я встаю и сразу в бой", sc: { Li: 2, Ne: 1 } },
+      { text: "Ритуал: кофе, тишина, план на день", sc: { Au: 2, Fe: 1 } },
+      { text: "Каждый день по-разному — зависит от настроения", sc: { Hg: 2, C: 1 } },
+      { text: "Я не утренний человек. Вообще. Совсем", sc: { He: 2, I: 1 } }
+    ] },
+  { tag: "Влияние · Cialdini", text: "Как ты влияешь на людей?",
+    opts: [
+      { text: "Энергией — рядом со мной все заряжаются", sc: { Li: 3, Ne: 1 } },
+      { text: "Примером — я просто делаю своё, и люди идут за мной", sc: { Au: 2, Fe: 1 } },
+      { text: "Словами — я умею убеждать и исцелять", sc: { I: 2, C: 1 } },
+      { text: "Загадкой — людей притягивает то, что они не могут понять", sc: { Hg: 3, He: 1 } }
+    ] },
+  { tag: "Одиночество · Cacioppo", text: "Когда ты один(а) надолго, ты:",
+    opts: [
+      { text: "Схожу с ума — мне нужны люди", sc: { Li: 2, Ne: 2 } },
+      { text: "Мне нормально — я самодостаточен", sc: { Au: 2, He: 2 } },
+      { text: "Рефлексирую и восстанавливаюсь", sc: { I: 3 } },
+      { text: "Начинаю проекты — одиночество = продуктивность", sc: { C: 2, Fe: 1 } }
+    ] },
+  { tag: "Сильная сторона", text: "Люди чаще всего хвалят тебя за:",
+    opts: [
+      { text: "Энергичность и позитив", sc: { Li: 2, Ne: 1 } },
+      { text: "Надёжность и ответственность", sc: { Fe: 3 } },
+      { text: "Глубину и чуткость", sc: { I: 2, C: 1 } },
+      { text: "Харизму и непредсказуемость", sc: { Hg: 2, Au: 1 } }
+    ] },
+  { tag: "Перемены · Rogers", text: "Ты переезжаешь в новый город. Что чувствуешь?",
+    opts: [
+      { text: "Кайф! Новые люди, места, возможности!", sc: { Li: 2, Hg: 1 } },
+      { text: "Тревогу, но справлюсь — я адаптивный", sc: { C: 2, Fe: 1 } },
+      { text: "Мне всё равно — я везде чувствую себя одинаково", sc: { He: 3 } },
+      { text: "Волнение — хочу изучить этот город до глубины", sc: { I: 2, Ne: 1 } }
+    ] },
+  { tag: "Наследие · Erikson", text: "Что ты хочешь, чтобы люди помнили о тебе?",
+    opts: [
+      { text: "Что я был(а) ярким и незабываемым", sc: { Ne: 3, Li: 1 } },
+      { text: "Что на меня всегда можно было положиться", sc: { Fe: 2, Au: 1 } },
+      { text: "Что я был(а) настоящим — без фальши", sc: { Au: 2, C: 1 } },
+      { text: "Что я помогал(а) людям стать лучше", sc: { I: 2, Hg: 1 } }
+    ] },
+  { tag: "Финальный вопрос ⚗️", text: "Какое слово описывает тебя точнее всего?",
+    opts: [
+      { text: "Энергия", sc: { Li: 3, Ne: 1 } },
+      { text: "Стойкость", sc: { Au: 2, Fe: 2 } },
+      { text: "Свобода", sc: { He: 3, Hg: 1 } },
+      { text: "Глубина", sc: { I: 2, C: 2 } }
+    ] }
+];
+
+let curQ = 0, selOpt = null, pickedReaction = null;
+let scores = { Li:0, Au:0, He:0, Fe:0, I:0, Hg:0, C:0, Ne:0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('pickerSection').classList.add('active');
+}
+
+function pick(el, val) {
+  document.querySelectorAll('.picker-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  pickedReaction = val;
+  document.getElementById('btnGo').classList.add('active');
+}
+
+function beginQuestions() {
+  if (!pickedReaction) return;
+  const bonus = pickBonus[pickedReaction];
+  for (const [k,v] of Object.entries(bonus)) scores[k] += v;
+  document.getElementById('pickerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  const num = String(i+1).padStart(2,'0');
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-tag">${q.tag}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">${q.opts.map((o,j) => `
+        <div class="option" onclick="sel(this,${j})">
+          <div class="opt-dot"></div>
+          <span>${o.text}</span>
+        </div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать свой элемент ⚗️':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i/questions.length)*100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop-10, behavior:'smooth' });
+}
+
+function sel(el,i) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if (selOpt===null) return;
+  const sc = questions[curQ].opts[selOpt].sc;
+  for (const [k,v] of Object.entries(sc)) scores[k] += v;
+  selOpt = null;
+  curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML = '';
+
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const elKey = sorted[0][0];
+  const el = elements[elKey];
+  const secondKey = sorted[1][0];
+  const secondEl = elements[secondKey];
+  const maxScore = sorted[0][1];
+
+  // Set CSS custom properties for element color
+  document.documentElement.style.setProperty('--el-color', el.color);
+  document.documentElement.style.setProperty('--el-glow', el.glow);
+
+  // Electron shell visualization
+  const shellsHTML = buildShells(el.shells);
+
+  // Properties
+  const propsHTML = Object.entries(el.props).map(([key,val]) => {
+    const names = { reactivity:'Реактивность', stability:'Стабильность', rarity:'Редкость', toxicity:'Токсичность', brilliance:'Яркость' };
+    return `<div class="prop-item"><div class="prop-name">${names[key]}</div><div class="prop-bar-bg"><div class="prop-bar-fill" data-w="${val}"></div></div><div class="prop-val">${val}%</div></div>`;
+  }).join('');
+
+  // Compatibility
+  const compatHTML = el.compat.map(c => `<div class="compat-tag"><span class="ct-sym" style="color:${elements[c.sym].color}">${c.sym}</span> ${c.name} — ${c.desc}</div>`).join('');
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="el-card-wrap">
+      <div class="el-card">
+        <span class="el-num mono">${el.number}</span>
+        <span class="el-mass mono">${el.mass}</span>
+        <span class="el-symbol">${el.symbol}</span>
+        <span class="el-name">${el.name}</span>
+        <span class="el-name-en">${el.nameEn}</span>
+        <span class="el-group">${el.group}</span>
+      </div>
+    </div>
+
+    <div class="r-center">
+      <div class="r-label" style="color:${el.color}">Ты — ${el.name}</div>
+      <p class="r-tagline">${el.tagline}</p>
+    </div>
+
+    <div class="electron-wrap">${shellsHTML}</div>
+
+    <div class="r-card">
+      <h3>🧬 Почему именно ты</h3>
+      <p>${el.personality}</p>
+    </div>
+
+    <div class="r-card">
+      <h3>⚗️ Реальная химия</h3>
+      <div class="chem-box">
+        <div class="chem-label">Факт · ${el.nameEn} (${el.symbol})</div>
+        <p>${el.chemistry}</p>
+      </div>
+    </div>
+
+    <div class="r-card">
+      <h3>📊 Свойства</h3>
+      <div class="prop-grid">${propsHTML}</div>
+    </div>
+
+    <div class="r-card">
+      <h3>🌘 Теневая сторона</h3>
+      <p>${el.shadow}</p>
+      <div class="pullquote"><p>${el.quote}</p></div>
+    </div>
+
+    <div class="r-card">
+      <h3>⚗️ Совместимость</h3>
+      <div class="compat-row">${compatHTML}</div>
+    </div>
+
+    ${sorted[1][1] > 4 ? `
+    <div class="r-card">
+      <h3>🧪 Примесь: <span class="mono" style="color:${secondEl.color}">${secondEl.symbol}</span> ${secondEl.name}</h3>
+      <p>${secondEl.tagline} Этот элемент тоже сильно проявился — ты сплав двух характеров.</p>
+    </div>` : ''}
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться
+      </button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Пройти ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Пройти заново</button>
+    </div>`;
+
+  setTimeout(() => document.querySelectorAll('.prop-bar-fill').forEach(b => b.style.width = b.dataset.w + '%'), 500);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildShells(shells) {
+  const sizes = [50, 90, 130, 160, 180, 200];
+  let html = '<div class="electron-viz"><div class="nucleus"></div>';
+  shells.forEach((count, i) => {
+    html += `<div class="shell" style="width:${sizes[i]}px;height:${sizes[i]}px"></div>`;
+    const r = sizes[i] / 2;
+    for (let j = 0; j < Math.min(count, 8); j++) {
+      const angle = (j / Math.min(count, 8)) * Math.PI * 2 - Math.PI / 2;
+      const x = 80 + r * Math.cos(angle) - 3;
+      const y = 80 + r * Math.sin(angle) - 3;
+      html += `<div class="electron" style="left:${x}px;top:${y}px"></div>`;
+    }
+  });
+  html += `<div class="shell-label">${shells.join(' · ')}</div></div>`;
+  return html;
+}
+
+function shareShort() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const el = elements[sorted[0][0]];
+  const text = `⚗️ Я — ${el.symbol} ${el.name}!\n\n${el.tagline}\n\nУзнай свой элемент: https://lisofoxa-oss.github.io/tests/`;
+  if (navigator.share) navigator.share({ title:'Какой ты элемент?', text }).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(() => showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const elKey = sorted[0][0];
+  const el = elements[elKey];
+  const secondEl = elements[sorted[1][0]];
+  const props = Object.entries(el.props).map(([k,v]) => {
+    const n = { reactivity:'Реактивность', stability:'Стабильность', rarity:'Редкость', toxicity:'Токсичность', brilliance:'Яркость' };
+    return `  ${n[k]}: ${'█'.repeat(Math.round(v/10))}${'░'.repeat(10-Math.round(v/10))} ${v}%`;
+  }).join('\n');
+  const compat = el.compat.map(c => `  ${c.sym} ${c.name} — ${c.desc}`).join('\n');
+
+  const text = `⚗️ КАКОЙ ТЫ ЭЛЕМЕНТ? — Результат
+
+[ ${el.number} ]  ${el.symbol} — ${el.name}
+${el.nameEn} · ${el.group} · ${el.mass}
+
+«${el.tagline}»
+
+━━━━━━━━━━━━━━━━━
+
+🧬 Почему именно я:
+
+${el.personality}
+
+━━━━━━━━━━━━━━━━━
+
+⚗️ Реальная химия:
+
+${el.chemistry}
+
+━━━━━━━━━━━━━━━━━
+
+📊 Свойства:
+${props}
+
+━━━━━━━━━━━━━━━━━
+
+🌘 Теневая сторона:
+
+${el.shadow}
+
+💬 «${el.quote}»
+
+━━━━━━━━━━━━━━━━━
+
+⚗️ Совместимость:
+${compat}${sorted[1][1] > 4 ? `
+
+━━━━━━━━━━━━━━━━━
+
+🧪 Примесь: ${secondEl.symbol} ${secondEl.name}
+${secondEl.tagline}` : ''}
+
+━━━━━━━━━━━━━━━━━
+→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
