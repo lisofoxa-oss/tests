@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какой ты Red Flag? 🚩</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #0c0808;
+  --bg-rgb: 12,8,8;
+  --surface: rgba(255,60,60,0.03);
+  --surface2: rgba(255,60,60,0.06);
+  --surface3: rgba(255,60,60,0.09);
+  --text: #b8a0a0;
+  --text-dim: #685858;
+  --text-bright: #f0e4e4;
+  --border: rgba(255,60,60,0.08);
+  --red: #dc2626;
+  --red-soft: #ef4444;
+  --red-glow: rgba(220,38,38,0.12);
+  --crimson: #991b1b;
+  --flag-gradient: linear-gradient(135deg, #dc2626, #991b1b);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 20% 15%, var(--red-glow), transparent 60%),
+    radial-gradient(ellipse 40% 50% at 80% 85%, rgba(153,27,27,0.06), transparent 60%);
+  pointer-events: none;
+}
+
+/* Warning tape top bar */
+body::after {
+  content: '⚠ RED FLAG TEST ⚠ RED FLAG TEST ⚠ RED FLAG TEST ⚠ RED FLAG TEST ⚠ RED FLAG TEST ⚠';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 24px;
+  background: repeating-linear-gradient(45deg, #dc2626, #dc2626 10px, #0c0808 10px, #0c0808 20px);
+  z-index: 1000;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: transparent;
+  line-height: 24px;
+  overflow: hidden;
+}
+
+.container { max-width: 660px; margin: 0 auto; padding: 32px 16px 60px; position: relative; z-index: 1; }
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 36px 0 28px;
+  animation: fadeUp .8s ease;
+}
+
+.flag-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 20px;
+  animation: wave 1.5s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%,100% { transform: rotate(-5deg); }
+  50% { transform: rotate(10deg); }
+}
+
+h1 {
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.1;
+  margin-bottom: 14px;
+  letter-spacing: -1px;
+}
+
+h1 em {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--red);
+}
+
+.lead {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* ─── Tape divider ─── */
+.tape {
+  height: 28px;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(220,38,38,0.08),
+    rgba(220,38,38,0.08) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  margin: 24px -16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--red);
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+/* ─── Intro ─── */
+.intro {
+  padding: 0 0 24px;
+  animation: fadeUp .8s ease .15s both;
+  text-align: center;
+}
+
+.intro p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  font-weight: 400;
+}
+
+.flags-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.flag-pill {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 14px;
+  background: var(--flag-gradient); color: #fff;
+  font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 6px 30px rgba(220,38,38,0.25);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(220,38,38,0.35); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 24px; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.92);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 10px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; font-weight: 600; }
+.progress-count { font-size: 12px; color: var(--red); font-weight: 700; }
+.progress-bar { height: 2px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--flag-gradient); border-radius: 10px; transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .45s ease;
+}
+
+.q-num { font-size: 10px; letter-spacing: 3px; color: var(--red); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
+
+.q-format {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--text-dim);
+  padding: 4px 10px; background: var(--surface2); border-radius: 6px;
+  margin-bottom: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;
+}
+
+.q-text {
+  font-size: 20px; font-weight: 600; color: var(--text-bright);
+  line-height: 1.4; margin-bottom: 8px;
+}
+
+.q-sub {
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px; font-style: italic; color: var(--text-dim);
+  margin-bottom: 22px; line-height: 1.5;
+}
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .25s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover { border-color: rgba(220,38,38,0.15); background: var(--surface3); }
+.option.selected { border-color: var(--red); background: rgba(220,38,38,0.08); }
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot { border-color: var(--red); background: var(--red); }
+.option.selected .opt-dot::after { content:''; position:absolute; inset:3px; background:#fff; border-radius:50%; }
+
+/* Chat bubble style options */
+.chat-options { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+.chat-opt {
+  max-width: 85%;
+  padding: 12px 18px;
+  background: var(--surface2);
+  border: 1.5px solid transparent;
+  border-radius: 18px 18px 4px 18px;
+  cursor: pointer; transition: all .25s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5;
+  text-align: right; user-select: none;
+}
+
+.chat-opt:hover { border-color: rgba(220,38,38,0.15); }
+.chat-opt.selected { border-color: var(--red); background: rgba(220,38,38,0.08); color: var(--text-bright); }
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: var(--flag-gradient); color: #fff;
+  box-shadow: 0 4px 16px rgba(220,38,38,0.2);
+}
+
+/* ═══════════════════════════════════════
+   R E S U L T S
+   ═══════════════════════════════════════ */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+/* ─── Mugshot card ─── */
+.mugshot-wrap { display: flex; justify-content: center; padding: 36px 0 8px; }
+
+.mugshot {
+  width: 220px;
+  border: 2px solid var(--red);
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  background: var(--surface);
+  box-shadow: 0 0 60px var(--red-glow);
+}
+
+.mugshot-top {
+  background: var(--flag-gradient);
+  padding: 10px 16px;
+  text-align: center;
+}
+
+.mugshot-top span {
+  font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: rgba(255,255,255,0.7); font-weight: 600;
+}
+
+.mugshot-body {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.mugshot-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
+
+.mugshot-name {
+  font-size: 20px; font-weight: 700;
+  color: var(--text-bright); margin-bottom: 4px;
+}
+
+.mugshot-aka {
+  font-family: 'Crimson Pro', serif;
+  font-size: 13px; font-style: italic;
+  color: var(--text-dim);
+}
+
+.mugshot-bottom {
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex; justify-content: space-between;
+}
+
+.mugshot-stat {
+  text-align: center;
+}
+
+.mugshot-stat-label {
+  font-size: 8px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 2px;
+}
+
+.mugshot-stat-val {
+  font-size: 13px; font-weight: 700; color: var(--red);
+}
+
+/* ─── Danger meter ─── */
+.danger-wrap { text-align: center; padding: 20px 0; }
+.danger-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; font-weight: 600; }
+.danger-bar-outer { height: 10px; background: var(--surface2); border-radius: 100px; overflow: hidden; margin-bottom: 8px; border: 1px solid var(--border); }
+.danger-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #facc15, #f97316, #ef4444, #dc2626); transition: width 1.5s cubic-bezier(0.4,0,0.2,1); width: 0; }
+.danger-val { font-size: 22px; font-weight: 700; color: var(--red); }
+
+.r-tagline {
+  font-family: 'Crimson Pro', serif;
+  font-size: 18px; font-style: italic;
+  color: var(--text); text-align: center;
+  max-width: 440px; margin: 8px auto 24px;
+  line-height: 1.6;
+}
+
+/* ─── Cards ─── */
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+}
+
+.r-card h3 {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; }
+
+/* Criminal record list */
+.record-list { list-style: none; }
+
+.record-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text);
+  line-height: 1.6;
+}
+
+.record-item:last-child { border-bottom: none; }
+.record-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+/* Bars */
+.sc-bars { margin: 14px 0 4px; }
+.sc-row { margin-bottom: 12px; }
+.sc-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.sc-name { font-size: 12px; color: var(--text); font-weight: 500; }
+.sc-val { font-size: 11px; font-weight: 700; color: var(--red); }
+.sc-bg { height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.sc-fill { height: 100%; border-radius: 10px; background: var(--flag-gradient); transition: width 1.2s ease; width: 0; }
+
+/* Warning box */
+.warn-box {
+  background: rgba(220,38,38,0.04);
+  border: 1px solid rgba(220,38,38,0.12);
+  border-radius: 14px;
+  padding: 18px;
+  margin-top: 14px;
+}
+
+.warn-box-label {
+  font-size: 9px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--red);
+  margin-bottom: 6px; font-weight: 700;
+}
+
+.warn-box p { font-size: 13px; }
+
+/* Pullquote */
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--red);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 12px 12px 0;
+}
+
+.pullquote p {
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px; font-style: italic;
+  color: var(--text-bright); line-height: 1.6; margin: 0;
+}
+
+/* ─── All flags gallery ─── */
+.gallery-toggle {
+  width: 100%; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text-dim);
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease;
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.gallery-toggle:hover { border-color: var(--red); color: var(--red); }
+
+.gallery {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  animation: fadeUp .4s ease;
+}
+
+.gallery.open { display: flex; }
+
+.gallery-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all .25s ease;
+  cursor: pointer;
+}
+
+.gallery-item:hover { background: var(--surface2); }
+.gallery-item.current { border-color: var(--red); background: rgba(220,38,38,0.05); }
+
+.gi-emoji { font-size: 24px; flex-shrink: 0; }
+.gi-body { flex: 1; }
+.gi-name { font-size: 13px; font-weight: 700; color: var(--text-bright); }
+.gi-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.gi-badge {
+  font-size: 9px; padding: 3px 8px;
+  background: rgba(220,38,38,0.1); color: var(--red);
+  border-radius: 6px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* ─── Actions ─── */
+.actions { display: flex; flex-direction: column; gap: 10px; padding-top: 28px; }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 14px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+.btn-primary { background: var(--flag-gradient); color: #fff; border: none; box-shadow: 0 4px 16px rgba(220,38,38,0.2); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--red); color: var(--red); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 500; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--red); color: #fff; padding: 12px 24px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+@media (max-width:480px) {
+  .container { padding: 28px 14px 50px; }
+  .q-card,.r-card { padding: 24px 16px; }
+  .q-text { font-size: 18px; }
+  .option,.chat-opt { font-size: 13px; }
+  .mugshot { width: 190px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ═══ HEADER ═══ -->
+  <div id="headerSection">
+    <div class="header">
+      <span class="flag-icon">🚩</span>
+      <h1>Какой ты <em>Red Flag?</em></h1>
+      <p class="lead">12 ситуаций из жизни. Честные ответы. И твоя токсичная суперсила — как на ладони.</p>
+    </div>
+
+    <div class="tape">· · · зона опасности · · ·</div>
+
+    <div class="intro">
+      <p>Все мы чьи-то red flags. Вопрос — какой именно? Этот тест не для тех, кто идеален. Он для тех, кто готов посмотреть правде в глаза. С юмором.</p>
+      <div class="flags-row">
+        <span class="flag-pill">👻 Гостинг</span>
+        <span class="flag-pill">👑 Я-центризм</span>
+        <span class="flag-pill">🕐 Хроно-хаос</span>
+        <span class="flag-pill">🗡️ Честность</span>
+        <span class="flag-pill">🎢 Качели</span>
+        <span class="flag-pill">🔍 Контроль</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Узнать свой флаг 🚩</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Допрос</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано!</div>
+
+<script>
+const flags = {
+  ghost: { emoji: "👻", name: "Мастер гостинга", aka: "aka «Был(а) в сети 5 минут назад»",
+    danger: 72, tagline: "Ты не исчезаешь — ты совершаешь тактическое отступление. Каждый раз.",
+    desc: "Ты не любишь сложные разговоры, конфликты и эмоциональное давление. Когда становится тяжело — ты просто пропадаешь. Не из злости. Из самосохранения. Для тебя проще начать заново, чем разгребать старое. Исследования (Freedman et al., 2019) показывают, что ghosting часто связан не с токсичностью, а с избегающим стилем привязанности — ты защищаешь себя единственным способом, который знаешь.",
+    symptoms: ["Не отвечаешь на сообщения 3 дня, потом присылаешь мем", "Фраза «мне нужно время» длится бесконечно", "Удалялся(-ась) из чатов «случайно»", "Считаешь, что молчание — тоже ответ"],
+    antidote: "Один неловкий разговор лучше, чем сто дней тишины. Попробуй написать «мне сложно, но я тут» — даже если это всё, что ты можешь.",
+    quote: "Людей ранит не уход. Людей ранит тишина вместо объяснения." },
+  main: { emoji: "👑", name: "Синдром главного героя", aka: "aka «А теперь про меня»",
+    danger: 65, tagline: "Мир — это фильм. Ты в главной роли. Остальные — массовка с опциональным текстом.",
+    desc: "Ты умеешь сделать любую историю про себя. Подруга рассказывает о проблемах — ты рассказываешь о своих. Кто-то грустит — ты грустишь громче. Это не эгоизм — это твоя нервная система, которая привыкла быть в центре, чтобы чувствовать себя в безопасности. Исследования нарциссизма (Twenge & Campbell, 2009) показывают, что «main character energy» — часто защита от страха быть незначительным.",
+    symptoms: ["Любую тему переводишь на себя за 30 секунд", "Обижаешься, если внимание не на тебе", "Сторис публикуешь чаще, чем пьёшь воду", "Считаешь свои проблемы объективно важнее чужих"],
+    antidote: "Попробуй эксперимент: целый разговор слушай и задавай вопросы, не рассказывая о себе. Посмотри, что будет.",
+    quote: "Быть главным героем — это не когда все смотрят на тебя. Это когда ты замечаешь других." },
+  chrono: { emoji: "🕐", name: "Хронический опоздун", aka: "aka «Уже выхожу (ещё в кровати)»",
+    danger: 48, tagline: "Ты не опаздываешь — ты живёшь в собственном часовом поясе. Всегда на 20 минут позже.",
+    desc: "Для тебя время — концепция, а не система координат. Ты не хочешь никого обидеть, просто у тебя внутренние часы работают иначе. Исследования (Conte, 2005) связывают хроническое опоздание с полихронностью — способностью делать 10 дел одновременно и терять счёт времени. Ты не ленивый — ты слишком увлечённый.",
+    symptoms: ["«Через 5 минут» = через 25 минут", "Будильников больше, чем друзей", "Собираешься за 10 минут до выхода, хотя нужен час", "Искренне удивляешься, что опоздал(а)"],
+    antidote: "Ставь «фейковое» время встречи на 30 минут раньше. Серьёзно — обмани себя. Это работает.",
+    quote: "Уважение к чужому времени — это бесплатный подарок, который стоит больше, чем кажется." },
+  brutal: { emoji: "🗡️", name: "Токсично честный", aka: "aka «Я просто говорю правду»",
+    danger: 78, tagline: "Ты не грубый — ты честный. Ну, по крайней мере, ты так думаешь.",
+    desc: "Ты говоришь то, что думаешь. Всегда. Без фильтра. И когда не просят. Ты считаешь это достоинством — а окружающие иногда плачут. Исследования эмоционального интеллекта (Goleman, 1995) показывают, что «токсичная честность» — это не про правду, а про неумение учитывать чужие чувства. Правда без эмпатии — это не честность, а оружие.",
+    symptoms: ["«Без обид, но…» — и дальше обиды", "Друзья боятся спрашивать твоё мнение", "Считаешь, что мягкость = лицемерие", "Говоришь «я просто честный человек» после того, как всех расстроил(а)"],
+    antidote: "Перед тем как сказать правду, спроси: «Меня просили? Это поможет? Или я просто хочу быть правым?». Два «нет» — молчи.",
+    quote: "Честность без доброты — это просто жестокость с хорошим пиаром." },
+  swing: { emoji: "🎢", name: "Эмоциональные качели", aka: "aka «Люблю-ненавижу за 5 минут»",
+    danger: 82, tagline: "Утром ты — солнце. Вечером — ледниковый период. Расписания нет.",
+    desc: "Ты чувствуешь всё на 200%. Радость — ярче, боль — глубже, обиды — острее. Ты не можешь «просто успокоиться», потому что твоя эмоциональная система работает на другом напряжении. Исследования (Linehan, 1993) описывают это как эмоциональную дисрегуляцию — не слабость, а особенность нервной системы, с которой можно научиться жить.",
+    symptoms: ["Пишешь длинное сообщение обиды, потом удаляешь, потом отправляешь", "Любишь — обожаешь, раздражён — ненавидишь", "Настроение зависит от одного непрочитанного сообщения", "Друзья не знают, какой ты сегодня"],
+    antidote: "Правило 24 часов: прежде чем отреагировать — подожди. Если через сутки всё ещё больно — реагируй. Спойлер: в 80% случаев уже нет.",
+    quote: "Сила — это не не чувствовать. Сила — это чувствовать и всё равно выбирать осознанно." },
+  ctrl: { emoji: "🔍", name: "Контрол-фрик", aka: "aka «А с кем ты там общаешься?»",
+    danger: 85, tagline: "Ты не контролируешь — ты «заботишься». Очень. Очень. Подробно.",
+    desc: "Ты проверяешь, когда был(а) в сети. Ты замечаешь, кто лайкнул фото. Ты задаёшь «невинные» вопросы, от которых напрягаются. Это не злость — это тревога. Исследования привязанности (Hazan & Shaver, 1987) показывают, что контроль — защита от страха быть брошенным. Ты не хочешь власти — ты хочешь гарантий, что тебя не оставят.",
+    symptoms: ["Проверяешь время последнего онлайна", "Задаёшь одни и те же вопросы разными словами", "Знаешь расписание другого человека лучше, чем своё", "«Я не ревную, я просто спрашиваю» — 5 раз в день"],
+    antidote: "Каждый раз, когда хочешь проверить — запиши свои чувства вместо этого. Тревога — это не факт. Это чувство. И оно врёт.",
+    quote: "Доверие — это не знать. Доверие — это не знать и быть в порядке с этим." }
+};
+
+const scaleNames = {
+  ghost: 'Гостинг', main: 'Я-центризм', chrono: 'Хроно-хаос',
+  brutal: 'Честность', swing: 'Качели', ctrl: 'Контроль'
+};
+
+const questions = [
+  { format: "📩 Ситуация", text: "Тебе написал(а) человек, с которым ты не хочешь разговаривать.",
+    sub: "Что ты делаешь?",
+    type: "standard",
+    opts: [
+      { text: "Не отвечаю. Вообще. Может, само рассосётся", sc: { ghost: 3 } },
+      { text: "Отвечаю, но перевожу разговор на себя и свои дела", sc: { main: 3 } },
+      { text: "Отвечаю через 4 дня: «ой, только увидел(а)»", sc: { chrono: 2, ghost: 1 } },
+      { text: "Говорю прямо: «Мне не хочется общаться»", sc: { brutal: 3 } }
+    ] },
+  { format: "💬 Что ты ответишь?", text: "Подруга спрашивает: «Как мне это платье?»",
+    sub: "Платье ужасное. Твой ответ?",
+    type: "chat",
+    opts: [
+      { text: "Красивое!!! 😍 (врёшь с улыбкой)", sc: { ctrl: 1, main: 1 } },
+      { text: "Ну… давай поищем другие варианты?", sc: { swing: 1, chrono: 1 } },
+      { text: "Если честно — не очень. Сними это пока не поздно", sc: { brutal: 3 } },
+      { text: "Мне тоже такое не идёт, помню купила похожее и…", sc: { main: 3 } }
+    ] },
+  { format: "📱 Сценарий", text: "Твой партнёр не отвечает 3 часа. Обычно отвечает быстро.",
+    sub: "Что у тебя в голове?",
+    type: "standard",
+    opts: [
+      { text: "Ничего. Человек занят. Напишет когда сможет", sc: { ghost: 1 } },
+      { text: "Уже проверяю онлайн. Был(а) в сети 12 минут назад. А ПОЧЕМУ НЕ МНЕ?", sc: { ctrl: 3 } },
+      { text: "Обида нарастает с каждой минутой. К вечеру будет скандал или ледяное молчание", sc: { swing: 3 } },
+      { text: "Пишу: «Ладно, я поняла» без контекста", sc: { swing: 1, ctrl: 1, ghost: 1 } }
+    ] },
+  { format: "🪞 Честный вопрос", text: "Что тебя больше всего раздражает в людях?",
+    sub: "(Спойлер: обычно это то, что есть в нас самих)",
+    type: "standard",
+    opts: [
+      { text: "Когда люди врут, даже «из вежливости»", sc: { brutal: 3 } },
+      { text: "Когда не ценят моё время или заставляют ждать", sc: { ctrl: 2, chrono: 1 } },
+      { text: "Когда перетягивают внимание на себя", sc: { main: 2, swing: 1 } },
+      { text: "Когда требуют ответ ПРЯМО СЕЙЧАС", sc: { ghost: 3 } }
+    ] },
+  { format: "⏰ Жизненная ситуация", text: "Ты договорился(-ась) встретиться в 18:00. Сейчас 17:30.",
+    sub: "Где ты и что делаешь?",
+    type: "standard",
+    opts: [
+      { text: "Уже на месте. Пришёл(а) заранее", sc: { ctrl: 2, main: 1 } },
+      { text: "Собираюсь. Буду вовремя. Ну, плюс-минус", sc: { swing: 1 } },
+      { text: "О, это сегодня? Даже не начинал(а) собираться", sc: { chrono: 3 } },
+      { text: "Думаю, может отменить и ничего не написать", sc: { ghost: 3 } }
+    ] },
+  { format: "💬 Что ты ответишь?", text: "Друг: «Я начал рисовать! Смотри мой первый рисунок»",
+    sub: "Рисунок… на уровне 3-летнего ребёнка.",
+    type: "chat",
+    opts: [
+      { text: "Ого, круто что начал! Продолжай!! 🎨", sc: { swing: 1 } },
+      { text: "Слушай, я тоже хотела начать! Вот я недавно…", sc: { main: 3 } },
+      { text: "Хм. Ну, первый блин комом, пойдёт 😅", sc: { brutal: 2, swing: 1 } },
+      { text: "Если честно, я бы нашла учителя прежде чем показывать", sc: { brutal: 3 } }
+    ] },
+  { format: "🎭 Что ближе?", text: "Какая фраза чаще всего звучит в твоей голове?",
+    sub: "",
+    type: "standard",
+    opts: [
+      { text: "«Потом разберусь» (потом = никогда)", sc: { ghost: 2, chrono: 2 } },
+      { text: "«А что обо мне подумают / скажут?»", sc: { main: 2, ctrl: 1 } },
+      { text: "«Я просто говорю как есть, это их проблемы»", sc: { brutal: 3 } },
+      { text: "«Меня бесит — нет, всё нормально — нет, БЕСИТ»", sc: { swing: 3 } }
+    ] },
+  { format: "📱 Сценарий", text: "Тебя позвали на вечеринку. Ты сказал(а) «да».",
+    sub: "Наступил день вечеринки. Что дальше?",
+    type: "standard",
+    opts: [
+      { text: "Иду! Там все должны меня увидеть", sc: { main: 3 } },
+      { text: "Иду, но опаздываю на час. Ну, на полтора", sc: { chrono: 3 } },
+      { text: "Отменяю за час до и выключаю телефон", sc: { ghost: 3 } },
+      { text: "Иду, но мониторю, с кем там общается мой/моя…", sc: { ctrl: 3 } }
+    ] },
+  { format: "🤔 Глубокий вопрос", text: "Как ты ведёшь себя в конфликте?",
+    sub: "Честно. Тут все свои.",
+    type: "standard",
+    opts: [
+      { text: "Ухожу. Буквально или эмоционально. Разговор окончен", sc: { ghost: 3 } },
+      { text: "Говорю всё что думаю. Потом жалею. Или не жалею", sc: { brutal: 2, swing: 2 } },
+      { text: "Зависит от настроения: то плачу, то ору, то молчу", sc: { swing: 3 } },
+      { text: "Собираю доказательства. Скрины, даты, факты", sc: { ctrl: 3 } }
+    ] },
+  { format: "📩 Ситуация", text: "Тебе нужно извиниться. Реально облажался(-ась).",
+    sub: "Как ты это делаешь?",
+    type: "standard",
+    opts: [
+      { text: "Делаю вид, что ничего не было. Время лечит, да?", sc: { ghost: 3 } },
+      { text: "Извиняюсь, но как-то получается рассказ о моих чувствах", sc: { main: 3 } },
+      { text: "«Ладно, может я был(а) слишком резкой. НО ты тоже…»", sc: { brutal: 2, swing: 1 } },
+      { text: "Пишу длинное сообщение в 3 ночи. Удаляю. Пишу заново. Отправляю в 5 утра", sc: { swing: 3 } }
+    ] },
+  { format: "🎯 Правда или правда", text: "Что друзья сказали бы о тебе за глаза?",
+    sub: "(То, что они не скажут в лицо)",
+    type: "standard",
+    opts: [
+      { text: "«С ним/ней классно, но вечно пропадает»", sc: { ghost: 3 } },
+      { text: "«Всегда про себя, даже на чужих похоронах»", sc: { main: 3 } },
+      { text: "«Лучше не спрашивай мнение, если не готов к правде»", sc: { brutal: 3 } },
+      { text: "«Не знаешь, в каком настроении будет сегодня»", sc: { swing: 2, ctrl: 1 } }
+    ] },
+  { format: "🚩 Финальный", text: "Тебе показали этот тест. Почему ты его прошёл(а)?",
+    sub: "",
+    type: "standard",
+    opts: [
+      { text: "Хочу узнать правду о себе — даже если неприятную", sc: { brutal: 2, swing: 1 } },
+      { text: "Хочу убедиться, что я не такой уж bad guy", sc: { ghost: 1, ctrl: 1 } },
+      { text: "Мне скинули — мне стало интересно, что обо мне думают", sc: { main: 2, ctrl: 1 } },
+      { text: "Просто прикольный тест, я все прохожу", sc: { chrono: 2, swing: 1 } }
+    ] }
+];
+
+let curQ = 0, selOpt = null;
+let scores = { ghost: 0, main: 0, chrono: 0, brutal: 0, swing: 0, ctrl: 0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  const num = String(i+1).padStart(2,'0');
+  const isChat = q.type === 'chat';
+
+  const optsHTML = isChat
+    ? `<div class="chat-options">${q.opts.map((o,j) => `<div class="chat-opt" onclick="sel(this,${j})">${o.text}</div>`).join('')}</div>`
+    : `<div class="options">${q.opts.map((o,j) => `<div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>`;
+
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">Вопрос ${num} из ${questions.length}</div>
+      <div class="q-format">${q.format}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
+      ${optsHTML}
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать свой флаг 🚩':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i/questions.length)*100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop-10, behavior:'smooth' });
+}
+
+function sel(el, i) {
+  document.querySelectorAll('.option,.chat-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if (selOpt===null) return;
+  const sc = questions[curQ].opts[selOpt].sc;
+  for (const [k,v] of Object.entries(sc)) scores[k] += v;
+  selOpt = null;
+  curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML = '';
+
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  const fKey = sorted[0][0];
+  const f = flags[fKey];
+  const maxVal = sorted[0][1];
+
+  // Bars
+  const barsHTML = sorted.map(([key, val]) => {
+    const pct = maxVal > 0 ? Math.round((val/maxVal)*100) : 0;
+    return `<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${scaleNames[key]}</span><span class="sc-val">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}"></div></div></div>`;
+  }).join('');
+
+  // Symptoms
+  const sympHTML = f.symptoms.map(s => `<li class="record-item"><span class="record-icon">🚩</span><span>${s}</span></li>`).join('');
+
+  // All flags gallery
+  const galleryHTML = Object.entries(flags).map(([key, fl]) => {
+    const isCur = key === fKey;
+    return `<div class="gallery-item ${isCur?'current':''}">
+      <span class="gi-emoji">${fl.emoji}</span>
+      <div class="gi-body"><div class="gi-name">${fl.name}</div><div class="gi-desc">${fl.tagline}</div></div>
+      ${isCur ? '<span class="gi-badge">Ты</span>' : ''}
+    </div>`;
+  }).join('');
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="mugshot-wrap">
+      <div class="mugshot">
+        <div class="mugshot-top"><span>⚠ Red Flag Profile ⚠</span></div>
+        <div class="mugshot-body">
+          <span class="mugshot-emoji">${f.emoji}</span>
+          <div class="mugshot-name">${f.name}</div>
+          <div class="mugshot-aka">${f.aka}</div>
+        </div>
+        <div class="mugshot-bottom">
+          <div class="mugshot-stat"><div class="mugshot-stat-label">Класс</div><div class="mugshot-stat-val">🚩</div></div>
+          <div class="mugshot-stat"><div class="mugshot-stat-label">Опасность</div><div class="mugshot-stat-val">${f.danger}%</div></div>
+          <div class="mugshot-stat"><div class="mugshot-stat-label">Статус</div><div class="mugshot-stat-val">Active</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="danger-wrap">
+      <div class="danger-label">Уровень опасности</div>
+      <div class="danger-bar-outer"><div class="danger-bar-fill" id="dangerFill" data-w="${f.danger}"></div></div>
+      <div class="danger-val">${f.danger}%</div>
+    </div>
+
+    <p class="r-tagline">${f.tagline}</p>
+
+    <div class="r-card">
+      <h3>🔬 Диагноз</h3>
+      <p>${f.desc}</p>
+    </div>
+
+    <div class="r-card">
+      <h3>🚩 Симптомы</h3>
+      <ul class="record-list">${sympHTML}</ul>
+    </div>
+
+    <div class="r-card">
+      <h3>📊 Профиль по 6 шкалам</h3>
+      <div class="sc-bars">${barsHTML}</div>
+    </div>
+
+    <div class="r-card">
+      <h3>💊 Антидот</h3>
+      <p>${f.antidote}</p>
+      <div class="pullquote"><p>${f.quote}</p></div>
+    </div>
+
+    ${sorted[1][1] > 3 ? `
+    <div class="r-card">
+      <h3>⚠ Дополнительный флаг: ${flags[sorted[1][0]].emoji} ${flags[sorted[1][0]].name}</h3>
+      <p>${flags[sorted[1][0]].tagline}</p>
+    </div>` : ''}
+
+    <div class="tape" style="margin:24px -22px">· · · все подозреваемые · · ·</div>
+
+    <button class="gallery-toggle" onclick="toggleGallery()">📋 Все 6 red flags</button>
+    <div class="gallery" id="gallery">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться
+      </button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Пройти ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(() => {
+    document.querySelectorAll('.sc-fill').forEach(b => b.style.width = b.dataset.w + '%');
+    document.getElementById('dangerFill').style.width = f.danger + '%';
+  }, 400);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleGallery() {
+  document.getElementById('gallery').classList.toggle('open');
+}
+
+function shareShort() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const f = flags[sorted[0][0]];
+  const text = `${f.emoji} Мой red flag: ${f.name}\nОпасность: ${f.danger}%\n\n${f.tagline}\n\nУзнай свой: https://lisofoxa-oss.github.io/tests/`;
+  if (navigator.share) navigator.share({ title:'Какой ты Red Flag?', text }).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(() => showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const fKey = sorted[0][0];
+  const f = flags[fKey];
+  const maxVal = sorted[0][1];
+  
+  const bars = sorted.map(([key, val]) => {
+    const pct = maxVal > 0 ? Math.round((val/maxVal)*100) : 0;
+    return `  ${scaleNames[key]}: ${'█'.repeat(Math.round(pct/10))}${'░'.repeat(10-Math.round(pct/10))} ${pct}%`;
+  }).join('\n');
+
+  const symp = f.symptoms.map(s => `  🚩 ${s}`).join('\n');
+
+  const text = `🚩 КАКОЙ ТЫ RED FLAG? — Результат
+
+${f.emoji}  ${f.name}
+${f.aka}
+Уровень опасности: ${f.danger}%
+
+«${f.tagline}»
+
+━━━━━━━━━━━━━━━━━
+
+🔬 Диагноз:
+
+${f.desc}
+
+━━━━━━━━━━━━━━━━━
+
+🚩 Симптомы:
+${symp}
+
+━━━━━━━━━━━━━━━━━
+
+📊 Профиль:
+${bars}
+
+━━━━━━━━━━━━━━━━━
+
+💊 Антидот:
+
+${f.antidote}
+
+💬 «${f.quote}»${sorted[1][1] > 3 ? `
+
+━━━━━━━━━━━━━━━━━
+
+⚠ Доп. флаг: ${flags[sorted[1][0]].emoji} ${flags[sorted[1][0]].name}
+${flags[sorted[1][0]].tagline}` : ''}
+
+━━━━━━━━━━━━━━━━━
+→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
