@@ -73,6 +73,7 @@
 
     /* ═══ TESTS DATA ═══ */
     const tests = [
+      { cat: "deep", folder: "expedition", emoji: "🏝️🗺️", title: "🏝️ Неизведанный остров", desc: "Текстовый квест · 20+ сцен с ветвлением · карта маршрута · ~8 мин" },
       { cat: "science", folder: "element", emoji: "⚗️🧬", title: "⚗️ Какой ты элемент?", desc: "Периодический тест — 8 элементов, реальная химия, твой характер" },
       { cat: "science", folder: "foto", emoji: "🪞🔬", title: "Почему ты не отправляешь это фото?", desc: "Научный тест на основе 6 психологических шкал" },
       { cat: "science", folder: "age", emoji: "⏳🔬", title: "Почему ты скрываешь возраст?", desc: "Научный тест — 6 психологических механизмов" },
@@ -99,6 +100,7 @@
     ];
 
     const catLabels = {
+      deep: '🧭 Глубокие',
       science: '🔬 Научные',
       fun: '✨ Развлекательные',
       vibe: '🌀 Вайб-тесты'
@@ -126,7 +128,7 @@
           delay++;
         });
       } else {
-        ['science', 'fun', 'vibe'].forEach(cat => {
+        ['deep', 'science', 'fun', 'vibe'].forEach(cat => {
           const items = list.filter(t => t.cat === cat);
           if (items.length === 0) return;
           const label = document.createElement('div');
