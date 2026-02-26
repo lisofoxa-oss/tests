@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Зомби-апокалипсис: кто ты? 💀</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #0a0e08;
+  --bg-rgb: 10,14,8;
+  --surface: rgba(80,120,60,0.04);
+  --surface2: rgba(80,120,60,0.08);
+  --surface3: rgba(80,120,60,0.12);
+  --text: #8a9a80;
+  --text-dim: #50604a;
+  --text-bright: #d4e4cc;
+  --border: rgba(80,120,60,0.10);
+  --green: #5a8a3c;
+  --green-bright: #7ab856;
+  --green-glow: rgba(90,138,60,0.12);
+  --red-alert: #c43030;
+  --amber: #c09030;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Scanline effect */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+    radial-gradient(ellipse 50% 40% at 20% 20%, var(--green-glow), transparent 60%),
+    radial-gradient(ellipse 40% 50% at 80% 80%, rgba(90,138,60,0.06), transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Alert bar */
+body::after {
+  content: '⚠ EMERGENCY BROADCAST ⚠ ЗОНА КАРАНТИНА ⚠ EMERGENCY BROADCAST ⚠ ЗОНА КАРАНТИНА ⚠';
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 26px; background: var(--red-alert);
+  z-index: 1000; font-family: 'Oswald', sans-serif;
+  font-size: 10px; letter-spacing: 3px; color: rgba(255,255,255,0.85);
+  line-height: 26px; text-align: center; overflow: hidden;
+  animation: scrollText 20s linear infinite;
+}
+
+@keyframes scrollText {
+  0% { text-indent: 100%; }
+  100% { text-indent: -200%; }
+}
+
+.container { max-width: 660px; margin: 0 auto; padding: 36px 16px 60px; position: relative; z-index: 1; }
+
+.oswald { font-family: 'Oswald', sans-serif; }
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 36px 0 28px;
+  animation: fadeUp .8s ease;
+}
+
+.header-icon { font-size: 60px; display: block; margin-bottom: 16px; }
+
+.classified {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; background: rgba(196,48,48,0.1);
+  border: 1px solid rgba(196,48,48,0.2); border-radius: 4px;
+  font-family: 'Oswald', sans-serif; font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--red-alert); font-weight: 600; margin-bottom: 20px;
+}
+
+h1 {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.05;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+h1 span { color: var(--green-bright); }
+
+.lead {
+  font-size: 15px; color: var(--text-dim);
+  max-width: 460px; margin: 0 auto;
+  line-height: 1.7; font-weight: 300;
+}
+
+/* ─── Dossier intro ─── */
+.dossier {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
+  margin: 24px 0;
+  background: var(--surface);
+  animation: fadeUp .8s ease .15s both;
+}
+
+.dossier-header {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--green);
+  margin-bottom: 12px; font-weight: 600;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+
+.dossier p { font-size: 14px; color: var(--text-dim); line-height: 1.75; font-weight: 300; }
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.role-tag {
+  font-size: 11px; padding: 6px 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; text-align: center;
+  color: var(--text-dim); font-weight: 400;
+}
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 4px;
+  background: var(--green); color: #fff;
+  font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  text-transform: uppercase; letter-spacing: 2px;
+  box-shadow: 0 4px 20px var(--green-glow);
+}
+
+.btn-start:hover { background: var(--green-bright); transform: translateY(-2px); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 26px; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; }
+.progress-count { font-family: 'Oswald', sans-serif; font-size: 12px; color: var(--green); font-weight: 600; }
+.progress-bar { height: 3px; background: var(--surface2); border-radius: 0; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--green-bright)); transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 28px 22px;
+  animation: fadeUp .45s ease;
+}
+
+.q-num { font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 3px; color: var(--green); font-weight: 600; margin-bottom: 4px; text-transform: uppercase; }
+
+.q-scenario {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--amber); font-weight: 600;
+  padding: 4px 10px; background: rgba(192,144,48,0.06);
+  border: 1px solid rgba(192,144,48,0.12);
+  border-radius: 4px; margin-bottom: 14px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.q-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px; font-weight: 500; color: var(--text-bright);
+  line-height: 1.35; margin-bottom: 8px; text-transform: uppercase;
+}
+
+.q-context {
+  font-size: 14px; font-style: italic; color: var(--text-dim);
+  margin-bottom: 22px; line-height: 1.6; font-weight: 300;
+}
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 4px;
+  cursor: pointer; transition: all .25s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover { border-color: rgba(90,138,60,0.2); background: var(--surface3); }
+.option.selected { border-color: var(--green); background: rgba(90,138,60,0.08); }
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 2px;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; margin-top: 2px; transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot { border-color: var(--green); background: var(--green); }
+.option.selected .opt-dot::after { content:'✓'; position:absolute; inset:0; color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 4px;
+  font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: var(--green); color: #fff;
+  box-shadow: 0 4px 16px var(--green-glow);
+}
+
+/* ═══ RESULTS ═══ */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+/* ID Card */
+.id-card-wrap { display: flex; justify-content: center; padding: 36px 0 24px; }
+
+.id-card {
+  width: 260px;
+  border: 2px solid var(--green);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 0 40px var(--green-glow);
+}
+
+.id-top {
+  background: var(--green);
+  padding: 8px 16px;
+  text-align: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: rgba(255,255,255,0.85);
+}
+
+.id-body { padding: 24px 20px; text-align: center; }
+.id-emoji { font-size: 52px; display: block; margin-bottom: 10px; }
+.id-role { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-bright); text-transform: uppercase; letter-spacing: 1px; }
+.id-aka { font-size: 13px; font-style: italic; color: var(--text-dim); margin-top: 4px; }
+
+.id-bottom {
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex; justify-content: space-between;
+}
+
+.id-stat { text-align: center; }
+.id-stat-label { font-family: 'Oswald', sans-serif; font-size: 8px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 2px; }
+.id-stat-val { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: var(--green); }
+
+.r-center { text-align: center; margin-bottom: 24px; }
+
+.r-tagline {
+  font-size: 17px; font-style: italic; font-weight: 300;
+  color: var(--text); max-width: 440px; margin: 8px auto 0; line-height: 1.6;
+}
+
+.survival-meter { margin: 20px 0; text-align: center; }
+.sm-label { font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.sm-bar { height: 8px; background: var(--surface2); border-radius: 0; overflow: hidden; border: 1px solid var(--border); }
+.sm-fill { height: 100%; background: linear-gradient(90deg, var(--red-alert), var(--amber), var(--green), var(--green-bright)); transition: width 1.5s cubic-bezier(0.4,0,0.2,1); width: 0; }
+.sm-val { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: var(--green); margin-top: 8px; }
+
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px 20px;
+  margin-bottom: 14px;
+}
+
+.r-card h3 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px; font-weight: 600;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+/* Stats grid */
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin: 14px 0 4px;
+}
+
+.stat-item {}
+.stat-name { font-family: 'Oswald', sans-serif; font-size: 10px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1.5px; }
+.stat-bar-bg { height: 4px; background: var(--surface2); overflow: hidden; }
+.stat-bar-fill { height: 100%; background: var(--green); transition: width 1.2s ease; width: 0; }
+.stat-val { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--green); margin-top: 3px; }
+
+/* Survival tips */
+.tip-row {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text); line-height: 1.6;
+}
+.tip-row:last-child { border-bottom: none; }
+.tip-num { font-family: 'Oswald', sans-serif; color: var(--green); font-weight: 700; flex-shrink: 0; width: 24px; }
+
+/* Pullquote */
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--green);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 4px 4px 0;
+}
+
+.pullquote p { font-size: 14px; font-style: italic; color: var(--text-bright); line-height: 1.6; margin: 0; }
+
+/* Bars */
+.sc-bars { margin: 14px 0 4px; }
+.sc-row { margin-bottom: 12px; }
+.sc-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.sc-name { font-size: 12px; color: var(--text); font-weight: 500; }
+.sc-val { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 600; color: var(--green); }
+.sc-bg { height: 4px; background: var(--surface2); overflow: hidden; }
+.sc-fill { height: 100%; background: var(--green); transition: width 1.2s ease; width: 0; }
+
+/* Gallery */
+.gallery-toggle {
+  width: 100%; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text-dim);
+  font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease;
+  text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px;
+}
+
+.gallery-toggle:hover { border-color: var(--green); color: var(--green); }
+
+.gallery { display: none; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.gallery.open { display: flex; animation: fadeUp .4s ease; }
+
+.gallery-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 4px;
+}
+
+.gallery-item.current { border-color: var(--green); background: rgba(90,138,60,0.05); }
+.gi-emoji { font-size: 24px; flex-shrink: 0; }
+.gi-body { flex: 1; }
+.gi-name { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-bright); text-transform: uppercase; }
+.gi-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.gi-badge { font-family: 'Oswald', sans-serif; font-size: 9px; padding: 3px 8px; background: rgba(90,138,60,0.1); color: var(--green); border-radius: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── Actions ─── */
+.actions { display: flex; flex-direction: column; gap: 10px; padding-top: 28px; border-top: 1px solid var(--border); }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 4px;
+  font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+
+.btn-primary { background: var(--green); color: #fff; border: none; box-shadow: 0 4px 16px var(--green-glow); }
+.btn-primary:hover { transform: translateY(-2px); background: var(--green-bright); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--green); color: var(--green); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 400; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--green); color: #fff; padding: 12px 24px; border-radius: 4px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+@media (max-width:480px) {
+  .container { padding: 32px 14px 50px; }
+  .q-card,.r-card { padding: 22px 16px; }
+  .q-text { font-size: 18px; }
+  .option { padding: 12px 14px; font-size: 13px; }
+  .roles-grid { grid-template-columns: 1fr 1fr; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .id-card { width: 230px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <span class="header-icon">💀</span>
+      <div class="classified">⚠ Classified · Level 5</div>
+      <h1>Зомби-апокалипсис:<br><span>кто ты?</span></h1>
+      <p class="lead">12 сценариев из конца света. Твои решения покажут, какая роль тебе уготована — лидер, целитель или тот, кого съедят первым.</p>
+    </div>
+
+    <div class="dossier">
+      <div class="dossier-header">📋 Досье · Классификация ролей</div>
+      <p>Каждый апокалипсис создаёт 6 типов выживших. Социальная психология (Zimbardo, 2007) показывает: в экстремальных условиях люди раскрываются по-настоящему.</p>
+      <div class="roles-grid">
+        <span class="role-tag">🎖️ Лидер</span>
+        <span class="role-tag">🐺 Одиночка</span>
+        <span class="role-tag">🩺 Медик</span>
+        <span class="role-tag">🧠 Стратег</span>
+        <span class="role-tag">🎭 Предатель</span>
+        <span class="role-tag">💀 Первая жертва</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Начать выживание →</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Сценарий</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано!</div>
+
+<script>
+const roles = {
+  leader: { emoji: "🎖️", name: "Лидер", aka: "Тот, за кем идут",
+    survival: 78, tagline: "Ты не самый сильный и не самый умный. Но когда все паникуют — ты тот, кто говорит «за мной». И люди идут.",
+    desc: "В кризисе ты берёшь на себя ответственность. Не потому что хочешь власти — потому что кто-то должен. Исследования лидерства в экстремальных ситуациях (Hannah et al., 2009) показывают: настоящие лидеры проявляются не в комфорте, а когда рушится всё. Ты принимаешь решения быстро, берёшь на себя последствия и ведёшь за собой даже когда сам не уверен. Особенно когда не уверен.",
+    stats: { strength: 70, intellect: 65, stealth: 30, empathy: 75, ruthless: 55, luck: 60 },
+    tips: ["Делегируй — ты не обязан(а) делать всё сам(а)", "Спи. Мёртвый лидер — не лидер", "Слушай стратега — у него есть план, пока ты вдохновляешь"],
+    weakness: "Ты берёшь на себя слишком много. Чувство ответственности сожрёт тебя быстрее, чем зомби. Научись отпускать тех, кого нельзя спасти.",
+    quote: "Лидер — это не тот, кто не боится. Это тот, кто боится и всё равно идёт первым." },
+  loner: { emoji: "🐺", name: "Одиночка", aka: "Волк без стаи",
+    survival: 85, tagline: "Пока остальные спорят — ты уже ушёл. Тебе не нужна команда. Тебе нужна тишина и хорошая карта.",
+    desc: "Ты выживаешь не благодаря людям, а вопреки им. Группы — это шум, конфликты, компромиссы. Ты двигаешься быстрее один. Исследования автономии (Deci & Ryan, 1985) показывают, что люди с высокой самодостаточностью лучше справляются со стрессом. Ты доверяешь только себе — и чаще всего оказываешься прав.",
+    stats: { strength: 60, intellect: 55, stealth: 90, empathy: 25, ruthless: 70, luck: 75 },
+    tips: ["Найди хотя бы одного человека, которому доверяешь", "Запасы > героизм", "Тебя сложнее найти — используй это"],
+    weakness: "Одиночество — твоя стратегия, но и твоя ловушка. Рано или поздно тебе понадобится помощь. А просить ты не умеешь.",
+    quote: "Волки выживают не потому, что сильные. А потому, что знают, когда уйти." },
+  medic: { emoji: "🩺", name: "Медик", aka: "Тот, кто лечит и не спит",
+    survival: 62, tagline: "Ты не умеешь стрелять, но умеешь остановить кровь. И в апокалипсисе это важнее.",
+    desc: "Ты — самый ценный член любой группы. Не потому что сильный, а потому что без тебя все умрут от инфекций раньше, чем от зомби. Исследования альтруизма (Batson, 2011) показывают: настоящие помощники действуют не ради благодарности — а потому что не могут иначе. Ты лечишь, утешаешь, чинишь — и забываешь про себя.",
+    stats: { strength: 30, intellect: 80, stealth: 40, empathy: 95, ruthless: 10, luck: 50 },
+    tips: ["Лечи себя ПЕРВЫМ — правило кислородной маски", "Учись говорить «нет» — ресурсы не бесконечны", "Ты незаменим(а) — защищай себя как стратегический ресурс"],
+    weakness: "Ты спасаешь всех, кроме себя. Выгорание убьёт тебя раньше, чем зомби. И ты не можешь принять жёсткое решение — «кого лечить первым».",
+    quote: "Тот, кто лечит — не слабый. Тот, кто лечит — храбрее тех, кто стреляет." },
+  strat: { emoji: "🧠", name: "Стратег", aka: "Тот, у кого есть план",
+    survival: 80, tagline: "Пока все бегут — ты считаешь. Маршруты, запасы, вероятности. У тебя всегда есть план. И план Б. И план В.",
+    desc: "Ты видишь систему там, где другие видят хаос. Пока лидер мотивирует и медик лечит — ты рассчитываешь, сколько у группы еды, какой маршрут безопаснее и когда нужно уходить. Теория принятия решений (Kahneman, 2011) описывает таких, как ты — «медленное мышление» в мире, которое требует быстрого.",
+    stats: { strength: 35, intellect: 95, stealth: 60, empathy: 40, ruthless: 65, luck: 55 },
+    tips: ["Не забывай: план — это не закон. Будь гибким", "Объясняй стратегию простыми словами — не все мыслят схемами", "Человеческий фактор всегда ломает план — учитывай это"],
+    weakness: "Ты так увлечён расчётами, что забываешь про людей. Идеальный план с несчастными людьми — бесполезный план.",
+    quote: "Выживают не самые сильные. Выживают те, кто думает на три шага вперёд." },
+  traitor: { emoji: "🎭", name: "Предатель", aka: "Тот, кто выживет любой ценой",
+    survival: 70, tagline: "Ты не плохой человек. Ты прагматичный. Когда выбор — ты или они — ты всегда выберешь себя.",
+    desc: "Тебя легко осуждать из комфортного кресла. Но в апокалипсисе мораль — роскошь. Ты не предаёшь из удовольствия — ты делаешь cold calculation: что выгоднее, кто полезнее, когда бежать. Исследования «дилеммы заключённого» (Axelrod, 1984) показывают: стратегия «предать первым» даёт преимущество в краткосрочной перспективе. Но друзей у тебя не будет.",
+    stats: { strength: 45, intellect: 70, stealth: 80, empathy: 15, ruthless: 95, luck: 65 },
+    tips: ["Помни: репутация — валюта. Предашь дважды — никто не возьмёт в группу", "Иногда лояльность выгоднее предательства", "Не путай прагматизм с безразличием — второе убивает изнутри"],
+    weakness: "Одиночество сильнее зомби. Ты выживешь дольше остальных — но зачем, если не для кого?",
+    quote: "Самое страшное в апокалипсисе — не зомби. Это понять, на что ты готов ради выживания." },
+  victim: { emoji: "💀", name: "Первая жертва", aka: "R.I.P. — 5 минут после начала",
+    survival: 12, tagline: "Давай честно: ты бы споткнулся(-ась) при побеге. И это нормально. Не все созданы для апокалипсиса.",
+    desc: "Ты не воин, не стратег, не выживальщик. Ты — обычный человек, который честно признаёт: в зомби-апокалипсисе у тебя нет шансов. И знаешь что? Это самый честный ответ. Исследования показывают, что 90% населения переоценивают свои шансы в кризисе (optimism bias, Sharot, 2011). Ты из тех 10%, кто не врёт себе. Респект.",
+    stats: { strength: 15, intellect: 40, stealth: 10, empathy: 70, ruthless: 5, luck: 15 },
+    tips: ["Держись рядом с лидером — просто рядом", "Не трогай ничего подозрительного. Ничего.", "Если слышишь странный звук — НЕ ИДИ ПРОВЕРЯТЬ"],
+    weakness: "Всё. Но по крайней мере, ты об этом знаешь. И это делает тебя умнее половины героев фильмов ужасов.",
+    quote: "Настоящая храбрость — не отсутствие страха. Это знать, что ты первая жертва, и всё равно не терять чувство юмора." }
+};
+
+const scaleNames = {
+  leader: 'Лидер', loner: 'Одиночка', medic: 'Медик',
+  strat: 'Стратег', traitor: 'Предатель', victim: 'Жертва'
+};
+
+const statNames = {
+  strength: 'Сила', intellect: 'Интеллект', stealth: 'Скрытность',
+  empathy: 'Эмпатия', ruthless: 'Жёсткость', luck: 'Удача'
+};
+
+const questions = [
+  { scenario: "День 1 · Сирены", text: "Сирены. Паника. Люди бегут. Ты:",
+    context: "Ты дома, когда начинается хаос. Телефон не работает. Новости не грузятся.",
+    opts: [
+      { text: "Собираю рюкзак, беру карту, ухожу тихо через задний выход", sc: { loner: 3, strat: 1 } },
+      { text: "Стучу к соседям — вместе безопаснее, нужна группа", sc: { leader: 3, medic: 1 } },
+      { text: "Сначала разберусь, что происходит — информация важнее скорости", sc: { strat: 3 } },
+      { text: "Паникую, хватаю кота и бегу непонятно куда", sc: { victim: 3 } }
+    ] },
+  { scenario: "День 3 · Ресурсы", text: "В магазине осталась еда, но там зомби. Что делаешь?",
+    context: "Ваша группа не ела сутки. В магазине 2-3 зомби и полные полки.",
+    opts: [
+      { text: "Составляю план: отвлечь шумом, зайти с чёрного входа", sc: { strat: 3, loner: 1 } },
+      { text: "Иду первым(-ой) — кто-то должен рискнуть, и это буду я", sc: { leader: 3 } },
+      { text: "Жду, пока кто-то другой пойдёт. Можно помочь раненым потом", sc: { medic: 1, victim: 2 } },
+      { text: "Знаю другое место. Туда сложнее добраться, но безопаснее", sc: { loner: 3 } }
+    ] },
+  { scenario: "Ночь 5 · Дежурство", text: "Твоя очередь дежурить ночью. Остальные спят. Ты:",
+    context: "Тишина. Темнота. Звуки снаружи. 4 часа до рассвета.",
+    opts: [
+      { text: "Бдю как ястреб. Никто не умрёт в мою смену", sc: { leader: 2, medic: 1 } },
+      { text: "Проверяю периметр, считаю запасы, обновляю маршрут", sc: { strat: 3 } },
+      { text: "Думаю: а может, пока все спят, взять лучшее и уйти?", sc: { traitor: 3 } },
+      { text: "Засыпаю. Не специально. Просто засыпаю", sc: { victim: 3 } }
+    ] },
+  { scenario: "День 8 · Незнакомцы", text: "К вашему убежищу приходят 3 незнакомца. Просят впустить.",
+    context: "Они выглядят измождёнными. У одного кровь на руке — говорит, что порезался.",
+    opts: [
+      { text: "Впускаю — мы люди, а не животные. Осмотрю рану", sc: { medic: 3 } },
+      { text: "Впускаю, но с условиями: оружие на стол, карантин 24 часа", sc: { leader: 2, strat: 2 } },
+      { text: "Не впускаю. Кровь на руке? Это может быть укус", sc: { loner: 2, strat: 1 } },
+      { text: "Впускаю. Потом, если что, можно использовать их как приманку", sc: { traitor: 3 } }
+    ] },
+  { scenario: "День 12 · Конфликт", text: "Два человека в группе ссорятся из-за еды. Ситуация накаляется.",
+    context: "Еды мало. Один считает, что сильные должны есть больше. Второй — что поровну.",
+    opts: [
+      { text: "Встаю между ними: «Я решу. Будет по-справедливому»", sc: { leader: 3 } },
+      { text: "Молча наблюдаю. Пусть сами разберутся — мне-то что", sc: { loner: 2, traitor: 1 } },
+      { text: "Предлагаю систему: кто работает больше — ест больше. Логика", sc: { strat: 3 } },
+      { text: "Раздаю свою порцию — лишь бы не ругались", sc: { medic: 2, victim: 1 } }
+    ] },
+  { scenario: "День 15 · Мораль", text: "Член группы укушен. Ещё не обратился. Что делать?",
+    context: "Он(-а) в сознании, понимает что происходит. Просит не бросать.",
+    opts: [
+      { text: "Изолирую и наблюдаю — вдруг есть шанс", sc: { medic: 3 } },
+      { text: "Делаю то, что нужно. Быстро и без лишних разговоров", sc: { leader: 1, traitor: 2 } },
+      { text: "Не могу. Пусть кто-то другой решает", sc: { victim: 2, medic: 1 } },
+      { text: "Оставляю припасы и отхожу. Пусть сам(а) решит", sc: { loner: 3 } }
+    ] },
+  { scenario: "День 20 · Маршрут", text: "Нужно двигаться. Два пути: короткий через город и длинный через лес.",
+    context: "Город быстрее, но опаснее. Лес безопаснее, но 3 дня пути и мало еды.",
+    opts: [
+      { text: "Город. Время — ресурс, а я справлюсь с опасностью", sc: { leader: 2, loner: 1 } },
+      { text: "Лес. Риск не стоит скорости — безопасность важнее", sc: { strat: 3 } },
+      { text: "Разделиться: кто хочет — в город, остальные — в лес", sc: { traitor: 2, strat: 1 } },
+      { text: "Куда скажут. Я просто пойду за всеми", sc: { victim: 2, medic: 1 } }
+    ] },
+  { scenario: "День 25 · Жертва", text: "Чтобы группа спаслась, кто-то должен отвлечь зомби на себя.",
+    context: "Выход из ловушки один: кто-то бежит в противоположную сторону и уводит орду.",
+    opts: [
+      { text: "Я пойду. Это моя ответственность", sc: { leader: 3 } },
+      { text: "Я рассчитаю, как это сделать с минимальным риском для «приманки»", sc: { strat: 3 } },
+      { text: "Предложу самого слабого. Жестоко, но рационально", sc: { traitor: 3 } },
+      { text: "Просто бегу. Без плана. Адреналин решает", sc: { victim: 2, loner: 1 } }
+    ] },
+  { scenario: "День 30 · Быт", text: "Чем ты занимаешься в лагере, когда нет угрозы?",
+    context: "Редкий спокойный день. Все живы. Можно выдохнуть.",
+    opts: [
+      { text: "Проверяю людей: кто устал, кто ранен, кому плохо", sc: { medic: 3 } },
+      { text: "Укрепляю периметр и планирую следующий переход", sc: { strat: 2, leader: 1 } },
+      { text: "Ухожу разведать окрестности — один(-а)", sc: { loner: 3 } },
+      { text: "Сплю. Наконец-то сплю нормально", sc: { victim: 2 } }
+    ] },
+  { scenario: "День 40 · Доверие", text: "Ты нашёл(-а) тайник с оружием. Группа не знает.",
+    context: "Автомат, патроны, нож. Хватит на одного.",
+    opts: [
+      { text: "Приношу в лагерь: «Нашёл(-а). Распределяем»", sc: { leader: 3, medic: 1 } },
+      { text: "Прячу для себя. На крайний случай. Никому не говорю", sc: { traitor: 2, loner: 2 } },
+      { text: "Беру лучшее, остальное приношу. Никто не заметит", sc: { traitor: 3 } },
+      { text: "Говорю стратегу — пусть решит, как лучше использовать", sc: { strat: 2, leader: 1 } }
+    ] },
+  { scenario: "День 60 · Надежда", text: "Радио ловит сигнал: «безопасная зона на севере». Но это может быть ловушка.",
+    context: "500 км пути. Неизвестно, правда ли. Запасов на 3 дня.",
+    opts: [
+      { text: "Идём. Надежда — лучшее, что у нас есть", sc: { leader: 3 } },
+      { text: "Нужно больше данных. Отправлю разведку", sc: { strat: 3 } },
+      { text: "Я пойду один(-а). Если безопасно — вернусь за остальными", sc: { loner: 3 } },
+      { text: "Ловушка. 100%. Остаёмся", sc: { traitor: 1, victim: 1, strat: 1 } }
+    ] },
+  { scenario: "Финал · Мета-вопрос", text: "Зачем ты бы вообще выживал(-а)?",
+    context: "Мир разрушен. Что держит тебя?",
+    opts: [
+      { text: "Ради людей, которые зависят от меня", sc: { leader: 2, medic: 2 } },
+      { text: "Ради себя. Я хочу жить. Этого достаточно", sc: { loner: 2, traitor: 1 } },
+      { text: "Ради будущего — кто-то должен восстановить мир", sc: { strat: 3 } },
+      { text: "Если честно — не знаю. Но пока жив(-а), буду стараться", sc: { victim: 2, medic: 1 } }
+    ] }
+];
+
+let curQ = 0, selOpt = null;
+let scores = { leader: 0, loner: 0, medic: 0, strat: 0, traitor: 0, victim: 0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  const num = String(i+1).padStart(2,'0');
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">Сценарий ${num} из ${questions.length}</div>
+      <div class="q-scenario">📍 ${q.scenario}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="q-context">${q.context}</div>
+      <div class="options">${q.opts.map((o,j) => `
+        <div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать свою роль →':'Следующий сценарий →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i/questions.length)*100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop-10, behavior:'smooth' });
+}
+
+function sel(el,i) {
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if(selOpt===null) return;
+  const sc = questions[curQ].opts[selOpt].sc;
+  for(const [k,v] of Object.entries(sc)) scores[k]+=v;
+  selOpt = null; curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML = '';
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const rKey = sorted[0][0];
+  const r = roles[rKey];
+  const maxVal = sorted[0][1];
+
+  const barsHTML = sorted.map(([key,val]) => {
+    const pct = maxVal>0 ? Math.round((val/maxVal)*100) : 0;
+    return `<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${scaleNames[key]}</span><span class="sc-val">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}"></div></div></div>`;
+  }).join('');
+
+  const statsHTML = Object.entries(r.stats).map(([k,v]) =>
+    `<div class="stat-item"><div class="stat-name">${statNames[k]}</div><div class="stat-bar-bg"><div class="stat-bar-fill" data-w="${v}"></div></div><div class="stat-val">${v}%</div></div>`
+  ).join('');
+
+  const tipsHTML = r.tips.map((t,i) => `<div class="tip-row"><span class="tip-num">0${i+1}</span><span>${t}</span></div>`).join('');
+
+  const galleryHTML = Object.entries(roles).map(([key,rl]) => {
+    const cur = key===rKey;
+    return `<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${rl.emoji}</span><div class="gi-body"><div class="gi-name">${rl.name}</div><div class="gi-desc">${rl.tagline.slice(0,80)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;
+  }).join('');
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="id-card-wrap">
+      <div class="id-card">
+        <div class="id-top"><span>⚠ Survivor ID ⚠</span></div>
+        <div class="id-body">
+          <span class="id-emoji">${r.emoji}</span>
+          <div class="id-role">${r.name}</div>
+          <div class="id-aka">${r.aka}</div>
+        </div>
+        <div class="id-bottom">
+          <div class="id-stat"><div class="id-stat-label">Класс</div><div class="id-stat-val">${r.emoji}</div></div>
+          <div class="id-stat"><div class="id-stat-label">Выживание</div><div class="id-stat-val">${r.survival}%</div></div>
+          <div class="id-stat"><div class="id-stat-label">Статус</div><div class="id-stat-val">ALIVE</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="survival-meter">
+      <div class="sm-label">Шансы на выживание</div>
+      <div class="sm-bar"><div class="sm-fill" id="survFill" data-w="${r.survival}"></div></div>
+      <div class="sm-val">${r.survival}%</div>
+    </div>
+
+    <p class="r-tagline">${r.tagline}</p>
+
+    <div class="r-card"><h3>🔬 Анализ</h3><p>${r.desc}</p></div>
+
+    <div class="r-card"><h3>📊 Характеристики</h3><div class="stat-grid">${statsHTML}</div></div>
+
+    <div class="r-card"><h3>📡 Профиль по 6 ролям</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🛡️ Советы по выживанию</h3>${tipsHTML}</div>
+
+    <div class="r-card"><h3>⚠ Слабое место</h3><p>${r.weakness}</p>
+      <div class="pullquote"><p>${r.quote}</p></div>
+    </div>
+
+    ${sorted[1][1]>3 ? `<div class="r-card"><h3>🧬 Вторая роль: ${roles[sorted[1][0]].emoji} ${roles[sorted[1][0]].name}</h3><p>${roles[sorted[1][0]].tagline}</p></div>` : ''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">📋 Все 6 ролей</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(() => {
+    document.querySelectorAll('.sc-fill,.stat-bar-fill').forEach(b=>b.style.width=b.dataset.w+'%');
+    document.getElementById('survFill').style.width=r.survival+'%';
+  }, 400);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function shareShort() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const r = roles[sorted[0][0]];
+  const text = `${r.emoji} В зомби-апокалипсисе я — ${r.name}\nШансы выжить: ${r.survival}%\n\n${r.tagline}\n\nА ты? https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share) navigator.share({title:'Зомби-апокалипсис: кто ты?',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const rKey = sorted[0][0]; const r = roles[rKey]; const maxVal = sorted[0][1];
+  const bars = sorted.map(([k,v])=>{const p=maxVal>0?Math.round((v/maxVal)*100):0;return`  ${scaleNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const stats = Object.entries(r.stats).map(([k,v])=>`  ${statNames[k]}: ${'█'.repeat(Math.round(v/10))}${'░'.repeat(10-Math.round(v/10))} ${v}%`).join('\n');
+  const tips = r.tips.map((t,i)=>`  0${i+1}. ${t}`).join('\n');
+
+  const text = `💀 ЗОМБИ-АПОКАЛИПСИС: КТО ТЫ? — Результат\n\n${r.emoji}  ${r.name}\n${r.aka}\nШансы на выживание: ${r.survival}%\n\n«${r.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🔬 Анализ:\n\n${r.desc}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Характеристики:\n${stats}\n\n━━━━━━━━━━━━━━━━━\n\n📡 Профиль:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🛡️ Советы:\n${tips}\n\n━━━━━━━━━━━━━━━━━\n\n⚠ Слабое место:\n${r.weakness}\n\n💬 «${r.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+</script>
+</body>
+</html>
