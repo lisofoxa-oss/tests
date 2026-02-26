@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Нейро-профиль 🧠</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #06060e;
+  --bg-rgb: 6,6,14;
+  --surface: rgba(255,255,255,0.025);
+  --surface2: rgba(255,255,255,0.05);
+  --surface3: rgba(255,255,255,0.075);
+  --text: #8888a8;
+  --text-dim: #50506a;
+  --text-bright: #e0e0f0;
+  --border: rgba(255,255,255,0.06);
+  --neon-pink: #ff2d95;
+  --neon-blue: #00d4ff;
+  --neon-green: #39ff14;
+  --neon-purple: #bf5af2;
+  --neon-yellow: #ffe94d;
+  --neon-orange: #ff6b35;
+}
+
+html{scroll-behavior:smooth}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Neural network canvas background */
+#neuralBg {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+  opacity: 0.4;
+}
+
+.container { max-width: 660px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 1; }
+.mono { font-family: 'Space Mono', monospace; }
+
+/* ─── Header ─── */
+.header { text-align: center; padding: 40px 0 24px; animation: fadeUp .8s ease; }
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 100px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 2px;
+  color: var(--neon-blue); font-weight: 400; margin-bottom: 20px;
+}
+
+.header-badge .pulse-dot {
+  width: 6px; height: 6px; background: var(--neon-green);
+  border-radius: 50%; animation: pulseDot 1.5s ease infinite;
+  box-shadow: 0 0 8px var(--neon-green);
+}
+
+@keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(0.8)} }
+
+/* Brain emoji with glow */
+.brain-icon {
+  font-size: 64px; display: block; margin-bottom: 16px;
+  filter: drop-shadow(0 0 20px rgba(191,90,242,0.3));
+  animation: brainFloat 3s ease-in-out infinite;
+}
+
+@keyframes brainFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+h1 {
+  font-size: clamp(2rem, 6.5vw, 2.8rem);
+  font-weight: 800; color: var(--text-bright);
+  line-height: 1.1; margin-bottom: 14px; letter-spacing: -0.5px;
+}
+
+h1 span {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.lead { font-size: 15px; color: var(--text-dim); max-width: 460px; margin: 0 auto; line-height: 1.7; font-weight: 300; }
+
+/* ─── Neurotransmitter preview ─── */
+.nt-intro {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0; margin: 24px 0 28px;
+  animation: fadeUp .8s ease .15s both;
+  text-align: center;
+}
+
+.nt-intro p { font-size: 14px; color: var(--text-dim); line-height: 1.75; font-weight: 300; margin-bottom: 16px; }
+
+.nt-preview { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+.nt-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 11px; color: var(--text-dim);
+}
+
+.nt-pill .nt-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+  color: #fff; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 0 30px rgba(255,45,149,0.15);
+}
+
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(255,45,149,0.25); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; }
+.progress-count { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--neon-blue); font-weight: 700; }
+.progress-bar { height: 2px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue)); border-radius: 10px; transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .45s ease;
+}
+
+.q-num { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 3px; color: var(--neon-blue); font-weight: 700; margin-bottom: 4px; }
+
+.q-type {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--text-dim); font-weight: 600;
+  padding: 4px 10px; background: var(--surface2);
+  border-radius: 6px; margin-bottom: 16px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.q-text {
+  font-size: 20px; font-weight: 700; color: var(--text-bright);
+  line-height: 1.35; margin-bottom: 8px; letter-spacing: -0.3px;
+}
+
+.q-sub { font-size: 14px; font-style: italic; color: var(--text-dim); margin-bottom: 24px; line-height: 1.6; font-weight: 300; }
+
+/* ─── SLIDER ─── */
+.slider-wrap { margin-bottom: 8px; }
+
+.slider-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--text-dim);
+  margin-bottom: 12px; font-weight: 500;
+}
+
+.slider-labels span:first-child { color: var(--neon-blue); }
+.slider-labels span:last-child { color: var(--neon-pink); }
+
+.slider-track { position: relative; padding: 10px 0; }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px;
+  background: var(--surface2);
+  border-radius: 10px; outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--neon-purple);
+  box-shadow: 0 0 16px rgba(191,90,242,0.4);
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 24px rgba(191,90,242,0.6);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 24px; height: 24px;
+  border-radius: 50%; border: none;
+  background: var(--neon-purple);
+  box-shadow: 0 0 16px rgba(191,90,242,0.4);
+  cursor: pointer;
+}
+
+.slider-val {
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 28px; font-weight: 700;
+  margin: 8px 0 4px;
+  transition: color .3s ease;
+}
+
+.slider-desc {
+  text-align: center;
+  font-size: 12px; color: var(--text-dim);
+  min-height: 18px;
+  transition: all .3s ease;
+}
+
+/* Synapse flash after slider commit */
+.synapse-flash {
+  position: fixed; inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(191,90,242,0.06), transparent 60%);
+  pointer-events: none; z-index: 100;
+  opacity: 0; transition: opacity .3s ease;
+}
+.synapse-flash.active { opacity: 1; }
+
+/* ─── Standard options ─── */
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .3s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover { border-color: rgba(191,90,242,0.2); background: var(--surface3); }
+.option.selected { border-color: var(--neon-purple); background: rgba(191,90,242,0.06); }
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot { border-color: var(--neon-purple); background: var(--neon-purple); }
+.option.selected .opt-dot::after { content:''; position:absolute; inset:3px; background:#fff; border-radius:50%; }
+
+/* ─── Chill fact ─── */
+.chill-fact {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(0,212,255,0.04);
+  border: 1px solid rgba(0,212,255,0.1);
+  border-radius: 10px;
+  font-size: 12px; color: var(--neon-blue);
+  line-height: 1.6;
+  display: none;
+  animation: fadeUp .3s ease;
+}
+
+.chill-fact.show { display: block; }
+
+.chill-fact-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 4px;
+  opacity: .7;
+}
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+  color: #fff; box-shadow: 0 0 20px rgba(255,45,149,0.15);
+}
+
+/* ═══ RESULTS ═══ */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+/* Brain scan card */
+.scan-wrap { display: flex; justify-content: center; padding: 36px 0 16px; }
+
+.scan-card {
+  width: 220px; padding: 24px;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-card::before {
+  content: '';
+  position: absolute; inset: -2px;
+  border-radius: 22px; z-index: -1;
+  animation: rotateBorder 4s linear infinite;
+}
+
+@keyframes rotateBorder { to { transform: rotate(360deg); } }
+
+.scan-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--bg);
+  border-radius: 20px;
+  z-index: -1;
+}
+
+.scan-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
+.scan-name { font-size: 20px; font-weight: 700; color: var(--text-bright); }
+.scan-aka { font-size: 12px; color: var(--text-dim); margin-top: 4px; font-style: italic; }
+
+.r-center { text-align: center; margin-bottom: 24px; }
+
+.r-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 3px; font-weight: 700;
+  margin-top: 16px; margin-bottom: 8px;
+}
+
+.r-tagline {
+  font-size: 17px; font-weight: 300; font-style: italic;
+  color: var(--text); max-width: 440px;
+  margin: 0 auto; line-height: 1.6;
+}
+
+/* ─── NT bars with glow ─── */
+.nt-bars { margin: 14px 0; }
+
+.nt-row { margin-bottom: 14px; }
+.nt-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.nt-name { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.nt-name .nt-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.nt-pct { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; }
+.nt-bar-bg { height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.nt-bar-fill { height: 100%; border-radius: 10px; transition: width 1.5s cubic-bezier(0.4,0,0.2,1); width: 0; }
+
+/* ─── Cards ─── */
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+}
+
+.r-card h3 {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+/* Brain stat */
+.brain-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin: 14px 0 4px;
+}
+
+.bs-item {
+  padding: 14px; background: var(--surface2);
+  border-radius: 12px; text-align: center;
+}
+
+.bs-icon { font-size: 22px; display: block; margin-bottom: 6px; }
+.bs-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 500; margin-bottom: 2px; }
+.bs-val { font-size: 12px; font-weight: 600; }
+
+/* Pullquote */
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--neon-purple);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 12px 12px 0;
+}
+.pullquote p { font-size: 14px; font-style: italic; color: var(--text-bright); line-height: 1.6; margin: 0; }
+
+/* Gallery */
+.gallery-toggle {
+  width: 100%; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text-dim);
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-bottom: 14px;
+}
+.gallery-toggle:hover { border-color: var(--neon-purple); color: var(--neon-purple); }
+
+.gallery { display: none; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.gallery.open { display: flex; animation: fadeUp .4s ease; }
+
+.gallery-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px;
+}
+.gallery-item.current { border-color: var(--neon-purple); background: rgba(191,90,242,0.04); }
+.gi-emoji { font-size: 24px; flex-shrink: 0; }
+.gi-body { flex: 1; }
+.gi-name { font-size: 13px; font-weight: 600; color: var(--text-bright); }
+.gi-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.gi-badge { font-size: 9px; padding: 3px 8px; background: rgba(191,90,242,0.1); color: var(--neon-purple); border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── Actions ─── */
+.actions { display: flex; flex-direction: column; gap: 10px; padding-top: 28px; border-top: 1px solid var(--border); }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+}
+.btn-primary { background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple)); color: #fff; border: none; box-shadow: 0 0 20px rgba(255,45,149,0.15); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--neon-purple); color: var(--neon-purple); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 500; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--neon-purple); color: #fff; padding: 12px 24px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+@media(max-width:480px){
+  .container{padding:12px 14px 50px}
+  .q-card,.r-card{padding:24px 16px}
+  .q-text{font-size:18px}
+  .option{padding:12px 14px;font-size:13px}
+  .brain-stats{grid-template-columns:1fr 1fr}
+  .scan-card{width:190px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="neuralBg"></canvas>
+<div class="synapse-flash" id="synapseFlash"></div>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge"><span class="pulse-dot"></span> NEURO SCAN ACTIVE</div>
+      <span class="brain-icon">🧠</span>
+      <h1>Какой у тебя <span>нейро-профиль?</span></h1>
+      <p class="lead">12 вопросов. Половина — слайдеры, где ты настраиваешь интенсивность. Мы определим, какой нейромедиатор управляет тобой.</p>
+    </div>
+
+    <div class="nt-intro">
+      <p>Дофамин, серотонин, окситоцин, адреналин, ГАМК, эндорфин — шесть молекул, которые определяют, как ты чувствуешь, думаешь и живёшь. У каждого свой «коктейль». Найдём твой.</p>
+      <div class="nt-preview">
+        <span class="nt-pill"><span class="nt-dot" style="background:#ff2d95"></span> Дофамин</span>
+        <span class="nt-pill"><span class="nt-dot" style="background:#ffe94d"></span> Серотонин</span>
+        <span class="nt-pill"><span class="nt-dot" style="background:#ff6b35"></span> Адреналин</span>
+        <span class="nt-pill"><span class="nt-dot" style="background:#39ff14"></span> ГАМК</span>
+        <span class="nt-pill"><span class="nt-dot" style="background:#00d4ff"></span> Окситоцин</span>
+        <span class="nt-pill"><span class="nt-dot" style="background:#bf5af2"></span> Эндорфин</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Запустить нейроскан 🧠</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Нейроскан</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ NEURAL BACKGROUND CANVAS ═══ */
+(function(){
+  const c = document.getElementById('neuralBg');
+  const ctx = c.getContext('2d');
+  let nodes = [], W, H;
+
+  function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; init(); }
+  function init(){
+    nodes = [];
+    const count = Math.min(40, Math.floor(W*H/25000));
+    for(let i=0;i<count;i++){
+      nodes.push({
+        x: Math.random()*W, y: Math.random()*H,
+        vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+        r: 2+Math.random()*2,
+        color: ['#ff2d95','#00d4ff','#39ff14','#bf5af2','#ffe94d'][Math.floor(Math.random()*5)]
+      });
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++){
+      const a=nodes[i];
+      a.x+=a.vx; a.y+=a.vy;
+      if(a.x<0||a.x>W) a.vx*=-1;
+      if(a.y<0||a.y>H) a.vy*=-1;
+      ctx.beginPath();
+      ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
+      ctx.fillStyle=a.color;
+      ctx.globalAlpha=.6;
+      ctx.fill();
+      for(let j=i+1;j<nodes.length;j++){
+        const b=nodes[j];
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<150){
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=a.color;
+          ctx.globalAlpha=.08*(1-d/150);
+          ctx.lineWidth=1;
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  resize(); draw();
+  addEventListener('resize', resize);
+})();
+
+/* ═══ DATA ═══ */
+const ntColors = {
+  dopamine: '#ff2d95', serotonin: '#ffe94d', adrenaline: '#ff6b35',
+  gaba: '#39ff14', oxytocin: '#00d4ff', endorphin: '#bf5af2'
+};
+
+const ntNames = {
+  dopamine: 'Дофамин', serotonin: 'Серотонин', adrenaline: 'Адреналин',
+  gaba: 'ГАМК', oxytocin: 'Окситоцин', endorphin: 'Эндорфин'
+};
+
+const profiles = {
+  dopamine: { emoji: "⚡", name: "Дофаминовый спринтер", aka: "Вечный охотник за новым",
+    tagline: "Тебя заводят идеи, старты, дедлайны и первый поцелуй. Ты живёшь ради «вау» — и умираешь от рутины.",
+    desc: "Дофамин — нейромедиатор предвкушения и награды. Не удовольствия — а именно ожидания удовольствия. Ты кайфуешь не от результата, а от погони. Новый проект, новый город, новый человек — ты на пике. Потом… скучно. Исследования (Berridge & Robinson, 2016) показывают: дофаминовая система — не про счастье, а про мотивацию. Ты — двигатель, который никогда не выключается.",
+    stats: { speed: "Мгновенная реакция", focus: "Яркий, но короткий", energy: "Пиковая, с провалами", social: "Заразительный энтузиазм" },
+    shadow: "Ты бросаешь на полпути. Не потому что слабый — дофамин просто перестаёт капать, когда новизна уходит. Твой враг — не провал, а рутина. Научись кайфовать от процесса, а не только от старта.",
+    quote: "Дофамин не знает слова «достаточно». И в этом его суперсила. И проклятие." },
+  serotonin: { emoji: "☀️", name: "Серотониновый чилл-мастер", aka: "Внутреннее солнце на автопилоте",
+    tagline: "Ты не прыгаешь от радости — ты просто в порядке. Стабильно. Каждый день. И людям рядом с тобой тоже хорошо.",
+    desc: "Серотонин — нейромедиатор спокойного счастья. Не экстаза — а ровного, тёплого «всё хорошо». Ты не гоняешься за впечатлениями — ты умеешь быть довольным тем, что есть. Исследования (Young, 2007) показывают: высокий серотонин коррелирует с эмоциональной стабильностью и социальным доминированием. Ты не лидер-крикун, а тот тихий человек, к которому все тянутся.",
+    stats: { speed: "Размеренная", focus: "Стабильный и долгий", energy: "Ровная, без провалов", social: "Тёплый и надёжный" },
+    shadow: "Стабильность может быть стагнацией. Ты так ценишь покой, что избегаешь рисков. Серотониновый мозг не любит перемен — а без них ты не растёшь.",
+    quote: "Счастье — это не фейерверк. Это тихий костёр, который горит каждый вечер." },
+  adrenaline: { emoji: "🔥", name: "Адреналиновый маньяк", aka: "Жизнь на красной линии",
+    tagline: "Тебя не пугает опасность — тебя пугает её отсутствие. Ты живёшь на краю и называешь это «нормальный вторник».",
+    desc: "Адреналин (эпинефрин) — гормон «бей или беги». Твоё тело заточено на кризис: пульс ускоряется, зрачки расширяются, мир замедляется. Исследования sensation seeking (Zuckerman, 1994) показывают: людям с высокой потребностью в стимуляции физически необходим адреналин для нормального функционирования. Без стресса ты не ленишься — ты буквально деградируешь.",
+    stats: { speed: "Сверхзвуковая", focus: "Острый в кризисе", energy: "Взрывная", social: "Магнит для авантюристов" },
+    shadow: "Ты создаёшь хаос, когда его нет — потому что твоему мозгу нужна доза. Ссоры, дедлайны в последний момент, рисковые решения — это не характер, это зависимость от адреналина.",
+    quote: "Адреналин не спрашивает, готов ли ты. Он просто включается. И ты — летишь." },
+  gaba: { emoji: "🌿", name: "ГАМК-мастер дзена", aka: "Нейронный антистресс",
+    tagline: "Ты — тишина в мире шума. Пока все паникуют, ты уже налил(-а) чай и открыл(-а) книгу. Твоё спокойствие — не маска. Оно настоящее.",
+    desc: "ГАМК (гамма-аминомасляная кислота) — главный тормозной нейромедиатор мозга. Он успокаивает нейроны, снижает тревогу и дарит ощущение покоя. Исследования (Lydiard, 2003) показывают: люди с высоким уровнем ГАМК лучше справляются со стрессом, быстрее восстанавливаются и реже выгорают. Ты — живой антидепрессант для окружающих.",
+    stats: { speed: "Неторопливая", focus: "Глубокий и медитативный", energy: "Тихая, но неиссякаемая", social: "Успокаивающее присутствие" },
+    shadow: "Ты настолько спокоен(-на), что иногда забываешь действовать. ГАМК тормозит не только тревогу — но и амбиции. Мир не всегда ждёт. Иногда надо встать с дивана.",
+    quote: "Тишина — не отсутствие звука. Это присутствие покоя." },
+  oxytocin: { emoji: "💜", name: "Окситоциновый магнит", aka: "Человек-обнимашка на молекулярном уровне",
+    tagline: "Ты привязываешься. Глубоко. Быстро. Навсегда. Для тебя люди — не фон, а весь смысл.",
+    desc: "Окситоцин — «гормон привязанности». Он выделяется при объятиях, доверии и близости. Исследования (Feldman, 2012) показывают: окситоцин усиливает эмпатию, укрепляет парные связи и повышает доверие. Ты чувствуешь чужую боль как свою, радуешься чужим победам искренне и создаёшь вокруг себя атмосферу безопасности.",
+    stats: { speed: "Зависит от близости", focus: "На людях рядом", energy: "От общения", social: "Максимальная привязанность" },
+    shadow: "Ты привязываешься к тем, кто этого не заслуживает. Окситоцин не разбирает — он связывает тебя с любым, кто рядом. Токсичные отношения? Ты в них дольше всех. Научись отпускать.",
+    quote: "Привязанность — это не слабость. Это решение быть уязвимым ради чего-то большего." },
+  endorphin: { emoji: "✨", name: "Эндорфиновый феникс", aka: "Через боль к кайфу",
+    tagline: "Ты знаешь: после самого тёмного момента — эйфория. Ты не избегаешь трудностей. Ты идёшь в них за наградой.",
+    desc: "Эндорфины — «внутренний морфин» мозга. Они выделяются при боли, интенсивных нагрузках и преодолении. Runner's high — это эндорфины. Исследования (Boecker et al., 2008) подтвердили: мозг награждает тебя эйфорией за то, что ты не сдался. Ты — тот человек, который после марафона говорит «давай ещё».",
+    stats: { speed: "Нарастающая", focus: "Усиливается с трудностью", energy: "Через преодоление", social: "Вдохновляет примером" },
+    shadow: "Ты романтизируешь страдание. «Через боль к звёздам» — красиво, но не всё должно быть подвигом. Иногда можно просто отдохнуть. Без боли. Без заслуги.",
+    quote: "Эндорфин не приходит к тем, кто сидит. Он ждёт за линией, где ты хотел(-а) сдаться." }
+};
+
+const sliderDescs = {
+  0: 'Абсолютный ноль', 1: 'Фоновый шум', 2: 'Еле-еле', 3: 'Ниже среднего',
+  4: 'Средне', 5: 'Норма', 6: 'Выше среднего', 7: 'Ярко',
+  8: 'Мощно', 9: 'Максимум', 10: 'ПЕРЕГРУЗКА'
+};
+
+const questions = [
+  { type: "slider", tag: "🧪 Дофамин", text: "Уровень кайфа от НОВЫХ идей, проектов, людей",
+    sub: "0 = «мне и так норм» → 10 = «НОВОЕ! ДАЙ! ЕЩЁ!»",
+    left: "Стабильность", right: "Новизна",
+    fact: "Дофамин выделяется сильнее от предвкушения, чем от самой награды. Мозг кайфует от погони, а не от добычи.",
+    calc: v => ({ dopamine: v*2.5, adrenaline: v*0.8 }) },
+  { type: "choice", tag: "⚡ Реакция", text: "Будильник звонит. Ты:",
+    sub: "",
+    fact: "Утренняя реакция на будильник коррелирует с уровнем кортизола — гормона стресса. «Снузеры» не ленивые — у них другой гормональный ритм.",
+    opts: [
+      { text: "Мгновенно встаю — день не ждёт", sc: { adrenaline: 5, dopamine: 3 } },
+      { text: "В суперпозиции сна и яви ещё 40 минут", sc: { gaba: 4, serotonin: 3 } },
+      { text: "Первым делом — телефон. Что нового в мире?", sc: { dopamine: 5, oxytocin: 2 } },
+      { text: "Лежу, наслаждаюсь теплом одеяла. Осознанно", sc: { serotonin: 5, endorphin: 2 } }
+    ] },
+  { type: "slider", tag: "🌿 ГАМК", text: "Уровень внутреннего покоя прямо сейчас",
+    sub: "0 = «я на грани» → 10 = «дзен-мастер на горе»",
+    left: "Тревога", right: "Покой",
+    fact: "ГАМК — главный «тормоз» мозга. Без него нейроны перевозбуждаются. Буквально: ГАМК — причина, по которой ты не в судорогах прямо сейчас.",
+    calc: v => ({ gaba: v*2.5, serotonin: v*0.7 }) },
+  { type: "choice", tag: "💜 Близость", text: "Что ты чувствуешь, когда близкий человек грустит?",
+    sub: "",
+    fact: "Зеркальные нейроны позволяют буквально чувствовать чужие эмоции. У людей с высоким окситоцином эта система работает мощнее.",
+    opts: [
+      { text: "Физически чувствую их боль — аж грудь сжимает", sc: { oxytocin: 6, endorphin: 1 } },
+      { text: "Хочу помочь действием — обнять, накормить, починить", sc: { oxytocin: 3, serotonin: 3 } },
+      { text: "Стараюсь отвлечь — шутки, энергия, движение", sc: { dopamine: 3, adrenaline: 2 } },
+      { text: "Даю пространство — иногда лучше просто побыть рядом молча", sc: { gaba: 4, serotonin: 2 } }
+    ] },
+  { type: "slider", tag: "🔥 Адреналин", text: "Насколько тебе нужен риск и острые ощущения?",
+    sub: "0 = «плед и чай навечно» → 10 = «прыжок с парашютом на обед»",
+    left: "Безопасность", right: "Риск",
+    fact: "Sensation seeking — научно доказанная черта. Люди с высокой потребностью в стимуляции имеют менее чувствительную дофаминовую систему и ищут более сильные раздражители.",
+    calc: v => ({ adrenaline: v*2.5, dopamine: v*0.6 }) },
+  { type: "choice", tag: "🧠 Мышление", text: "Как ты принимаешь решения?",
+    sub: "",
+    fact: "Нейронауки различают два типа: «быстрое мышление» (амигдала, эмоции) и «медленное» (префронтальная кора, логика). У большинства — микс, но у каждого свой баланс.",
+    opts: [
+      { text: "Мгновенно, на интуиции — и обычно правильно", sc: { adrenaline: 3, dopamine: 3 } },
+      { text: "Долго думаю, взвешиваю, потом действую", sc: { gaba: 3, serotonin: 3 } },
+      { text: "Спрашиваю близких — мне важно мнение со стороны", sc: { oxytocin: 5, serotonin: 1 } },
+      { text: "Через преодоление — лучшие решения рождаются в трудности", sc: { endorphin: 5, adrenaline: 2 } }
+    ] },
+  { type: "slider", tag: "☀️ Серотонин", text: "Уровень «просто хорошего настроения» без причины",
+    sub: "0 = «каждый день — борьба» → 10 = «мне хорошо, потому что хорошо»",
+    left: "Усилие", right: "Легкость",
+    fact: "90% серотонина вырабатывается в кишечнике, а не в мозге. Буквально: твоё счастье зависит от того, что ты ешь.",
+    calc: v => ({ serotonin: v*2.5, gaba: v*0.5 }) },
+  { type: "choice", tag: "🏃 Энергия", text: "Откуда берётся твоя энергия?",
+    sub: "",
+    fact: "Митохондрии — «электростанции» клеток — производят АТФ, но субъективное ощущение энергии зависит от нейромедиаторов: дофамин даёт мотивацию, адреналин — реактивность, эндорфины — выносливость.",
+    opts: [
+      { text: "От новых впечатлений — путешествия, люди, проекты", sc: { dopamine: 5, adrenaline: 2 } },
+      { text: "От людей — общение, близость, команда", sc: { oxytocin: 5, serotonin: 1 } },
+      { text: "От тишины и отдыха — мне нужна перезарядка", sc: { gaba: 4, serotonin: 3 } },
+      { text: "От преодоления — спорт, вызовы, сложные задачи", sc: { endorphin: 5, adrenaline: 2 } }
+    ] },
+  { type: "slider", tag: "💜 Окситоцин", text: "Насколько сильно ты привязываешься к людям?",
+    sub: "0 = «я сам(-а) себе достаточно» → 10 = «без близких я не существую»",
+    left: "Автономия", right: "Привязанность",
+    fact: "Окситоцин усиливает доверие настолько, что в экспериментах люди под его воздействием отдавали деньги незнакомцам. Буквально: химия доверия.",
+    calc: v => ({ oxytocin: v*2.5, serotonin: v*0.4 }) },
+  { type: "choice", tag: "🎯 Мотивация", text: "Что заставляет тебя не сдаваться?",
+    sub: "",
+    fact: "Исследования grit (Duckworth, 2007) показали: выносливость важнее таланта. Но движущая сила у всех разная — кого-то ведёт страсть (дофамин), кого-то — ответственность (окситоцин), кого-то — кайф от преодоления (эндорфин).",
+    opts: [
+      { text: "Азарт — мне нравится сам процесс, скорость, кайф", sc: { dopamine: 4, adrenaline: 3 } },
+      { text: "Люди — я не могу подвести тех, кто в меня верит", sc: { oxytocin: 5, serotonin: 2 } },
+      { text: "Принцип — я решил(-а) и иду до конца", sc: { endorphin: 4, gaba: 2 } },
+      { text: "Покой после — знаю, что потом будет хорошо", sc: { serotonin: 4, gaba: 3 } }
+    ] },
+  { type: "slider", tag: "✨ Эндорфин", text: "Насколько ты кайфуешь от преодоления трудностей?",
+    sub: "0 = «трудности — зло» → 10 = «боль — это рост, дайте ещё»",
+    left: "Комфорт", right: "Преодоление",
+    fact: "Runner's high — не миф. fMRI-исследования (Boecker, 2008) подтвердили: после 2+ часов бега мозг заливается эндорфинами. Ты буквально становишься наркоманом от боли — в хорошем смысле.",
+    calc: v => ({ endorphin: v*2.5, adrenaline: v*0.5 }) },
+  { type: "choice", tag: "🧠 Финальный скан", text: "Если бы твой мозг мог сказать одну фразу — какую?",
+    sub: "",
+    fact: "Нейропластичность — способность мозга перестраиваться — работает всю жизнь. Ты можешь изменить свой нейро-коктейль. Не быстро. Но можешь.",
+    opts: [
+      { text: "«Давай ещё! Что дальше? Новое! Больше!»", sc: { dopamine: 5, adrenaline: 2 } },
+      { text: "«Всё хорошо. Мы в порядке. Правда»", sc: { serotonin: 5, gaba: 2 } },
+      { text: "«Обними кого-нибудь. Прямо сейчас»", sc: { oxytocin: 5, endorphin: 1 } },
+      { text: "«Ещё один подход. Ты можешь. Давай»", sc: { endorphin: 5, adrenaline: 2 } }
+    ] }
+];
+
+let curQ=0, selOpt=null, curSliderVal=5;
+let scores = { dopamine:0, serotonin:0, adrenaline:0, gaba:0, oxytocin:0, endorphin:0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  const num = String(i+1).padStart(2,'0');
+  selOpt = null; curSliderVal = 5;
+
+  let bodyHTML;
+  if (q.type === 'slider') {
+    bodyHTML = `
+      <div class="slider-wrap">
+        <div class="slider-labels"><span>${q.left}</span><span>${q.right}</span></div>
+        <div class="slider-track">
+          <input type="range" min="0" max="10" value="5" step="1" id="slider" oninput="onSlide(this.value)">
+        </div>
+        <div class="slider-val" id="sliderVal" style="color:var(--neon-purple)">5</div>
+        <div class="slider-desc" id="sliderDesc">${sliderDescs[5]}</div>
+      </div>
+      <div class="chill-fact" id="chillFact"><div class="chill-fact-label">🧬 chill fact</div>${q.fact}</div>`;
+  } else {
+    bodyHTML = `
+      <div class="options">${q.opts.map((o,j) => `
+        <div class="option" onclick="selChoice(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>
+      <div class="chill-fact" id="chillFact"><div class="chill-fact-label">🧬 chill fact</div>${q.fact}</div>`;
+  }
+
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-type">${q.tag}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
+      ${bodyHTML}
+      <button class="btn-next ${q.type==='slider'?'active':''}" id="btnNext" onclick="nxt()">${i===questions.length-1?'Получить нейро-профиль 🧠':'Следующий скан →'}</button>
+    </div>`;
+
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function onSlide(v) {
+  curSliderVal = parseInt(v);
+  const el = document.getElementById('sliderVal');
+  el.textContent = v;
+  document.getElementById('sliderDesc').textContent = sliderDescs[v];
+  // Color interpolation blue → purple → pink
+  const t = v / 10;
+  if (t < 0.5) {
+    el.style.color = `color-mix(in srgb, var(--neon-blue) ${(1-t*2)*100}%, var(--neon-purple) ${t*2*100}%)`;
+  } else {
+    el.style.color = `color-mix(in srgb, var(--neon-purple) ${(1-(t-0.5)*2)*100}%, var(--neon-pink) ${(t-0.5)*2*100}%)`;
+  }
+  // Show fact on first interaction
+  const fact = document.getElementById('chillFact');
+  if (fact && !fact.classList.contains('show')) {
+    fact.classList.add('show');
+    flashSynapse();
+  }
+}
+
+function selChoice(el, i) {
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+  const fact = document.getElementById('chillFact');
+  if (fact) { fact.classList.add('show'); flashSynapse(); }
+}
+
+function flashSynapse() {
+  const f = document.getElementById('synapseFlash');
+  f.classList.add('active');
+  setTimeout(()=>f.classList.remove('active'), 400);
+}
+
+function nxt() {
+  const q = questions[curQ];
+  if (q.type === 'slider') {
+    const calc = q.calc(curSliderVal);
+    for (const [k,v] of Object.entries(calc)) scores[k] += v;
+  } else {
+    if (selOpt === null) return;
+    const sc = q.opts[selOpt].sc;
+    for (const [k,v] of Object.entries(sc)) scores[k] += v;
+  }
+  selOpt = null; curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const pKey = sorted[0][0]; const p = profiles[pKey]; const maxVal = sorted[0][1];
+
+  const barsHTML = sorted.map(([key,val])=>{
+    const pct = maxVal>0 ? Math.round((val/maxVal)*100) : 0;
+    return `<div class="nt-row"><div class="nt-row-top"><span class="nt-name"><span class="nt-dot" style="background:${ntColors[key]};box-shadow:0 0 8px ${ntColors[key]}"></span> ${ntNames[key]}</span><span class="nt-pct" style="color:${ntColors[key]}">${pct}%</span></div><div class="nt-bar-bg"><div class="nt-bar-fill" data-w="${pct}" style="background:${ntColors[key]};box-shadow:0 0 12px ${ntColors[key]}40"></div></div></div>`;
+  }).join('');
+
+  const statsHTML = Object.entries(p.stats).map(([k,v])=>{
+    const icons={speed:'⚡',focus:'🎯',energy:'🔋',social:'🫂'};
+    const labels={speed:'Скорость',focus:'Фокус',energy:'Энергия',social:'Социальность'};
+    return `<div class="bs-item"><span class="bs-icon">${icons[k]}</span><div class="bs-label">${labels[k]}</div><div class="bs-val" style="color:${ntColors[pKey]}">${v}</div></div>`;
+  }).join('');
+
+  const galleryHTML = Object.entries(profiles).map(([key,pr])=>{
+    const cur = key===pKey;
+    return `<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${pr.emoji}</span><div class="gi-body"><div class="gi-name">${pr.name}</div><div class="gi-desc">${pr.tagline.slice(0,65)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;
+  }).join('');
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="scan-wrap">
+      <div class="scan-card" style="border:2px solid ${ntColors[pKey]};box-shadow:0 0 40px ${ntColors[pKey]}20">
+        <span class="scan-emoji">${p.emoji}</span>
+        <div class="scan-name">${p.name}</div>
+        <div class="scan-aka">${p.aka}</div>
+      </div>
+    </div>
+
+    <div class="r-center">
+      <div class="r-label" style="color:${ntColors[pKey]}">Главный нейромедиатор: ${ntNames[pKey]}</div>
+      <p class="r-tagline">${p.tagline}</p>
+    </div>
+
+    <div class="r-card"><h3>🧠 Нейро-профиль</h3><p>${p.desc}</p></div>
+
+    <div class="r-card"><h3>📊 Нейромедиаторный коктейль</h3><div class="nt-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>⚡ Характеристики</h3><div class="brain-stats">${statsHTML}</div></div>
+
+    <div class="r-card"><h3>🌘 Теневая сторона</h3><p>${p.shadow}</p>
+      <div class="pullquote"><p>${p.quote}</p></div>
+    </div>
+
+    ${sorted[1][1]>5 ? `<div class="r-card"><h3>🧪 Второй нейромедиатор: <span style="color:${ntColors[sorted[1][0]]}">${ntNames[sorted[1][0]]}</span></h3><p>${profiles[sorted[1][0]].tagline}</p></div>` : ''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🧠 Все 6 нейропрофилей</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(()=>document.querySelectorAll('.nt-bar-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort() {
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const p=profiles[sorted[0][0]];
+  const text=`${p.emoji} Мой нейро-профиль: ${p.name}\n\n${p.tagline}\n\nУзнай свой: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share) navigator.share({title:'Нейро-профиль',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const pKey=sorted[0][0]; const p=profiles[pKey]; const maxVal=sorted[0][1];
+  const bars=sorted.map(([k,v])=>{const pc=maxVal>0?Math.round((v/maxVal)*100):0;return`  ${ntNames[k]}: ${'█'.repeat(Math.round(pc/10))}${'░'.repeat(10-Math.round(pc/10))} ${pc}%`;}).join('\n');
+  const stats=Object.entries(p.stats).map(([k,v])=>{const l={speed:'Скорость',focus:'Фокус',energy:'Энергия',social:'Социальность'};return`  ${l[k]}: ${v}`;}).join('\n');
+
+  const text=`🧠 НЕЙРО-ПРОФИЛЬ — Результат\n\n${p.emoji}  ${p.name}\n${p.aka}\n\n«${p.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🧠 Профиль:\n\n${p.desc}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Нейромедиаторы:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n⚡ Характеристики:\n${stats}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Теневая сторона:\n${p.shadow}\n\n💬 «${p.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>
