@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>На какой ты глубине? 🌊</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #020810;
+  --bg-rgb: 2,8,16;
+  --surface: rgba(40,120,200,0.04);
+  --surface2: rgba(40,120,200,0.07);
+  --surface3: rgba(40,120,200,0.11);
+  --text: #5080a8;
+  --text-dim: #304060;
+  --text-bright: #c0d8f0;
+  --border: rgba(40,120,200,0.08);
+  --blue: #1e90ff;
+  --blue-deep: #0a3a6e;
+  --cyan: #00e5ff;
+  --biolum: #40ffcc;
+  --biolum-glow: rgba(64,255,204,0.12);
+}
+
+html{scroll-behavior:smooth}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Ocean particles */
+#oceanBg {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+}
+
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+.mono{font-family:'Space Mono',monospace}
+
+/* ─── Depth indicator (side) ─── */
+.depth-strip {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #1e90ff, #0a3a6e, #020810, #000);
+  z-index: 50;
+  opacity: 0.6;
+}
+
+.depth-marker {
+  position: fixed;
+  left: 0; top: 0;
+  width: 4px; height: 8px;
+  background: var(--biolum);
+  box-shadow: 0 0 12px var(--biolum);
+  z-index: 51;
+  transition: top 1s ease;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ─── Header ─── */
+.header{text-align:center;padding:40px 0 24px;animation:fadeUp .8s ease}
+
+.header-depth {
+  font-family: 'Space Mono', monospace;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 100px;
+  font-size: 10px; letter-spacing: 2px;
+  color: var(--cyan); margin-bottom: 20px;
+}
+
+.header-depth .sonar {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: sonar 2s ease infinite;
+}
+
+@keyframes sonar {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: .3; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.header-icon{font-size:56px;display:block;margin-bottom:16px}
+
+h1 {
+  font-size: clamp(2rem, 6.5vw, 2.8rem);
+  font-weight: 800; color: var(--text-bright);
+  line-height: 1.1; margin-bottom: 14px; letter-spacing: -0.5px;
+}
+
+h1 span {
+  background: linear-gradient(135deg, #1e90ff, #00e5ff, #40ffcc);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.lead{font-size:15px;color:var(--text-dim);max-width:460px;margin:0 auto;line-height:1.7;font-weight:300}
+
+/* ─── Depth scale intro ─── */
+.depth-intro {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0; margin: 24px 0 28px;
+  animation: fadeUp .8s ease .15s both;
+}
+
+.depth-intro p{font-size:14px;color:var(--text-dim);line-height:1.75;font-weight:300;text-align:center;margin-bottom:16px}
+
+.depth-scale {
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.ds-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 12px; border-radius: 8px;
+  transition: background .3s ease;
+}
+
+.ds-depth {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  width: 60px; text-align: right; flex-shrink: 0;
+}
+
+.ds-bar {
+  flex: 1; height: 3px;
+  border-radius: 10px;
+  opacity: 0.5;
+}
+
+.ds-name { font-size: 11px; color: var(--text); width: 90px; }
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #1e90ff, #00e5ff);
+  color: #fff; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 0 30px rgba(30,144,255,0.15);
+}
+
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 0 50px rgba(30,144,255,0.25)}
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); display: none;
+}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase}
+.progress-count{font-family:'Space Mono',monospace;font-size:12px;color:var(--cyan);font-weight:700}
+.progress-bar{height:2px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#1e90ff,#00e5ff);border-radius:10px;transition:width .5s ease;width:0}
+
+/* Current depth display */
+.cur-depth {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--cyan);
+  text-align: center; margin-top: 6px;
+  opacity: 0.7;
+}
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .45s ease;
+  transition: background 1s ease;
+}
+
+.q-num{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--cyan);font-weight:700;margin-bottom:4px}
+
+.q-zone {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 600;
+  padding: 4px 10px; background: var(--surface2);
+  border-radius: 6px; margin-bottom: 16px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.q-text {
+  font-size: 20px; font-weight: 700; color: var(--text-bright);
+  line-height: 1.35; margin-bottom: 8px; letter-spacing: -0.3px;
+}
+
+.q-sub{font-size:14px;font-style:italic;color:var(--text-dim);margin-bottom:24px;line-height:1.6;font-weight:300}
+
+/* Options */
+.options{display:flex;flex-direction:column;gap:8px}
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .3s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover{border-color:rgba(0,229,255,0.15);background:var(--surface3)}
+.option.selected{border-color:var(--cyan);background:rgba(0,229,255,0.06)}
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot{border-color:var(--cyan);background:var(--cyan)}
+.option.selected .opt-dot::after{content:'';position:absolute;inset:3px;background:#fff;border-radius:50%}
+
+/* Grid options */
+.grid-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.grid-opt {
+  padding: 20px 14px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 16px;
+  text-align: center; cursor: pointer; transition: all .3s ease; user-select: none;
+}
+
+.grid-opt:hover{border-color:rgba(0,229,255,0.15);transform:translateY(-2px)}
+.grid-opt.selected{border-color:var(--cyan);background:rgba(0,229,255,0.06)}
+
+.grid-opt .go-icon{font-size:30px;display:block;margin-bottom:8px}
+.grid-opt .go-title{font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+.grid-opt .go-desc{font-size:11px;color:var(--text-dim);line-height:1.4}
+
+/* Pressure warning */
+.pressure-warn {
+  margin-top: 16px; padding: 10px 14px;
+  background: rgba(64,255,204,0.04);
+  border: 1px solid rgba(64,255,204,0.1);
+  border-radius: 10px; font-size: 12px;
+  color: var(--biolum); line-height: 1.6;
+  display: none; animation: fadeUp .3s ease;
+}
+.pressure-warn.show{display:block}
+.pressure-warn-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;opacity:.7}
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, #1e90ff, #00e5ff);
+  color: #fff; box-shadow: 0 0 16px rgba(30,144,255,0.15);
+}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+/* Depth sonar card */
+.sonar-wrap{display:flex;justify-content:center;padding:36px 0 16px}
+
+.sonar-card {
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 2px solid var(--cyan);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: radial-gradient(circle, rgba(0,229,255,0.04), transparent 70%);
+  position: relative;
+  box-shadow: 0 0 40px rgba(0,229,255,0.08);
+}
+
+/* Sonar rings */
+.sonar-card::before, .sonar-card::after {
+  content: ''; position: absolute; border-radius: 50%;
+  border: 1px solid rgba(0,229,255,0.1);
+}
+.sonar-card::before { inset: 20px; }
+.sonar-card::after { inset: 45px; }
+
+.sonar-ping {
+  position: absolute; inset: -2px;
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  animation: ping 3s ease infinite;
+  opacity: 0;
+}
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.sc-icon{font-size:44px;display:block;margin-bottom:8px}
+.sc-depth{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--cyan)}
+.sc-name{font-size:12px;color:var(--text-dim);margin-top:4px}
+
+.r-center{text-align:center;margin-bottom:24px}
+
+.r-label{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-top:16px;margin-bottom:8px}
+
+.r-tagline{font-size:17px;font-weight:300;font-style:italic;color:var(--text);max-width:440px;margin:0 auto;line-height:1.6}
+
+/* Depth gradient */
+.depth-viz {
+  height: 80px; border-radius: 14px;
+  margin-bottom: 24px; position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1e90ff 0%, #0a5ab0 20%, #062a5a 40%, #031530 60%, #010a18 80%, #000 100%);
+}
+
+.depth-viz-marker {
+  position: absolute; left: 0; right: 0;
+  height: 3px; background: var(--biolum);
+  box-shadow: 0 0 12px var(--biolum);
+  transition: top 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.depth-viz-labels {
+  display: flex; justify-content: space-between;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: var(--text-dim); margin-top: 6px;
+}
+
+/* ─── Cards ─── */
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+}
+
+.r-card h3 {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:300}
+
+/* Creature card */
+.creature-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px; background: var(--surface2);
+  border-radius: 12px; margin-top: 12px;
+}
+
+.creature-emoji{font-size:32px;flex-shrink:0}
+.creature-name{font-size: 13px;font-weight:600;color:var(--text-bright)}
+.creature-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+
+/* Conditions */
+.cond-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin: 14px 0 4px;
+}
+
+.cond-item{padding:14px;background:var(--surface2);border-radius:12px;text-align:center}
+.cond-icon{font-size:20px;display:block;margin-bottom:6px}
+.cond-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);font-weight:500;margin-bottom:2px}
+.cond-val{font-size:12px;font-weight:500}
+
+/* Bars */
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500;display:flex;align-items:center;gap:8px}
+.sc-val{font-family:'Space Mono',monospace;font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--cyan);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 12px 12px 0;
+}
+.pullquote p{font-size:14px;font-style:italic;color:var(--text-bright);line-height:1.6;margin:0}
+
+/* Gallery */
+.gallery-toggle {
+  width: 100%; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text-dim);
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-bottom: 14px;
+}
+.gallery-toggle:hover{border-color:var(--cyan);color:var(--cyan)}
+
+.gallery{display:none;flex-direction:column;gap:8px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+
+.gallery-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.gallery-item.current{border-color:var(--cyan);background:rgba(0,229,255,0.04)}
+.gi-emoji{font-size:24px;flex-shrink:0}
+.gi-body{flex:1}
+.gi-name{font-size:13px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.gi-badge{font-size:9px;padding:3px 8px;background:rgba(0,229,255,0.1);color:var(--cyan);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+/* Actions */
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,#1e90ff,#00e5ff);color:#fff;border:none;box-shadow:0 0 20px rgba(30,144,255,0.15)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--cyan);color:var(--bg);padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:480px){
+  .container{padding:12px 14px 50px}
+  .q-card,.r-card{padding:24px 16px}
+  .q-text{font-size:18px}
+  .option{padding:12px 14px;font-size:13px}
+  .grid-options{gap:8px}
+  .grid-opt{padding:16px 10px}
+  .cond-grid{grid-template-columns:1fr 1fr}
+  .sonar-card{width:170px;height:170px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="oceanBg"></canvas>
+<div class="depth-strip"></div>
+<div class="depth-marker" id="depthMarker"></div>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-depth"><span class="sonar"></span> DEPTH SCAN</div>
+      <span class="header-icon">🌊</span>
+      <h1>На какой ты <span>глубине?</span></h1>
+      <p class="lead">12 погружений в темноту. С каждым вопросом — глубже. С каждым ответом — ближе к себе. Давление растёт. Готов(-а)?</p>
+    </div>
+
+    <div class="depth-intro">
+      <p>Океан — единственное место на планете, где с каждым метром вниз мир меняется полностью. Свет исчезает, давление растёт, существа светятся сами. Как и люди — чем глубже копнёшь, тем интереснее.</p>
+      <div class="depth-scale">
+        <div class="ds-row"><span class="ds-depth">0–200м</span><div class="ds-bar" style="background:linear-gradient(90deg,#1e90ff,#40a0ff);width:100%"></div><span class="ds-name">☀️ Солнечная</span></div>
+        <div class="ds-row"><span class="ds-depth">200–1000м</span><div class="ds-bar" style="background:linear-gradient(90deg,#0a5ab0,#1e70c0);width:80%"></div><span class="ds-name">🌅 Сумеречная</span></div>
+        <div class="ds-row"><span class="ds-depth">1–4 км</span><div class="ds-bar" style="background:linear-gradient(90deg,#062a5a,#0a4080);width:60%"></div><span class="ds-name">🌑 Батиальная</span></div>
+        <div class="ds-row"><span class="ds-depth">4–6 км</span><div class="ds-bar" style="background:linear-gradient(90deg,#031530,#052040);width:40%"></div><span class="ds-name">⬛ Абиссальная</span></div>
+        <div class="ds-row"><span class="ds-depth">6–11 км</span><div class="ds-bar" style="background:linear-gradient(90deg,#010a18,#020e20);width:25%"></div><span class="ds-name">🕳️ Хадальная</span></div>
+        <div class="ds-row"><span class="ds-depth">~2.5 км</span><div class="ds-bar" style="background:linear-gradient(90deg,#ff4500,#ff8c00);width:50%"></div><span class="ds-name">🔥 Термальная</span></div>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Начать погружение 🌊</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Погружение</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="cur-depth" id="curDepth">▼ 0 м</div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ OCEAN CANVAS ═══ */
+(function(){
+  const c=document.getElementById('oceanBg'), ctx=c.getContext('2d');
+  let W,H,particles=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;init()}
+  function init(){
+    particles=[];
+    for(let i=0;i<50;i++){
+      particles.push({
+        x:Math.random()*W, y:Math.random()*H,
+        r:1+Math.random()*2, vy:0.2+Math.random()*0.5,
+        vx:(Math.random()-.5)*0.3,
+        glow:Math.random()>.7,
+        color:Math.random()>.5?'rgba(0,229,255,':'rgba(64,255,204,'
+      });
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.y+=p.vy; p.x+=p.vx;
+      if(p.y>H) p.y=0;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color+(p.glow?'0.5)':'0.15)');
+      ctx.fill();
+      if(p.glow){
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);
+        ctx.fillStyle=p.color+'0.04)';
+        ctx.fill();
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();draw();
+  addEventListener('resize',resize);
+})();
+
+/* ═══ DATA ═══ */
+const zones = {
+  sunlit: { emoji:"☀️", name:"Солнечная зона", depth:"0–200 м", pressure:"1–20 атм",
+    color:"#1e90ff", glow:"rgba(30,144,255,0.15)",
+    creature:{emoji:"🐬",name:"Дельфин",desc:"Социальный, игривый, всегда на поверхности"},
+    tagline:"Ты живёшь на виду. Тепло, свет, люди — это твоя стихия. Тебе не нужно нырять вглубь, чтобы чувствовать себя живым(-ой).",
+    desc:"Солнечная зона — 200 метров, в которых живёт 90% всей океанической жизни. Здесь свет, тепло, фотосинтез. Ты — человек поверхности, и это не оскорбление. Исследования social connectedness (Lee & Robbins, 1998) показывают: люди, которые свободно существуют «на виду», обладают высокой социальной интеграцией. Ты не прячешь себя — и мир тебя видит.",
+    conds:{light:"100%",pressure:"Минимальное",temp:"+20°C",creatures:"90% всех видов"},
+    shadow:"Ты боишься глубины. Не океанской — своей. Поверхность безопасна, но однообразна. Иногда нужно нырнуть — хотя бы на метр — чтобы увидеть, что там.",
+    quote:"Поверхность — не значит поверхностный. Солнце не стыдится, что оно наверху." },
+  twilight: { emoji:"🌅", name:"Сумеречная зона", depth:"200–1000 м", pressure:"20–100 атм",
+    color:"#4a80c0", glow:"rgba(74,128,192,0.15)",
+    creature:{emoji:"🦑",name:"Кальмар",desc:"Между мирами — видит и свет, и тьму одновременно"},
+    tagline:"Ты на границе. Ещё видишь свет, но уже чувствуешь глубину. Ты — переводчик между поверхностными и глубокими.",
+    desc:"Сумеречная зона — последние проблески света. Здесь живут существа, которые знают оба мира: поднимаются к поверхности ночью и уходят вглубь днём. Ты так же — умеешь быть на людях и в одиночестве, в веселье и в тишине. Исследования амбивертов (Grant, 2013) показывают: люди на границе интро- и экстраверсии — лучшие коммуникаторы. Ты видишь обе стороны.",
+    conds:{light:"1–10%",pressure:"Ощутимое",temp:"+5°C",creatures:"Вертикальные мигранты"},
+    shadow:"Ты нигде до конца. Не полностью на свету, не полностью в темноте. Иногда это мудрость — иногда неспособность выбрать.",
+    quote:"Сумерки — не переход от дня к ночи. Это отдельное время. Целое и самодостаточное." },
+  bathyal: { emoji:"🌑", name:"Батиальная зона", depth:"1–4 км", pressure:"100–400 атм",
+    color:"#1a4070", glow:"rgba(26,64,112,0.15)",
+    creature:{emoji:"🐙",name:"Осьминог",desc:"Три сердца, голубая кровь, гений маскировки"},
+    tagline:"Ты ушёл(-а) глубже, чем большинство. Здесь темно, тихо — и именно поэтому ты видишь то, что не видят другие.",
+    desc:"Батиальная зона — абсолютная темнота. Света нет. Существа здесь создают свой свет — биолюминесценцию. Ты так же: в темноте ты не слепнешь, а начинаешь светиться. Исследования post-traumatic growth (Tedeschi & Calhoun, 2004) показывают: именно в «темноте» — после кризисов, потерь, тишины — люди находят свои главные смыслы.",
+    conds:{light:"0%",pressure:"Серьёзное",temp:"+2°C",creatures:"Биолюминесцентные"},
+    shadow:"Ты так привык(-ла) к темноте, что свет тебя пугает. Поверхность кажется слишком шумной, слишком яркой. Но там тоже есть жизнь — и она скучает по тебе.",
+    quote:"В темноте ты учишься видеть не глазами. А тем, что внутри." },
+  abyssal: { emoji:"⬛", name:"Абиссальная зона", depth:"4–6 км", pressure:"400–600 атм",
+    color:"#0c2040", glow:"rgba(12,32,64,0.15)",
+    creature:{emoji:"🐡",name:"Рыба-удильщик",desc:"Носит свой свет в абсолютной темноте"},
+    tagline:"На этой глубине нет ничего случайного. Каждое движение — осознанное. Каждая мысль — глубокая. Ты не живёшь — ты существуешь. Полностью.",
+    desc:"Абиссальная зона — «бездна» по-гречески. Давление в 600 атмосфер раздавило бы подводную лодку. Но жизнь здесь есть — тихая, медленная, невероятно адаптированная. Ты — тот человек, который выдерживает давление, от которого другие ломаются. Исследования resilience (Masten, 2001) описывают «обычную магию» — способность обычных людей выживать в необычных условиях. Ты не сверхчеловек. Ты просто глубже.",
+    conds:{light:"0%",pressure:"Раздавливающее",temp:"+1°C",creatures:"Единицы, но уникальные"},
+    shadow:"Ты на глубине, куда не доходит ни свет, ни звук. Это сила — но и изоляция. Мир наверху не враг. Иногда стоит всплыть — хотя бы чтобы вдохнуть.",
+    quote: "Бездна не пустая. Она просто ждёт тех, кто не побоится туда заглянуть." },
+  hadal: { emoji:"🕳️", name:"Хадальная зона", depth:"6–11 км", pressure:"600–1100 атм",
+    color:"#040c18", glow:"rgba(4,12,24,0.15)",
+    creature:{emoji:"🦐",name:"Хадальный бокоплав",desc:"Выживает в условиях, где не должна быть жизнь"},
+    tagline:"Марианская впадина. 11 км вниз. Ты на дне — но не в плохом смысле. Ты там, где не был никто. И ты в порядке.",
+    desc:"Хадальная зона — дно мира. Марианская впадина, 10 994 метра. Сюда спускались три человека за всю историю. Давление раздавит сталь. А ты здесь. Целый(-ая). Исследования extreme environments (Suedfeld, 2001) показывают парадокс: люди, прошедшие через экстремальную изоляцию, обретают невозможную ясность мышления. На дне нет шума. И впервые слышишь себя.",
+    conds:{light:"0%, навсегда",pressure:"1100 атм",temp:"+1°C",creatures:"Те, кого считали невозможными"},
+    shadow:"Ты так глубоко, что забыл(-а) о поверхности. Мир наверху существует. Люди наверху скучают. Глубина — не побег. Если она стала убежищем — пора всплывать.",
+    quote:"На дне океана тишина абсолютна. И в этой тишине ты наконец слышишь правду." },
+  thermal: { emoji:"🔥", name:"Гидротермальная зона", depth:"~2.5 км", pressure:"250 атм",
+    color:"#e05020", glow:"rgba(224,80,32,0.15)",
+    creature:{emoji:"🪱",name:"Трубчатый червь",desc:"Живёт без солнца, питается хаосом чёрных курильщиков"},
+    tagline:"Ты не на дне и не наверху. Ты у трещины, из которой бьёт хаос — и создаёшь из него жизнь. Там, где всё должно умереть, ты расцветаешь.",
+    desc:"Гидротермальные источники — трещины на дне, откуда бьёт вода при +400°C. Токсичная, кислотная, смертельная. И именно здесь — одна из самых богатых экосистем на планете. Жизнь родилась не на тёплой поверхности — а здесь, в хаосе. Исследования antifragility (Taleb, 2012) описывают системы, которые становятся сильнее от стресса. Ты не хрупкий и не устойчивый. Ты антихрупкий.",
+    conds:{light:"Своё — раскалённое",pressure:"250 атм",temp:"+400°C у источника",creatures:"Невозможные, но живые"},
+    shadow:"Ты кайфуешь от хаоса — но не весь хаос полезен. Иногда трещина — это просто трещина. Не каждый кризис — точка роста. Научись отличать.",
+    quote:"Жизнь зародилась не в тепле и свете — а в кипящей темноте на дне океана." }
+};
+
+const zKeys = ['sunlit','twilight','bathyal','abyssal','hadal','thermal'];
+const zNames = { sunlit:'Солнечная', twilight:'Сумеречная', bathyal:'Батиальная', abyssal:'Абиссальная', hadal:'Хадальная', thermal:'Термальная' };
+const depthPerQ = [50,200,500,1000,2000,3000,4000,5500,7000,8500,10000,10994];
+
+const questions = [
+  { zone:"☀️ 50 м · Первый нырок", text:"Задержи дыхание. Что ты чувствуешь, когда вода накрывает с головой?",
+    sub:"Первый метр вниз. Ещё светло.",
+    fact:"На глубине 10м давление удваивается. Лёгкие сжимаются на 50%. Тело адаптируется за секунды — или паникует.",
+    opts:[
+      {text:"Свободу — наконец тишина, наконец один(-а)",sc:{bathyal:3,hadal:1}},
+      {text:"Любопытство — что там, внизу? Хочу увидеть",sc:{thermal:3,twilight:1}},
+      {text:"Спокойствие — вода держит, можно расслабиться",sc:{abyssal:2,twilight:2}},
+      {text:"Дискомфорт — мне нужен воздух и свет, дайте обратно",sc:{sunlit:3}}
+    ]},
+  { zone:"🌅 200 м · Сумерки", text:"Свет тускнеет. Четыре двери в темноте. За каждой — звук. Выбери.",
+    sub:"",
+    layout:"grid",
+    fact:"На 200м начинается дисфотическая зона — свет есть, но фотосинтез невозможен. Растения умирают. Хищники просыпаются.",
+    opts:[
+      {icon:"🔊",title:"Гул глубины",desc:"Низкий, вибрирующий, древний",sc:{hadal:3,abyssal:1}},
+      {icon:"🫧",title:"Пузырьки",desc:"Лёгкие, играющие, живые",sc:{sunlit:3}},
+      {icon:"🔥",title:"Шипение",desc:"Что-то кипит в темноте",sc:{thermal:3}},
+      {icon:"🔇",title:"Ничего",desc:"Абсолютная, звенящая тишина",sc:{bathyal:2,abyssal:2}}
+    ]},
+  { zone:"🌑 500 м · Темнеет", text:"Тебе предлагают узнать одну правду о себе. Но забыть нельзя. Согласишься?",
+    sub:"Чем глубже — тем честнее вопросы.",
+    fact:"На 500м человеческий глаз ещё улавливает свет — но мозг уже не различает цвета. Мир становится монохромным.",
+    opts:[
+      {text:"Да. Всегда. Правда стоит любой боли",sc:{hadal:3,thermal:1}},
+      {text:"Зависит от правды — я хочу выбирать, что знать",sc:{twilight:3}},
+      {text:"Нет. Некоторые вещи лучше не знать",sc:{sunlit:2,bathyal:1}},
+      {text:"Я уже знаю. Мне не нужно, чтобы кто-то говорил",sc:{abyssal:3}}
+    ]},
+  { zone:"🌑 1 км · Полная темнота", text:"Свет исчез. Полностью. Что ты делаешь в первую секунду?",
+    sub:"Тебя не видно. Тебя не слышно. Ты наедине с собой.",
+    fact:"На 1000м начинается «midnight zone». Ни один фотон солнца сюда не доходит. Единственный свет — тот, что создают живые существа.",
+    opts:[
+      {text:"Замираю и слушаю. Темнота — это информация",sc:{abyssal:3,bathyal:1}},
+      {text:"Ищу свой свет — должен же быть выход, решение, искра",sc:{thermal:3}},
+      {text:"Плыву дальше. Темнота не меняет направление",sc:{hadal:3}},
+      {text:"Ищу чью-то руку. Вместе не так темно",sc:{sunlit:2,twilight:2}}
+    ]},
+  { zone:"🌑 2 км · Давление", text:"Давление 200 атмосфер. Что ломается в тебе первым, когда жизнь давит по-настоящему?",
+    sub:"Честно. Здесь тебя никто не видит.",
+    fact:"На 2000м давление расплющит пустую бутылку до размера напёрстка. Но глубоководные рыбы не замечают — их тело заполнено несжимаемой жидкостью.",
+    opts:[
+      {text:"Сон — я перестаю спать или сплю по 14 часов",sc:{bathyal:3}},
+      {text:"Голос — я замолкаю. Слова заканчиваются",sc:{abyssal:3,hadal:1}},
+      {text:"Терпение — я взрываюсь на мелочах",sc:{thermal:3,sunlit:1}},
+      {text: "Ничего — я сжимаюсь, уплотняюсь и выдерживаю",sc:{hadal:3}}
+    ]},
+  { zone:"🐙 3 км · Существа", text:"В темноте мелькнул свет. Подплыть или уплыть?",
+    sub:"В глубине океана свет — это либо чудо, либо ловушка. Удильщик ловит жертв своим фонариком.",
+    layout:"grid",
+    fact:"Биолюминесценция — самый распространённый способ коммуникации в океане. 76% всех глубоководных существ светятся.",
+    opts:[
+      {icon:"✨",title:"Подплыть",desc:"Свет — это жизнь. Всегда",sc:{sunlit:2,thermal:2}},
+      {icon:"👁️",title:"Наблюдать издалека",desc:"Сначала пойму, что это",sc:{twilight:3,bathyal:1}},
+      {icon:"🖤",title:"Уплыть",desc:"Мне не нужен чужой свет",sc:{abyssal:2,hadal:2}},
+      {icon:"💡",title:"Засветиться самому",desc:"Пусть оно решает, подплывать ли ко мне",sc:{bathyal:3,thermal:1}}
+    ]},
+  { zone:"⬛ 4 км · Бездна", text:"Ты нашёл(-а) что-то ценное. Но чтобы забрать — нужно отпустить что-то, что держишь. Что отпустишь?",
+    sub:"На этой глубине нет лишнего. Только необходимое.",
+    fact:"Абиссальные организмы развили минимализм до совершенства: прозрачное тело, замедленный метаболизм, ноль лишнего.",
+    opts:[
+      {text:"Контроль — пусть будет как будет",sc:{abyssal:3,twilight:1}},
+      {text:"Одобрение — мне не нужно, чтобы меня принимали",sc:{hadal:3}},
+      {text:"Безопасность — рискну, иначе зачем спускался(-ась)",sc:{thermal:3}},
+      {text:"Прошлое — оно тяжелее, чем я думал(-а)",sc:{bathyal:3}}
+    ]},
+  { zone:"⬛ 5.5 км · Тишина", text:"72 часа полного одиночества. Без телефона, без людей, без звуков. Твоя реакция на третий день?",
+    sub:"",
+    fact:"Сенсорная депривация активирует default mode network мозга — зону, отвечающую за самосознание. Чем тише снаружи — тем громче внутри.",
+    opts:[
+      {text:"Я говорю с собой — и наконец слышу ответы",sc:{hadal:3,abyssal:1}},
+      {text:"Я схожу с ума — мне физически нужны люди",sc:{sunlit:3}},
+      {text:"Я создаю — рисую, пишу, строю из того, что есть",sc:{thermal:3,bathyal:1}},
+      {text:"Я в порядке. Три дня — не срок",sc:{abyssal:3}}
+    ]},
+  { zone:"🕳️ 7 км · Давление критическое", text:"На дне лежит запечатанное письмо — от тебя через 10 лет. Одно слово на конверте. Какое?",
+    sub:"",
+    layout:"grid",
+    fact:"Давление в Марианской впадине — 1100 атмосфер. Сталь деформируется. Стекло трескается. А крошечный бокоплав — живёт.",
+    opts:[
+      {icon:"🔓",title:"«Наконец»",desc:"Ожидание чего-то, что пришло",sc:{bathyal:2,hadal:2}},
+      {icon:"🌊",title:"«Прости»",desc:"Кому-то. Может быть — себе",sc:{abyssal:3,twilight:1}},
+      {icon:"🔥",title:"«Смотри»",desc:"Я сделал(-а) это",sc:{thermal:3,sunlit:1}},
+      {icon:"🤫",title:"«Тихо»",desc:"Всё хорошо. Без слов",sc:{hadal:3}}
+    ]},
+  { zone:"🕳️ 8.5 км · Почти дно", text:"Ты можешь задать вселенной один вопрос. Она ответит. Какой?",
+    sub:"Один. Честный.",
+    fact:"В Марианской впадине нашли микропластик. Человечество добралось даже сюда.",
+    opts:[
+      {text:"«Меня когда-нибудь по-настоящему поняли?»",sc:{abyssal:3,twilight:1}},
+      {text:"«Что будет, если я перестану бояться?»",sc:{thermal:3,hadal:1}},
+      {text:"«Я на правильном пути?»",sc:{bathyal:2,sunlit:2}},
+      {text:"Не буду спрашивать. Ответ уже внутри",sc:{hadal:3}}
+    ]},
+  { zone:"🕳️ 10 км · Предел", text:"Ты на самом дне. Дальше некуда. Что ты здесь находишь?",
+    sub:"10 000 метров. Тишина. Темнота. И ты.",
+    fact:"Джеймс Кэмерон в 2012 году провёл 3 часа на дне Марианской впадины. Он сказал: «Полное одиночество. Абсолютная тишина. И странный покой».",
+    opts:[
+      {text:"Покой. Абсолютный, невозможный, настоящий",sc:{hadal:3,abyssal:1}},
+      {text:"Себя. Настоящего. Без ролей, масок и историй",sc:{bathyal:3,abyssal:1}},
+      {text:"Идею. Что-то, что изменит всё наверху",sc:{thermal:3}},
+      {text:"Желание всплыть. С новым дыханием и новым взглядом",sc:{sunlit:2,twilight:2}}
+    ]},
+  { zone:"🌊 Всплытие · Финал", text:"Ты всплываешь. Первое, что хочешь сделать, когда голова покажется над водой?",
+    sub:"",
+    fact:"Декомпрессия — процесс всплытия — занимает часы. Если всплыть слишком быстро, растворённый азот образует пузыри в крови. Глубина не отпускает мгновенно.",
+    opts:[
+      {text:"Вдохнуть полной грудью и заорать",sc:{thermal:2,sunlit:2}},
+      {text:"Молча лежать на воде и смотреть в небо",sc:{abyssal:2,bathyal:2}},
+      {text:"Найти того, кого люблю, и обнять",sc:{sunlit:2,twilight:2}},
+      {text:"Нырнуть обратно. Мне там лучше",sc:{hadal:3,abyssal:1}}
+    ]}
+];
+
+let curQ=0, selOpt=null;
+let scores={sunlit:0,twilight:0,bathyal:0,abyssal:0,hadal:0,thermal:0};
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i], num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  // Update depth indicator
+  const d=depthPerQ[i];
+  document.getElementById('curDepth').textContent=`▼ ${d.toLocaleString()} м`;
+  const pct=d/10994;
+  document.getElementById('depthMarker').style.top=(pct*100)+'%';
+  // Darken card background with depth
+  const darkness = Math.min(0.03, 0.005 + i*0.002);
+
+  let optsHTML;
+  if(q.layout==='grid'){
+    optsHTML=`<div class="grid-options">${q.opts.map((o,j)=>`<div class="grid-opt" onclick="sel(this,${j})"><span class="go-icon">${o.icon}</span><div class="go-title">${o.title}</div><div class="go-desc">${o.desc}</div></div>`).join('')}</div>`;
+  } else {
+    optsHTML=`<div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>`;
+  }
+
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card" style="background:rgba(40,120,200,${darkness})">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-zone" style="color:${i<2?'#1e90ff':i<5?'#4a80c0':i<8?'#1a4070':i<10?'#0c2040':'#40ffcc'}">${q.zone}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      ${optsHTML}
+      <div class="pressure-warn" id="pWarn"><div class="pressure-warn-label">🧬 глубоководный факт</div>${q.fact}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Всплыть с результатом 🌊':'Глубже →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option,.grid-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+  const pw=document.getElementById('pWarn');
+  if(pw) pw.classList.add('show');
+}
+
+function nxt(){
+  if(selOpt===null) return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const [k,v] of Object.entries(sc)) scores[k]+=v;
+  selOpt=null; curQ++;
+  curQ<questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  document.getElementById('depthMarker').style.display='none';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const zKey=sorted[0][0], z=zones[zKey], maxVal=sorted[0][1];
+
+  document.documentElement.style.setProperty('--cyan',z.color);
+
+  const barsHTML=sorted.map(([key,val])=>{
+    const pct=maxVal>0?Math.round((val/maxVal)*100):0;
+    return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${zones[key].emoji} ${zNames[key]}</span><span class="sc-val" style="color:${zones[key].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${zones[key].color}"></div></div></div>`;
+  }).join('');
+
+  const condHTML=Object.entries(z.conds).map(([k,v])=>{
+    const ic={light:'💡',pressure:'🔻',temp:'🌡️',creatures:'🐠'};
+    const lb={light:'Свет',pressure:'Давление',temp:'Температура',creatures:'Существа'};
+    return`<div class="cond-item"><span class="cond-icon">${ic[k]}</span><div class="cond-label">${lb[k]}</div><div class="cond-val" style="color:${z.color}">${v}</div></div>`;
+  }).join('');
+
+  const depthPct = {sunlit:2,twilight:9,bathyal:25,abyssal:45,hadal:90,thermal:23};
+
+  const galleryHTML=zKeys.map(key=>{
+    const zz=zones[key],cur=key===zKey;
+    return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${zz.emoji}</span><div class="gi-body"><div class="gi-name">${zz.name} · ${zz.depth}</div><div class="gi-desc">${zz.tagline.slice(0,60)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;
+  }).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="sonar-wrap">
+      <div class="sonar-card" style="border-color:${z.color};box-shadow:0 0 40px ${z.glow}">
+        <div class="sonar-ping" style="border-color:${z.color}"></div>
+        <span class="sc-icon">${z.emoji}</span>
+        <span class="sc-depth" style="color:${z.color}">${z.depth}</span>
+        <span class="sc-name">${z.name}</span>
+      </div>
+    </div>
+
+    <div class="r-center">
+      <div class="r-label" style="color:${z.color}">Твоя глубина: ${z.name}</div>
+      <p class="r-tagline">${z.tagline}</p>
+    </div>
+
+    <div class="depth-viz">
+      <div class="depth-viz-marker" id="dvMarker" style="top:0%"></div>
+    </div>
+    <div class="depth-viz-labels"><span>0 м</span><span>2 км</span><span>6 км</span><span>11 км</span></div>
+
+    <div class="r-card"><h3>🌊 Твоя зона</h3><p>${z.desc}</p>
+      <div class="creature-card"><span class="creature-emoji">${z.creature.emoji}</span><div><div class="creature-name">Тотем: ${z.creature.name}</div><div class="creature-desc">${z.creature.desc}</div></div></div>
+    </div>
+
+    <div class="r-card"><h3>📡 Условия на глубине</h3><div class="cond-grid">${condHTML}</div></div>
+
+    <div class="r-card"><h3>📊 Профиль глубины</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🌘 Теневая сторона</h3><p>${z.shadow}</p>
+      <div class="pullquote"><p>${z.quote}</p></div>
+    </div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Соседняя зона: ${zones[sorted[1][0]].emoji} ${zones[sorted[1][0]].name}</h3><p>${zones[sorted[1][0]].tagline}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🌊 Все 6 глубин</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(()=>{
+    document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%');
+    document.getElementById('dvMarker').style.top=depthPct[zKey]+'%';
+  },400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const z=zones[sorted[0][0]];
+  const text=`${z.emoji} Моя глубина — ${z.name} (${z.depth})\n\n${z.tagline}\n\nНырни: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share) navigator.share({title:'На какой ты глубине?',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Ссылка скопирована!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const zKey=sorted[0][0],z=zones[zKey],maxVal=sorted[0][1];
+  const bars=sorted.map(([k,v])=>{const p=maxVal>0?Math.round((v/maxVal)*100):0;return`  ${zones[k].emoji} ${zNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const conds=Object.entries(z.conds).map(([k,v])=>{const l={light:'Свет',pressure:'Давление',temp:'Температура',creatures:'Существа'};return`  ${l[k]}: ${v}`;}).join('\n');
+
+  const text=`🌊 НА КАКОЙ ТЫ ГЛУБИНЕ? — Результат\n\n${z.emoji}  ${z.name}\n${z.depth} · ${z.pressure}\n\n«${z.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🌊 Описание:\n\n${z.desc}\n\n🐠 Тотем: ${z.creature.emoji} ${z.creature.name} — ${z.creature.desc}\n\n━━━━━━━━━━━━━━━━━\n\n📡 Условия:\n${conds}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Профиль:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Тень:\n${z.shadow}\n\n💬 «${z.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Нырнуть: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
