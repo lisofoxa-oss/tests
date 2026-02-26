@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Эффект бабочки 🦋</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #08060e;
+  --bg-rgb: 8,6,14;
+  --surface: rgba(180,120,255,0.03);
+  --surface2: rgba(180,120,255,0.06);
+  --surface3: rgba(180,120,255,0.10);
+  --text: #9080a8;
+  --text-dim: #605070;
+  --text-bright: #e0d8f0;
+  --border: rgba(180,120,255,0.07);
+  --wing1: #c084fc;
+  --wing2: #f0abfc;
+  --chaos: #f97316;
+  --glow: rgba(192,132,252,0.12);
+}
+
+html{scroll-behavior:smooth}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+#butterflyBg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+.serif{font-family:'Cormorant Garamond',serif}
+
+/* ─── Header ─── */
+.header{text-align:center;padding:40px 0 24px;animation:fadeUp .8s ease}
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 100px;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--wing1); font-weight: 500; margin-bottom: 20px;
+}
+
+.header-icon{font-size:60px;display:block;margin-bottom:16px;animation:wingBeat 2s ease-in-out infinite}
+
+@keyframes wingBeat {
+  0%,100%{transform:scaleX(1)}
+  50%{transform:scaleX(.85)}
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 700; color: var(--text-bright);
+  line-height: 1.1; margin-bottom: 14px;
+}
+
+h1 em{font-style:italic;color:var(--wing1)}
+
+.lead{font-size:15px;color:var(--text-dim);max-width:460px;margin:0 auto;line-height:1.7;font-weight:300}
+
+/* ─── Cascade intro ─── */
+.cascade-intro {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0; margin: 24px 0 28px;
+  animation: fadeUp .8s ease .15s both;
+  text-align: center;
+}
+
+.cascade-intro p{font-size:14px;color:var(--text-dim);line-height:1.75;font-weight:300;margin-bottom:16px}
+
+.chain {
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px; flex-wrap: wrap;
+}
+
+.chain-link {
+  padding: 5px 10px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 11px; color: var(--text-dim);
+}
+
+.chain-arrow{color:var(--wing1);font-size:12px}
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, var(--wing1), var(--wing2));
+  color: #fff; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 0 30px var(--glow);
+}
+
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 0 50px rgba(192,132,252,0.25)}
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); display: none;
+}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.progress-count{font-size:12px;color:var(--wing1);font-weight:700}
+.progress-bar{height:2px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--wing1),var(--wing2));border-radius:10px;transition:width .5s ease;width:0}
+
+/* ─── Cascade counter ─── */
+.cascade-count {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; color: var(--text-dim);
+  text-align: center; margin-top: 6px;
+  font-style: italic;
+}
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .45s ease;
+}
+
+.q-num{font-size:11px;letter-spacing:2px;color:var(--wing1);font-weight:600;margin-bottom:4px;text-transform:uppercase}
+
+.q-type {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--text-dim); font-weight: 600;
+  padding: 4px 10px; background: var(--surface2);
+  border-radius: 6px; margin-bottom: 16px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.q-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; color: var(--text-bright);
+  line-height: 1.35; margin-bottom: 8px;
+}
+
+.q-sub{font-size:14px;font-style:italic;color:var(--text-dim);margin-bottom:24px;line-height:1.6;font-weight:300}
+
+/* === THIS-OR-THAT === */
+.tot-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
+
+.tot-opt {
+  padding: 22px 14px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 16px;
+  text-align: center; cursor: pointer; transition: all .35s ease; user-select: none;
+  position: relative; overflow: hidden;
+}
+
+.tot-opt:hover{border-color:rgba(192,132,252,0.15);transform:translateY(-2px)}
+.tot-opt.selected{border-color:var(--wing1);background:rgba(192,132,252,0.08)}
+
+.tot-emoji{font-size:32px;display:block;margin-bottom:10px}
+.tot-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:6px}
+.tot-price{font-size:11px;color:var(--chaos);font-weight:500;font-style:italic}
+
+/* Divider "OR" */
+.tot-or {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px; height: 32px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; font-weight: 700; color: var(--wing1);
+  z-index: 5;
+}
+
+/* Standard options */
+.options{display:flex;flex-direction:column;gap:8px}
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .3s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover{border-color:rgba(192,132,252,0.15);background:var(--surface3)}
+.option.selected{border-color:var(--wing1);background:rgba(192,132,252,0.08)}
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot{border-color:var(--wing1);background:var(--wing1)}
+.option.selected .opt-dot::after{content:'';position:absolute;inset:3px;background:#fff;border-radius:50%}
+
+/* Ripple effect after answer */
+.ripple-fact {
+  margin-top: 16px; padding: 12px 16px;
+  background: rgba(249,115,22,0.04);
+  border: 1px solid rgba(249,115,22,0.1);
+  border-radius: 10px; font-size: 12px;
+  color: var(--chaos); line-height: 1.6;
+  display: none; animation: fadeUp .3s ease;
+}
+.ripple-fact.show{display:block}
+.ripple-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;opacity:.7}
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, var(--wing1), var(--wing2));
+  color: #fff; box-shadow: 0 0 16px var(--glow);
+}
+
+/* ═══ TIMED MECHANIC ═══ */
+.timed-phase1 { text-align: center; }
+
+.btn-ready {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 18px 48px; border: 2px solid var(--wing1); border-radius: 16px;
+  background: transparent; color: var(--wing1);
+  font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease;
+  animation: readyPulse 2s ease infinite;
+  margin: 24px auto 0;
+}
+
+.btn-ready:hover {
+  background: var(--wing1); color: #fff;
+  box-shadow: 0 0 30px var(--glow);
+  animation: none;
+}
+
+@keyframes readyPulse {
+  0%,100% { box-shadow: 0 0 0 0 var(--glow); }
+  50% { box-shadow: 0 0 0 12px transparent; }
+}
+
+.timed-phase2 { display: none; animation: fadeUp .3s ease; }
+.timed-phase2.active { display: block; }
+
+.timer-bar-wrap {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.timer-bar-bg {
+  height: 6px; background: var(--surface2);
+  border-radius: 10px; overflow: hidden;
+}
+
+.timer-bar-fill {
+  height: 100%; border-radius: 10px;
+  background: linear-gradient(90deg, var(--chaos), #ef4444);
+  transition: width linear;
+  width: 100%;
+}
+
+.timer-bar-fill.critical {
+  animation: timerFlash .4s ease infinite;
+}
+
+@keyframes timerFlash {
+  0%,100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+.timer-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 32px; font-weight: 700;
+  text-align: center; margin-bottom: 8px;
+  transition: color .3s ease;
+}
+
+.timer-sub {
+  font-size: 11px; color: var(--text-dim);
+  text-align: center; margin-bottom: 16px;
+  font-style: italic;
+}
+
+.timed-expired-msg {
+  text-align: center; padding: 24px;
+  animation: fadeUp .4s ease;
+}
+
+.timed-expired-msg .te-icon { font-size: 36px; display: block; margin-bottom: 12px; }
+.timed-expired-msg .te-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; color: var(--text-dim);
+  font-style: italic; line-height: 1.5;
+}
+
+/* Shake on expire */
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+
+.shake { animation: shake .4s ease; }
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+.r-hero{text-align:center;padding:36px 0 20px}
+
+.r-icon-big{font-size:72px;display:block;margin-bottom:12px;animation:wingBeat 2s ease-in-out infinite}
+
+.r-label {
+  font-size:11px;text-transform:uppercase;letter-spacing:3px;font-weight:600;margin-bottom:8px;
+}
+
+.r-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,6vw,2.4rem);font-weight:700;color:var(--text-bright);margin-bottom:6px}
+
+.r-tagline{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--text);max-width:460px;margin:0 auto 24px;line-height:1.6}
+
+/* Cascade visualization */
+.cascade-viz {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; flex-wrap: wrap;
+  margin-bottom: 24px; padding: 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.cv-step {
+  padding: 6px 12px; border-radius: 8px;
+  font-size: 11px; font-weight: 500;
+  transition: all .5s ease;
+}
+
+.cv-arrow{font-size:14px;transition:all .5s ease}
+
+/* Cards */
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px 22px;margin-bottom:14px}
+
+.r-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 600;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:300}
+
+/* Butterfly pattern */
+.pattern-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.pattern-row:last-child{border-bottom:none}
+.pattern-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.pattern-text{font-size:13px;color:var(--text);line-height:1.6}
+
+/* Bars */
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500;display:flex;align-items:center;gap:8px}
+.sc-val{font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.pullquote{padding:16px 20px;border-left:3px solid var(--wing1);margin:14px 0 6px;background:var(--surface2);border-radius:0 12px 12px 0}
+.pullquote p{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--text-bright);line-height:1.6;margin:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--wing1);color:var(--wing1)}
+
+.gallery{display:none;flex-direction:column;gap:8px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+
+.gallery-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.gallery-item.current{border-color:var(--wing1);background:rgba(192,132,252,0.04)}
+.gi-emoji{font-size:24px;flex-shrink:0}
+.gi-body{flex:1}
+.gi-name{font-size:13px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.gi-badge{font-size:9px;padding:3px 8px;background:rgba(192,132,252,0.1);color:var(--wing1);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--wing1),var(--wing2));color:#fff;border:none;box-shadow:0 0 20px var(--glow)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--wing1);color:var(--wing1)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--wing1);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:480px){
+  .container{padding:12px 14px 50px}
+  .q-card,.r-card{padding:24px 16px}
+  .q-text{font-size:19px}
+  .option{padding:12px 14px;font-size:13px}
+  .tot-wrap{gap:8px}
+  .tot-opt{padding:18px 10px}
+  .tot-title{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="butterflyBg"></canvas>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">🦋 Теория хаоса</div>
+      <span class="header-icon">🦋</span>
+      <h1>Эффект <em>бабочки</em></h1>
+      <p class="lead">12 невозможных выборов. Каждый запускает цепную реакцию. К концу теста ты узнаешь, какой ураган вызвали твои взмахи крыльев.</p>
+    </div>
+
+    <div class="cascade-intro">
+      <p>Взмах крыла бабочки в Бразилии может вызвать торнадо в Техасе. Эдвард Лоренц, 1972. Каждое маленькое решение — начало лавины. Этот тест — 12 взмахов. Куда они тебя приведут?</p>
+      <div class="chain">
+        <span class="chain-link">🦋 Взмах</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-link">💨 Ветер</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-link">🌊 Волна</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-link">⛈️ Шторм</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-link">🌍 Мир изменён</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Первый взмах 🦋</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Взмах</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="cascade-count" id="cascadeCount">Цепная реакция: 1 событие</div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ BUTTERFLY CANVAS ═══ */
+(function(){
+  const c=document.getElementById('butterflyBg'),ctx=c.getContext('2d');
+  let W,H,bflies=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;init()}
+  function init(){
+    bflies=[];
+    const n=Math.min(20,Math.floor(W*H/50000));
+    for(let i=0;i<n;i++){
+      bflies.push({
+        x:Math.random()*W,y:Math.random()*H,
+        vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.3,
+        size:3+Math.random()*4,
+        phase:Math.random()*Math.PI*2,
+        speed:.02+Math.random()*.03,
+        hue:270+Math.random()*60
+      });
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    bflies.forEach(b=>{
+      b.x+=b.vx;b.y+=b.vy;b.phase+=b.speed;
+      if(b.x<-20)b.x=W+20;if(b.x>W+20)b.x=-20;
+      if(b.y<-20)b.y=H+20;if(b.y>H+20)b.y=-20;
+      const wing=Math.abs(Math.sin(b.phase));
+      ctx.save();
+      ctx.translate(b.x,b.y);
+      ctx.globalAlpha=.25+wing*.15;
+      // Left wing
+      ctx.beginPath();
+      ctx.ellipse(-b.size*wing*.6,0,b.size*wing,b.size*1.3,-.3,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${b.hue},70%,70%,.4)`;
+      ctx.fill();
+      // Right wing
+      ctx.beginPath();
+      ctx.ellipse(b.size*wing*.6,0,b.size*wing,b.size*1.3,.3,0,Math.PI*2);
+      ctx.fill();
+      // Glow
+      ctx.beginPath();
+      ctx.arc(0,0,b.size*2,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${b.hue},60%,60%,.03)`;
+      ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();draw();
+  addEventListener('resize',resize);
+})();
+
+/* ═══ DATA ═══ */
+const types = {
+  catalyst: { emoji:"⚡", name:"Катализатор", aka:"Одно слово — и мир сдвинулся",
+    color:"#f97316", glow:"rgba(249,115,22,0.15)",
+    tagline:"Ты не меняешь мир специально. Ты просто говоришь что-то — и цепная реакция уже идёт. Одна фраза, один жест, одно решение — и через год у кого-то другая жизнь.",
+    desc:"Катализатор в химии — вещество, которое запускает реакцию, не участвуя в ней. Ты так же: одно твоё слово в нужный момент меняет чужую траекторию. Исследования social contagion (Christakis & Fowler, 2009) показывают: влияние распространяется на три рукопожатия вдаль. Ты влияешь на людей, которых никогда не встречал(-а).",
+    chain:["Случайная фраза","→ Человек задумался","→ Принял решение","→ Изменил жизнь","→ Повлиял на других"],
+    patterns:["Люди вспоминают твои случайные слова годами","Ты меняешь чужие планы, не подозревая об этом","После разговора с тобой люди делают то, что откладывали","Ты — точка невозврата в чужих историях"],
+    shadow:"Ты запускаешь реакции, которые не контролируешь. Иногда одно слово ранит так же мощно, как и вдохновляет. Не каждый взмах должен становиться штормом.",
+    quote:"Бабочка не знает, что вызвала ураган. Но ураган знает, что начался с крыла." },
+  attractor: { emoji:"🌀", name:"Странный аттрактор", aka:"Хаос, в котором есть скрытый узор",
+    color:"#c084fc", glow:"rgba(192,132,252,0.15)",
+    tagline:"Снаружи — хаос. Внутри — невидимая логика. Ты непредсказуем(-а), но если нарисовать карту твоих решений — получится фрактал невозможной красоты.",
+    desc:"Странный аттрактор — фигура в теории хаоса, которая выглядит случайной, но подчиняется скрытому порядку. Аттрактор Лоренца похож на бабочку — и это не совпадение. Исследования nonlinear dynamics показывают: самые сложные системы создают самые красивые паттерны. Ты — не хаос. Ты — хаос с геометрией.",
+    chain:["Непредсказуемый выбор","→ Все в шоке","→ Через полгода","→ Оказалось гениально","→ «Как ты знал(-а)?»"],
+    patterns:["Твои решения кажутся случайными, но потом оказываются точными","Ты меняешь планы внезапно — и это всегда к лучшему","Люди не могут тебя просчитать, но доверяют результату","Твоя жизнь — не линия. Это спираль"],
+    shadow:"Не каждый хаос — красивый. Иногда непредсказуемость — это не мудрость, а страх выбрать. Аттрактор без центра — просто шум.",
+    quote:"Хаос — это не отсутствие порядка. Это порядок, который ещё не увидели." },
+  ripple: { emoji:"🌊", name:"Тихая рябь", aka:"Камешек, от которого расходятся круги",
+    color:"#60a5fa", glow:"rgba(96,165,250,0.15)",
+    tagline:"Ты не кричишь. Не взрываешь. Ты просто делаешь одно маленькое, тихое, правильное дело — и круги расходятся.",
+    desc:"Когда камешек падает в воду, круги расходятся тихо, но доходят до берега. Ты — тихий камешек. Твоё влияние не заметно сразу, но через время оно меняет всё. Исследования kindness ripple effect (Fowler & Christakis, 2010) доказали: один акт доброты вдохновляет до 3 поколений последующих добрых поступков.",
+    chain:["Тихое доброе дело","→ Кто-то заметил","→ Сделал то же","→ Ещё кто-то","→ Волна через весь пруд"],
+    patterns:["Люди говорят «ты даже не представляешь, как помог(-ла)»","Твоё влияние видно в ретроспективе, не в моменте","Ты действуешь маленькими шагами, а результат — огромный","Мир вокруг тебя медленно, но верно — теплеет"],
+    shadow:"Тихая рябь — красиво, но иногда мир требует волны. Ты так боишься шума, что выбираешь невидимость. А иногда нужно бросить не камешек — а булыжник.",
+    quote:"Рябь на воде не знает, что дойдёт до берега. Она просто идёт." },
+  fork: { emoji:"🔀", name:"Точка бифуркации", aka:"Момент, где всё раздваивается",
+    color:"#f0abfc", glow:"rgba(240,171,252,0.15)",
+    tagline:"Ты — развилка. Не дорога, а место, где дорога разделяется. Рядом с тобой люди вынуждены выбирать. Ты не даёшь быть «ни о чём».",
+    desc:"Бифуркация в математике — точка, где система переходит из одного состояния в другое. Назад нельзя. Ты — живая бифуркация: рядом с тобой люди не могут оставаться прежними. Ты задаёшь вопросы, которые заставляют выбирать. Ты ставишь перед фактом. Исследования transformative experiences (Paul, 2014) описывают опыт, после которого ты — другой человек. Ты создаёшь такие опыты.",
+    chain:["Неудобный вопрос","→ Пауза","→ «Я никогда об этом не думал(-а)»","→ Всё изменилось","→ Назад нельзя"],
+    patterns:["После общения с тобой люди принимают решения, которые откладывали","Ты говоришь то, что другие думают, но молчат","Рядом с тобой невозможна «серая зона» — только чёрное или белое","Ты — зеркало, в которое не все хотят смотреть"],
+    shadow:"Не все хотят выбирать. Не все готовы к бифуркации. Ты форсируешь чужие кризисы из лучших побуждений — но иногда людям нужна пауза, а не развилка.",
+    quote:"Бифуркация — это не выбор. Это конец старого мира и начало двух новых." },
+  fractal: { emoji:"∞", name:"Фрактальная петля", aka:"Одно и то же, но каждый раз глубже",
+    color:"#34d399", glow:"rgba(52,211,153,0.15)",
+    tagline:"Ты проходишь одни и те же уроки — но с каждым витком спирали понимаешь больше. Ты не топчешься на месте. Ты — фрактал. Повторяется форма, но не глубина.",
+    desc:"Фрактал — фигура, где каждая часть повторяет целое. Береговая линия, брокколи, кровеносная система. Ты так же: повторяешь паттерны, но каждый раз — на другом масштабе. Те же темы, те же уроки, но глубина растёт. Исследования cyclical growth (Levinson, 1978) показывают: развитие — это не линия вверх, а спираль. Ты на третьем витке того, через что другие проходят один раз.",
+    chain:["Знакомая ситуация","→ «Опять?!»","→ Но подожди...","→ В этот раз иначе","→ Глубже, точнее, мудрее"],
+    patterns:["Ты замечаешь паттерны в своей жизни раньше, чем другие — в своей","Одна и та же тема возвращается — но ты каждый раз извлекаешь новое","Ты видишь, как малое отражает большое","Твоя мудрость — не от опыта, а от глубины переработки опыта"],
+    shadow:"Спираль может стать замкнутым кругом. Если ты не растёшь на каждом витке — ты просто ходишь по кругу и называешь это «мудростью».",
+    quote:"Фрактал не повторяется — он уточняется. С каждым масштабом. Бесконечно." },
+  entropy: { emoji:"🔥", name:"Энтропийный взрыв", aka:"Хаос как топливо",
+    color:"#ef4444", glow:"rgba(239,68,68,0.15)",
+    tagline:"Ты не боишься разрушения — потому что знаешь: из обломков строят лучше. Ты ломаешь, чтобы создать. И создаёшь, чтобы снова сломать.",
+    desc:"Энтропия — мера беспорядка. Второй закон термодинамики гласит: хаос всегда растёт. Но вот парадокс: жизнь — самое сложное, что существует — возникла именно из хаоса. Ты — живой второй закон: создаёшь беспорядок, из которого рождается новый порядок. Исследования creative destruction (Schumpeter, 1942) описывают: инновации рождаются из разрушения старого.",
+    chain:["Всё сломалось","→ Паника","→ Из обломков — идея","→ Новая система","→ Лучше прежней"],
+    patterns:["Ты разрушаешь рутину — свою и чужую","Кризисы вокруг тебя превращаются в возможности","Тебе скучно, когда всё стабильно","После тебя — либо руины, либо шедевр. Среднего нет"],
+    shadow:"Не всё нужно ломать. Не каждая система устарела. Иногда стабильность — не враг, а фундамент. Ты путаешь скуку с необходимостью разрушения.",
+    quote:"Энтропия — не разрушение. Это вселенная, которая ищет новую форму." }
+};
+
+const tKeys=['catalyst','attractor','ripple','fork','fractal','entropy'];
+const tNames={catalyst:'Катализатор',attractor:'Аттрактор',ripple:'Рябь',fork:'Бифуркация',fractal:'Фрактал',entropy:'Энтропия'};
+
+const cascadeWords = ['событие','последствие','поворот','сдвиг','волна','резонанс','каскад','трансформация','цепная реакция','лавина','новая реальность','ураган'];
+
+const questions = [
+  { type:"🦋 Дилемма", text:"Бессмертие, но ты забываешь всех, кого любишь. Или обычная жизнь с памятью. Что выберешь?",
+    sub:"Тут нет правильного ответа. Есть только твой.",
+    layout:"tot",
+    ripple:"Парадокс бессмертия: в 2019 году опрос показал — 60% людей отказались бы от бессмертия, если оно означает потерю связей. Мы ценим память больше, чем время.",
+    opts:[
+      {emoji:"♾️",title:"Бессмертие",price:"Цена: все, кого любишь",sc:{entropy:3,catalyst:2}},
+      {emoji:"💀",title:"Обычная жизнь",price:"Цена: конечность",sc:{ripple:3,fractal:2}}
+    ]},
+  { type:"🌀 Парадокс", text:"Ты можешь отменить одну ошибку из прошлого. Но вместе с ней исчезнет всё, что из неё выросло. Отменишь?",
+    sub:"Подумай. Из самых больших ошибок выросло самое важное.",
+    ripple:"Теория хаоса Лоренца: изменение третьего знака после запятой в начальных условиях полностью меняет прогноз погоды через неделю.",
+    opts:[
+      {text:"Да. Есть вещи, которые не стоили урока",sc:{catalyst:3,entropy:1}},
+      {text:"Нет. Я — это сумма всех ошибок. Даже худших",sc:{fractal:3,attractor:1}},
+      {text:"Зависит от ошибки. Не все последствия одинаковы",sc:{fork:3}},
+      {text:"Я бы не отменил(-а), но изменил(-а) бы свою реакцию",sc:{ripple:3}}
+    ]},
+  { type:"⏱️ Мгновение", text:"У тебя 5 секунд. Тебе дали кнопку, которая случайно перемешает всю твою жизнь — работу, город, окружение. Нажмёшь?",
+    sub:"Прочитай. Прочувствуй. Когда будешь готов(-а) — жми. Дальше будет 5 секунд.",
+    layout:"timed", timerSec:5,
+    noChoiceSc:{attractor:3,fractal:2},
+    noChoiceMsg:"Ты не выбрал(-а). Время вышло. Бабочка замерла. Иногда не выбрать — тоже выбор.",
+    ripple:"Исследования decision-making under pressure (Kahneman): в условиях нехватки времени мы принимаем решения из «ядра» личности — без фильтров, рационализации и страха.",
+    opts:[
+      {emoji:"🔴",title:"ЖМАК",price:"Привет, новая жизнь",sc:{entropy:3,catalyst:2}},
+      {emoji:"⬜",title:"Не трогаю",price:"Я выбираю то, что есть",sc:{ripple:2,fractal:2}}
+    ]},
+  { type:"🪞 Зеркало", text:"Тебе показывают два варианта твоего будущего. Через 10 лет ты — стабильный и спокойный. Или через 10 лет — хаотичный, но с историей, от которой захватывает дух.",
+    sub:"",
+    ripple:"Regret minimization framework (Безос, 1994): спроси себя в 80 лет — о чём пожалеешь больше? О риске или о безопасности?",
+    opts:[
+      {text:"Стабильный. Спокойствие — недооценённая роскошь",sc:{ripple:3,fractal:1}},
+      {text:"Хаотичный. Пусть будет что рассказать",sc:{entropy:3,attractor:1}},
+      {text:"Это ложный выбор. Можно и то, и другое",sc:{attractor:3}},
+      {text:"Мне всё равно. Я буду собой в любом варианте",sc:{fork:2,fractal:2}}
+    ]},
+  { type:"🔗 Цепочка", text:"Незнакомец на улице роняет конверт. Ты поднимаешь — внутри билет на самолёт на завтра. Город неизвестный. Имя — не твоё.",
+    sub:"Что сделаешь?",
+    ripple:"В 1969 году социолог Милгрэм отправил 296 писем случайным людям с просьбой передать незнакомцу. Каждое дошло за 6 шагов. Шесть рукопожатий до любого человека на Земле.",
+    opts:[
+      {text:"Полечу. Вселенная подбрасывает подсказки не просто так",sc:{entropy:3,catalyst:1}},
+      {text:"Найду владельца. Это не мой путь — это чей-то",sc:{ripple:3}},
+      {text:"Сфотографирую и выложу в сеть. Пусть судьба сама разберётся",sc:{attractor:2,fork:1}},
+      {text:"Положу обратно. Не моё — не трогаю",sc:{fractal:2,ripple:1}}
+    ]},
+  { type:"⚖️ Невозможный выбор", text:"Ты можешь спасти одно: все свои воспоминания или все свои навыки. Второе исчезнет навсегда.",
+    sub:"Подумай хорошо. Когда нажмёшь «готов» — у тебя будет 7 секунд.",
+    layout:"timed", timerSec:7,
+    noChoiceSc:{attractor:2,fork:3},
+    noChoiceMsg:"Ты не смог(-ла) выбрать. Оба исчезли. Иногда нерешительность стоит дороже любого выбора.",
+    ripple:"Нейронаука различает эпизодическую (воспоминания) и процедурную (навыки) память. Они хранятся в разных зонах мозга. Технически — это два разных «я».",
+    opts:[
+      {emoji:"🧠",title:"Воспоминания",price:"Навыки исчезнут",sc:{fractal:3,ripple:2}},
+      {emoji:"🛠️",title:"Навыки",price:"Воспоминания исчезнут",sc:{catalyst:2,entropy:2}}
+    ]},
+  { type:"🎲 Случайность", text:"Ты получаешь письмо: «Три года назад ты сказал(-а) мне одну фразу. Она изменила мою жизнь. Спасибо.» Подпись неразборчива. Как реагируешь?",
+    sub:"",
+    ripple:"Исследования неосознанного влияния: 73% людей, изменивших жизнь после разговора, сообщали, что «влиятель» даже не подозревал о своём эффекте.",
+    opts:[
+      {text:"Радуюсь. Но пытаюсь вспомнить — что за фраза? Кто это?",sc:{ripple:2,catalyst:2}},
+      {text:"Пугаюсь. Я не хочу нести ответственность за чужие жизни",sc:{fractal:3}},
+      {text:"Принимаю как данность. Мы все влияем — осознанно или нет",sc:{attractor:3}},
+      {text:"Пишу ответ: «Расскажи подробнее. Я хочу понять, что произошло»",sc:{fork:3}}
+    ]},
+  { type:"🌍 Масштаб", text:"Одна кнопка: все люди на Земле на 24 часа почувствуют то, что чувствуешь ты прямо сейчас. Нажмёшь?",
+    sub:"Честно. Прямо сейчас.",
+    ripple:"Эмоциональное заражение распространяется через Facebook на 3 уровня связей. Твоё настроение влияет на друга друга друга.",
+    opts:[
+      {text:"Да. Мне сейчас хорошо — пусть все почувствуют",sc:{ripple:3,catalyst:1}},
+      {text:"Нет. Моё «хорошо» — не универсально. У каждого своё",sc:{attractor:3}},
+      {text:"Зависит от дня. Сегодня — пожалуй, нет",sc:{fractal:2,fork:1}},
+      {text:"Да, даже если мне плохо. Пусть мир поймёт, каково это",sc:{entropy:3,fork:1}}
+    ]},
+  { type:"⏳ Время", text:"Ты встречаешь себя из прошлого — 5 лет назад. Можно сказать три слова. Какие?",
+    sub:"Только три. Выбирай.",
+    ripple:"Парадокс дедушки: если ты изменишь прошлое — ты можешь уничтожить причину, по которой ты его изменил.",
+    opts:[
+      {text:"«Доверяй себе больше»",sc:{fractal:3,ripple:1}},
+      {text:"«Скоро всё изменится»",sc:{fork:2,attractor:2}},
+      {text:"«Не бойся ошибок»",sc:{entropy:3}},
+      {text:"Ничего. Прошлое не нужно менять",sc:{attractor:2,fractal:2}}
+    ]},
+  { type:"🦋 Крыло", text:"Маленький выбор, который изменил всю твою жизнь. Ты знаешь, какой это был момент?",
+    sub:"У каждого есть такой.",
+    ripple:"Исследователь Марк Грановеттер: самые важные возможности приходят через «слабые связи» — знакомых, а не близких друзей. Случайная встреча > стратегический план.",
+    opts:[
+      {text:"Да. И я благодарен(-на) за него каждый день",sc:{ripple:3,fractal:1}},
+      {text:"Да. Но я узнал(-а) это только сейчас — оглядываясь назад",sc:{attractor:3}},
+      {text:"Их было несколько. Жизнь — каскад таких моментов",sc:{catalyst:3}},
+      {text:"Нет. Я не верю в один момент — всё складывается постепенно",sc:{fractal:2,ripple:1}}
+    ]},
+  { type:"💥 Удар", text:"Всё, что ты построил(-а), рушится. Работа, отношения, планы. С нуля. Твоя первая мысль?",
+    sub:"",
+    ripple:"Антихрупкость (Taleb): некоторые системы не просто выдерживают удар — они становятся сильнее. Кость срастается крепче в месте перелома.",
+    opts:[
+      {text:"«Наконец-то чистый лист»",sc:{entropy:3,catalyst:1}},
+      {text:"«Я уже проходил(-а) это. Справлюсь»",sc:{fractal:3}},
+      {text:"«Кого я могу позвать на помощь?»",sc:{ripple:2,fork:1}},
+      {text:"«Что из старого стоит взять с собой в новое?»",sc:{attractor:3}}
+    ]},
+  { type:"🌌 Финал", text:"Через 100 лет после тебя. Что осталось в мире от твоего существования?",
+    sub:"Последний взмах.",
+    ripple:"Каждый человек за жизнь влияет в среднем на 80 000 людей — прямо или через цепочки. Ты — часть лавины, которая началась тысячи лет назад.",
+    opts:[
+      {text:"Цепочка поступков, которую невозможно отследить, но она работает",sc:{ripple:3,catalyst:1}},
+      {text:"Хаос, который я создал(-а) — и новый порядок, выросший из него",sc:{entropy:3}},
+      {text:"Люди, которых я изменил(-а) — а они изменили других",sc:{fork:3,catalyst:1}},
+      {text:"Узор. Повторяющийся в тех, кто меня помнит",sc:{fractal:3,attractor:1}}
+    ]}
+];
+
+let curQ=0,selOpt=null;
+let scores={catalyst:0,attractor:0,ripple:0,fork:0,fractal:0,entropy:0};
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+let timerInterval=null, timerExpired=false;
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null; timerExpired=false;
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  document.getElementById('cascadeCount').textContent=`Цепная реакция: ${cascadeWords[i]}`;
+
+  let bodyHTML;
+
+  if(q.layout==='timed'){
+    // Phase 1: show question + ready button. Options hidden.
+    const optsInner=q.opts.map((o,j)=>`<div class="tot-opt" onclick="timedSel(this,${j})"><span class="tot-emoji">${o.emoji}</span><div class="tot-title">${o.title}</div><div class="tot-price">${o.price}</div></div>`).join('');
+    bodyHTML=`
+      <div class="timed-phase1" id="timedP1">
+        <button class="btn-ready" onclick="startTimer(${q.timerSec})">Готов(-а) ⏱️</button>
+      </div>
+      <div class="timed-phase2" id="timedP2">
+        <div class="timer-label" id="timerLabel">${q.timerSec}</div>
+        <div class="timer-bar-wrap"><div class="timer-bar-bg"><div class="timer-bar-fill" id="timerFill"></div></div></div>
+        <div class="timer-sub">Время идёт. Выбирай.</div>
+        <div class="tot-wrap" id="timedOpts" style="position:relative">
+          ${optsInner}
+          <div class="tot-or">или</div>
+        </div>
+      </div>
+      <div id="timedExpired"></div>`;
+  } else if(q.layout==='tot'){
+    bodyHTML=`<div class="tot-wrap" style="position:relative">
+      ${q.opts.map((o,j)=>`<div class="tot-opt" onclick="sel(this,${j})"><span class="tot-emoji">${o.emoji}</span><div class="tot-title">${o.title}</div><div class="tot-price">${o.price}</div></div>`).join('')}
+      <div class="tot-or">или</div>
+    </div>`;
+  } else {
+    bodyHTML=`<div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>`;
+  }
+
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card" id="qCard">
+      <div class="q-num">Взмах ${num} из ${questions.length}</div>
+      <div class="q-type">${q.type}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      ${bodyHTML}
+      <div class="ripple-fact" id="rFact"><div class="ripple-label">🦋 эффект</div>${q.ripple}</div>
+            <button class="btn-next" id="btnNext" onclick="nxt()" style="${q.layout==='timed'?'display:none':''}">${i===questions.length-1?'Увидеть свой ураган 🦋':'Следующий взмах →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function startTimer(sec){
+  document.getElementById('timedP1').style.display='none';
+  const p2=document.getElementById('timedP2');
+  p2.classList.add('active');
+
+  const label=document.getElementById('timerLabel');
+  const fill=document.getElementById('timerFill');
+  let remaining=sec*10; // tenths of a second
+  const total=sec*10;
+
+  fill.style.transition=`width ${sec}s linear`;
+  requestAnimationFrame(()=>{ fill.style.width='0%'; });
+
+  label.style.color='var(--wing1)';
+
+  timerInterval=setInterval(()=>{
+    remaining--;
+    const secs=Math.ceil(remaining/10);
+    label.textContent=secs;
+
+    if(remaining<=20){
+      label.style.color='#ef4444';
+      fill.classList.add('critical');
+    } else if(remaining<=30){
+      label.style.color='var(--chaos)';
+    }
+
+    if(remaining<=0){
+      clearInterval(timerInterval);
+      timerInterval=null;
+      timerExpired=true;
+      // Time's up!
+      const q=questions[curQ];
+      document.getElementById('timedOpts').style.opacity='.2';
+      document.getElementById('timedOpts').style.pointerEvents='none';
+      label.textContent='0';
+
+      const card=document.getElementById('qCard');
+      card.classList.add('shake');
+
+      document.getElementById('timedExpired').innerHTML=`
+        <div class="timed-expired-msg">
+          <span class="te-icon">🦋</span>
+          <span class="te-text">${q.noChoiceMsg}</span>
+        </div>`;
+
+      // Score the no-choice
+      for(const[k,v]of Object.entries(q.noChoiceSc)) scores[k]+=v;
+
+      // Show fact + auto-advance button
+      const rf=document.getElementById('rFact');
+      if(rf)rf.classList.add('show');
+
+      const btn=document.getElementById('btnNext');
+      btn.style.display='';
+      btn.classList.add('active');
+      btn.textContent='Дальше →';
+      btn.onclick=function(){
+        selOpt='expired'; // mark as handled
+        curQ++;
+        curQ<questions.length?showQ(curQ):showResults();
+      };
+    }
+  },100);
+}
+
+function timedSel(el,i){
+  if(timerExpired) return;
+  // Stop timer — choice made!
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+
+  document.querySelectorAll('.tot-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+
+  // Freeze timer display
+  const label=document.getElementById('timerLabel');
+  label.style.color='var(--wing1)';
+  const fill=document.getElementById('timerFill');
+  fill.classList.remove('critical');
+  const computedWidth=getComputedStyle(fill).width;
+  fill.style.transition='none';
+  fill.style.width=computedWidth;
+
+  const rf=document.getElementById('rFact');
+  if(rf)rf.classList.add('show');
+
+  const btn=document.getElementById('btnNext');
+  btn.style.display='';
+  btn.classList.add('active');
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option,.tot-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+  const rf=document.getElementById('rFact');
+  if(rf)rf.classList.add('show');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  if(selOpt!=='expired'){
+    const sc=questions[curQ].opts[selOpt].sc;
+    for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  }
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const tKey=sorted[0][0],t=types[tKey],maxVal=sorted[0][1];
+
+  document.documentElement.style.setProperty('--wing1',t.color);
+  document.documentElement.style.setProperty('--glow',t.glow);
+
+  const barsHTML=sorted.map(([key,val])=>{
+    const pct=maxVal>0?Math.round((val/maxVal)*100):0;
+    return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${types[key].emoji} ${tNames[key]}</span><span class="sc-val" style="color:${types[key].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${types[key].color}"></div></div></div>`;
+  }).join('');
+
+  const chainHTML=t.chain.map((c,i)=>{
+    const colors=[t.color,t.color+'cc',t.color+'99',t.color+'66',t.color];
+    return`<span class="cv-step" style="background:${colors[i]}20;color:${colors[i]}">${c}</span>`;
+  }).join('');
+
+  const patternsHTML=t.patterns.map(p=>`<div class="pattern-row"><span class="pattern-icon">🦋</span><span class="pattern-text">${p}</span></div>`).join('');
+
+  const galleryHTML=tKeys.map(key=>{
+    const tt=types[key],cur=key===tKey;
+    return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${tt.emoji}</span><div class="gi-body"><div class="gi-name">${tt.name}</div><div class="gi-desc">${tt.tagline.slice(0,60)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;
+  }).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="r-hero">
+      <span class="r-icon-big">${t.emoji}</span>
+      <div class="r-label" style="color:${t.color}">Твой эффект бабочки</div>
+      <div class="r-name">${t.name}</div>
+    </div>
+
+    <p class="r-tagline">${t.tagline}</p>
+
+    <div class="cascade-viz">${chainHTML}</div>
+
+    <div class="r-card"><h3>🦋 Как ты меняешь мир</h3><p>${t.desc}</p></div>
+
+    <div class="r-card"><h3>🌀 Твой паттерн влияния</h3>${patternsHTML}</div>
+
+    <div class="r-card"><h3>📊 Профиль хаоса</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🌘 Тёмная сторона эффекта</h3><p>${t.shadow}</p>
+      <div class="pullquote"><p>${t.quote}</p></div>
+    </div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Побочный эффект: ${types[sorted[1][0]].emoji} ${types[sorted[1][0]].name}</h3><p>${types[sorted[1][0]].tagline}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🦋 Все 6 эффектов</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const t=types[sorted[0][0]];
+  const text=`${t.emoji} Мой эффект бабочки — ${t.name}\n\n${t.tagline}\n\n🦋 Узнай свой: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Эффект бабочки',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Ссылка скопирована!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const tKey=sorted[0][0],t=types[tKey],maxVal=sorted[0][1];
+  const bars=sorted.map(([k,v])=>{const p=maxVal>0?Math.round((v/maxVal)*100):0;return`  ${types[k].emoji} ${tNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const chain=t.chain.join(' ');
+  const pats=t.patterns.map(p=>`  🦋 ${p}`).join('\n');
+
+  const text=`🦋 ЭФФЕКТ БАБОЧКИ — Результат\n\n${t.emoji}  ${t.name}\n${t.aka}\n\n«${t.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🔗 Цепочка: ${chain}\n\n━━━━━━━━━━━━━━━━━\n\n🦋 Описание:\n\n${t.desc}\n\n━━━━━━━━━━━━━━━━━\n\n🌀 Паттерн:\n${pats}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Профиль:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Тёмная сторона:\n${t.shadow}\n\n💬 «${t.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Пройти: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
