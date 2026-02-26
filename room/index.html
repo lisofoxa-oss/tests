@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какая ты комната? 🏠</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #f8f4ef;
+  --bg-rgb: 248,244,239;
+  --surface: #ffffff;
+  --surface2: #f2ece4;
+  --surface3: #ebe3d8;
+  --text: #5c5044;
+  --text-dim: #9a8e80;
+  --text-bright: #2c2420;
+  --border: rgba(140,110,80,0.10);
+  --accent: #b0845c;
+  --accent2: #c8a47c;
+  --accent-soft: rgba(176,132,92,0.08);
+  --warm: #d4a878;
+  --room-color: #b0845c;
+  --room-glow: rgba(176,132,92,0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 15%, rgba(212,168,120,0.08), transparent 50%),
+    radial-gradient(ellipse 40% 50% at 85% 85%, rgba(176,132,92,0.06), transparent 50%);
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--warm), var(--accent2));
+  z-index: 1000;
+}
+
+.container { max-width: 640px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 1; }
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 44px 0 28px;
+  animation: fadeUp .8s ease;
+}
+
+.header-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 100px;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--accent);
+  font-weight: 600; margin-bottom: 20px;
+}
+
+.header-badge .dot { width: 6px; height: 6px; background: var(--warm); border-radius: 50%; animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2.1rem, 7vw, 3rem);
+  font-weight: 400;
+  color: var(--text-bright);
+  line-height: 1.12;
+  margin-bottom: 14px;
+}
+
+h1 em { font-style: italic; color: var(--accent); }
+
+.lead {
+  font-size: 15px; color: var(--text-dim);
+  max-width: 440px; margin: 0 auto;
+  line-height: 1.7; font-weight: 300;
+}
+
+/* ─── Floor plan intro ─── */
+.floor-plan {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  margin: 24px 0 28px;
+  animation: fadeUp .8s ease .15s both;
+  text-align: center;
+}
+
+.floor-plan p {
+  font-size: 14px; color: var(--text-dim);
+  line-height: 1.75; font-weight: 300;
+  margin-bottom: 16px;
+}
+
+.rooms-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.room-mini {
+  padding: 10px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.room-mini-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent), var(--warm));
+  color: #fff; font-family: 'Outfit', sans-serif;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 6px 24px var(--room-glow);
+}
+
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(176,132,92,0.25); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 3px; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.92);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+.progress-count { font-size: 12px; color: var(--accent); font-weight: 700; }
+.progress-bar { height: 3px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--warm)); border-radius: 10px; transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .45s ease;
+  box-shadow: 0 2px 10px rgba(140,110,80,0.04);
+}
+
+.q-num { font-size: 11px; letter-spacing: 2px; color: var(--accent); font-weight: 600; margin-bottom: 4px; text-transform: uppercase; }
+
+.q-tag {
+  display: inline-block; font-size: 11px; color: var(--text-dim);
+  padding: 4px 10px; background: var(--surface2);
+  border-radius: 8px; margin-bottom: 14px;
+}
+
+.q-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px; font-weight: 400; color: var(--text-bright);
+  line-height: 1.4; margin-bottom: 8px;
+}
+
+.q-sub {
+  font-size: 14px; font-style: italic; color: var(--text-dim);
+  margin-bottom: 22px; line-height: 1.6; font-weight: 300;
+}
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .25s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover { border-color: var(--border); background: var(--surface); }
+.option.selected { border-color: var(--accent); background: var(--accent-soft); }
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(176,132,92,0.2);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot { border-color: var(--accent); background: var(--accent); }
+.option.selected .opt-dot::after { content:''; position:absolute; inset:3px; background:#fff; border-radius:50%; }
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, var(--accent), var(--warm));
+  color: #fff; box-shadow: 0 4px 16px var(--room-glow);
+}
+
+/* ═══ RESULTS ═══ */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+/* Room blueprint card */
+.blueprint-wrap { display: flex; justify-content: center; padding: 36px 0 20px; }
+
+.blueprint {
+  width: 200px; height: 200px;
+  border: 2px solid var(--accent);
+  border-radius: 20px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--surface);
+  position: relative;
+  box-shadow: 0 8px 40px var(--room-glow);
+}
+
+/* Corner marks like architectural drawing */
+.blueprint::before, .blueprint::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--accent);
+  border-style: solid;
+}
+.blueprint::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+.blueprint::after { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+.bp-icon { font-size: 52px; display: block; margin-bottom: 8px; }
+.bp-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text-bright); }
+.bp-sqm { font-size: 11px; color: var(--text-dim); font-weight: 300; margin-top: 4px; }
+
+.r-center { text-align: center; margin-bottom: 24px; }
+
+.r-label {
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 3px; color: var(--accent);
+  font-weight: 600; margin-top: 20px; margin-bottom: 8px;
+}
+
+.r-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  color: var(--text-bright); margin-bottom: 8px;
+}
+
+.r-tagline {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px; font-style: italic; font-weight: 400;
+  color: var(--text-dim); max-width: 440px;
+  margin: 0 auto; line-height: 1.6;
+}
+
+/* ─── Cards ─── */
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(140,110,80,0.04);
+}
+
+.r-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px; font-weight: 400;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+/* Atmosphere */
+.atmo-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin: 14px 0 4px;
+}
+
+.atmo-item {
+  padding: 14px;
+  background: var(--surface2);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.atmo-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+.atmo-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 500; margin-bottom: 2px; }
+.atmo-val { font-size: 13px; color: var(--text); font-weight: 600; }
+
+/* Interior elements */
+.interior-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 12px;
+}
+
+.interior-tag {
+  padding: 6px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px; color: var(--text);
+}
+
+/* Bars */
+.sc-bars { margin: 14px 0 4px; }
+.sc-row { margin-bottom: 12px; }
+.sc-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.sc-name { font-size: 12px; color: var(--text); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.sc-name span { font-size: 16px; }
+.sc-val { font-size: 11px; font-weight: 700; color: var(--accent); }
+.sc-bg { height: 5px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.sc-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--accent), var(--warm)); transition: width 1.2s ease; width: 0; }
+
+/* Pullquote */
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--accent);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 12px 12px 0;
+}
+
+.pullquote p { font-family: 'DM Serif Display', serif; font-size: 15px; font-style: italic; color: var(--text-bright); line-height: 1.6; margin: 0; }
+
+/* Guest tip */
+.guest-tip {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text); line-height: 1.6;
+}
+.guest-tip:last-child { border-bottom: none; }
+.guest-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+/* Gallery */
+.gallery-toggle {
+  width: 100%; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text-dim);
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-bottom: 14px;
+}
+
+.gallery-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+.gallery { display: none; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.gallery.open { display: flex; animation: fadeUp .4s ease; }
+
+.gallery-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px;
+}
+
+.gallery-item.current { border-color: var(--accent); background: var(--accent-soft); }
+.gi-emoji { font-size: 24px; flex-shrink: 0; }
+.gi-body { flex: 1; }
+.gi-name { font-size: 13px; font-weight: 600; color: var(--text-bright); }
+.gi-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.gi-badge { font-size: 9px; padding: 3px 8px; background: var(--accent-soft); color: var(--accent); border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── Actions ─── */
+.actions { display: flex; flex-direction: column; gap: 10px; padding-top: 28px; border-top: 1px solid var(--border); }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 14px;
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+}
+
+.btn-primary { background: linear-gradient(135deg, var(--accent), var(--warm)); color: #fff; border: none; box-shadow: 0 4px 16px var(--room-glow); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 400; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--text-bright); color: var(--bg); padding: 12px 24px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+@media (max-width:480px) {
+  .container { padding: 12px 14px 50px; }
+  .q-card,.r-card { padding: 24px 16px; }
+  .q-text { font-size: 18px; }
+  .option { padding: 12px 14px; font-size: 13px; }
+  .rooms-preview { grid-template-columns: repeat(2, 1fr); }
+  .atmo-grid { grid-template-columns: 1fr 1fr; }
+  .blueprint { width: 170px; height: 170px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <span class="header-icon">🏠</span>
+      <div class="header-badge"><span class="dot"></span>Архитектурный тест</div>
+      <h1>Какая ты <em>комната?</em></h1>
+      <p class="lead">12 вопросов о твоём характере и привычках — и мы определим, какая комната дома описывает тебя лучше всего. С психологией и уютом.</p>
+    </div>
+
+    <div class="floor-plan">
+      <p>Каждая комната в доме имеет энергетику и функцию. Кухня — это забота. Ванная — уединение. Балкон — мечты. Исследования environmental psychology показывают: мы выбираем пространства, которые отражают нас.</p>
+      <div class="rooms-preview">
+        <div class="room-mini"><span class="room-mini-icon">🛋️</span>Гостиная</div>
+        <div class="room-mini"><span class="room-mini-icon">🍳</span>Кухня</div>
+        <div class="room-mini"><span class="room-mini-icon">🛁</span>Ванная</div>
+        <div class="room-mini"><span class="room-mini-icon">🌙</span>Спальня</div>
+        <div class="room-mini"><span class="room-mini-icon">📚</span>Кабинет</div>
+        <div class="room-mini"><span class="room-mini-icon">🌿</span>Балкон</div>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Найти свою комнату 🏠</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Вопрос</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано!</div>
+
+<script>
+const rooms = {
+  living: { emoji: "🛋️", name: "Гостиная", sqm: "~25 м²",
+    tagline: "Ты — центр, вокруг которого собираются люди. Тепло, свет и разговоры — это твоя стихия.",
+    desc: "Гостиная — сердце дома. Это место, где люди собираются вместе: смеются, спорят, засиживаются до ночи. Ты создаёшь атмосферу, в которой другим хочется остаться. Исследования social spaces (Sommer, 1969) показывают, что люди-«гостиные» обладают навыком creating togetherness — способностью объединять разных людей в одном пространстве. Ты — тот человек, у которого всегда кто-то в гостях.",
+    atmo: { light: "Тёплый, приглушённый", sound: "Разговоры и смех", scent: "Кофе и свечи", temp: "Уютно тёплая" },
+    interior: ["Мягкий диван", "Свечи", "Фотографии на стенах", "Плед", "Настольные игры"],
+    shadow: "Ты так привык(-ла) быть для других, что забываешь побыть для себя. Гостиная без людей — просто пустая комната. А ты без людей — кто?",
+    tips: ["Иногда закрывай дверь — тебе тоже нужна тишина", "Не путай гостеприимство с потребностью быть нужным(-ой)", "Лучший вечер — когда рядом только те, кого ты правда хочешь видеть"],
+    quote: "Дом — это не стены. Дом — это люди, которые собираются внутри." },
+  kitchen: { emoji: "🍳", name: "Кухня", sqm: "~15 м²",
+    tagline: "Ты заботишься через действия: кормишь, чинишь, решаешь. Твоя любовь — глагол, а не существительное.",
+    desc: "Кухня — место заботы. Не показной, а настоящей: приготовить суп больному, сварить кофе утром, собрать ужин, когда все устали. Ты — тот человек, который выражает любовь руками. Исследования acts of service как языка любви (Chapman, 1992) показывают: забота через действия — один из сильнейших способов создавать привязанность. Ты не говоришь «я люблю» — ты готовишь ужин, и это говорит больше.",
+    atmo: { light: "Яркий, утренний", sound: "Шкворчание, музыка", scent: "Домашняя еда и специи", temp: "Тёплая, чуть душная" },
+    interior: ["Открытые полки", "Травы на подоконнике", "Потёртый фартук", "Магниты с поездок", "Большой стол"],
+    shadow: "Ты заботишься обо всех, кроме себя. Кухня перегревается, если плита работает круглосуточно. Выгорание — это когда ты готовишь пятый ужин подряд и уже не помнишь, ел(-а) ли сам(-а).",
+    tips: ["Позволь другим позаботиться о тебе — это не слабость", "Иногда заказать доставку — тоже акт любви к себе", "Ты ценен(-на) не только за то, что делаешь, но и за то, кто ты есть"],
+    quote: "Самый тёплый разговор происходит за кухонным столом, а не в гостиной." },
+  bath: { emoji: "🛁", name: "Ванная", sqm: "~8 м²",
+    tagline: "Ты — пространство для восстановления. Тихое, глубокое, закрытое. Туда не пускают всех.",
+    desc: "Ванная — единственная комната, которую запирают. Это пространство максимальной приватности. Ты — интроверт в лучшем смысле: тебе нужна тишина, чтобы восстановиться. Не потому что ты не любишь людей — а потому что ты перерабатываешь слишком много. Исследования интроверсии (Cain, 2012) показывают, что людям-«ваннам» нужно одиночество как ресурс, а не как побег.",
+    atmo: { light: "Мягкий, рассеянный", sound: "Тишина или шум воды", scent: "Лаванда и хвоя", temp: "Горячий пар" },
+    interior: ["Свечи повсюду", "Пена для ванны", "Подставка для книги", "Мягкое полотенце", "Закрытая дверь"],
+    shadow: "Замок на двери — это защита, но и ловушка. Ты так боишься быть уязвимым(-ой), что не подпускаешь даже тех, кто хочет помочь. Ванная прекрасна, но жить в ней нельзя.",
+    tips: ["Позволь кому-то увидеть тебя без маски — хотя бы одному человеку", "Одиночество — ресурс, а не образ жизни", "Ты заслуживаешь заботы, а не только самодостаточности"],
+    quote: "Право на уединение — не роскошь. Это необходимость." },
+  bedroom: { emoji: "🌙", name: "Спальня", sqm: "~18 м²",
+    tagline: "Ты — мечты, тишина и мягкий свет. Мир внутри тебя богаче, чем мир снаружи.",
+    desc: "Спальня — место, где мы снимаем все маски. Здесь нет ролей, нет «надо». Только ты настоящий(-ая). Ты — мечтатель, романтик, чувствительная натура. Исследования inner world (Singer, 1975) показывают, что люди с богатым внутренним миром обладают большей креативностью и эмпатией. Ты чувствуешь глубже, видишь тоньше и мечтаешь ярче.",
+    atmo: { light: "Лунный, ночной", sound: "Тихая музыка или дождь", scent: "Хлопок и ваниль", temp: "Прохладная" },
+    interior: ["Мягкие подушки", "Гирлянда огней", "Дневник на тумбочке", "Пледы в три слоя", "Закрытые шторы"],
+    shadow: "Спальня — место мечтаний, но не действий. Ты можешь проводить жизнь в голове, пока она проходит снаружи. Мечты без шагов — это просто красивый сон.",
+    tips: ["Один маленький шаг > 100 красивых планов", "Выходи из спальни — мир ждёт, а не только снится", "Твоя чувствительность — суперсила, если не прячешь её под одеяло"],
+    quote: "Мечтать — значит видеть то, чего ещё нет. Но потом нужно встать и построить." },
+  study: { emoji: "📚", name: "Кабинет", sqm: "~12 м²",
+    tagline: "Ты — фокус, глубина и тихая сила. Пока другие разговаривают, ты делаешь.",
+    desc: "Кабинет — комната, где рождаются идеи, пишутся книги и принимаются решения. Ты — человек глубокого фокуса: когда ты погружаешься в задачу, мир исчезает. Исследования deep work (Newport, 2016) показывают, что способность к концентрации — один из самых ценных навыков современности. Ты не ищешь внимания — ты создаёшь то, что привлечёт его само.",
+    atmo: { light: "Направленный, лампа", sound: "Тишина или ambient", scent: "Бумага и дерево", temp: "Прохладная" },
+    interior: ["Книги до потолка", "Настольная лампа", "Блокнот и ручка", "Кресло с подлокотниками", "Закрытая дверь"],
+    shadow: "Кабинет может стать башней из слоновой кости. Ты так увлечён(-а) своими проектами, что забываешь про людей рядом. Успех без тех, с кем его разделить — пустая полка с наградами.",
+    tips: ["Выходи к людям — не только в перерывах, а по-настоящему", "Не всё в жизни — задача, которую нужно решить", "Твои знания ценнее, когда ты ими делишься"],
+    quote: "Кабинет — это место, где тишина превращается в силу." },
+  balcony: { emoji: "🌿", name: "Балкон", sqm: "~6 м²",
+    tagline: "Ты — на границе между внутри и снаружи. Наблюдатель, мыслитель, свободный дух.",
+    desc: "Балкон — не внутри и не снаружи. Это пограничное пространство — место наблюдения, размышлений и свежего воздуха. Ты — философ по натуре: тебе нужна перспектива, обзор, дистанция. Исследования boundary spaces (Alexander, 1977) показывают, что люди, которые любят пограничные пространства, обладают уникальной способностью видеть картину целиком, не погружаясь в хаос.",
+    atmo: { light: "Естественный, закатный", sound: "Город внизу, ветер", scent: "Свежий воздух и мята", temp: "Зависит от настроения неба" },
+    interior: ["Растения в горшках", "Гамак или кресло", "Кружка с чаем", "Тетрадка для мыслей", "Вид на крыши"],
+    shadow: "Балкон — красивое место, но жить на нём нельзя. Ты так привык(-ла) наблюдать за жизнью, что забываешь в ней участвовать. Перспектива — дар, но дистанция — это не всегда мудрость. Иногда — бегство.",
+    tips: ["Спускайся вниз — жизнь происходит на улице, а не в обзоре", "Делись своими мыслями — они ценнее, чем тебе кажется", "Свобода — это не дистанция. Это выбор быть рядом"],
+    quote: "Лучший вид открывается не с вершины, а с края — там, где ты ещё внутри, но уже видишь всё." }
+};
+
+const scaleNames = { living:'Гостиная', kitchen:'Кухня', bath:'Ванная', bedroom:'Спальня', study:'Кабинет', balcony:'Балкон' };
+const scaleEmoji = { living:'🛋️', kitchen:'🍳', bath:'🛁', bedroom:'🌙', study:'📚', balcony:'🌿' };
+
+const questions = [
+  { tag: "Среда · Introversion", text: "Суббота, никаких планов. Что ты делаешь?",
+    sub: "Будь честен(-на) — не что «надо бы», а что реально.",
+    opts: [
+      { text: "Зову друзей к себе — фильм, настолки, болтовня", sc: { living: 3 } },
+      { text: "Готовлю что-нибудь сложное — это мой дзен", sc: { kitchen: 3 } },
+      { text: "Ванна, книга, свечи. Идеальный день", sc: { bath: 3 } },
+      { text: "Лежу в кровати, смотрю в потолок, думаю о жизни", sc: { bedroom: 2, balcony: 1 } }
+    ] },
+  { tag: "Энергия · Big Five", text: "Откуда ты берёшь энергию?",
+    opts: [
+      { text: "От людей — разговоры, объятия, компания", sc: { living: 3, kitchen: 1 } },
+      { text: "От одиночества — мне нужна тишина, чтобы перезарядиться", sc: { bath: 2, bedroom: 2 } },
+      { text: "От задач — когда я делаю что-то важное, я оживаю", sc: { study: 3 } },
+      { text: "От прогулок и свежего воздуха — мне нужен простор", sc: { balcony: 3 } }
+    ] },
+  { tag: "Забота · Attachment", text: "Друг грустит. Что ты делаешь?",
+    opts: [
+      { text: "Приглашаю к себе — посидим, поговорим, вместе легче", sc: { living: 3 } },
+      { text: "Привожу еду и одеяло — забота лечит", sc: { kitchen: 3 } },
+      { text: "Пишу длинное сообщение — мне легче в тексте", sc: { bedroom: 2, bath: 1 } },
+      { text: "Даю пространство — иногда нужно просто побыть одному", sc: { balcony: 2, bath: 1 } }
+    ] },
+  { tag: "Конфликт · Coping", text: "После ссоры тебе нужно:",
+    opts: [
+      { text: "Поговорить. Прямо сейчас. Молчание убивает", sc: { living: 2, kitchen: 1 } },
+      { text: "Побыть одному(-ой). Запереться и переварить", sc: { bath: 3 } },
+      { text: "Лечь, накрыться одеялом и полежать в темноте", sc: { bedroom: 3 } },
+      { text: "Выйти на воздух — прогулка всё расставляет на места", sc: { balcony: 3 } }
+    ] },
+  { tag: "Утро · Хронотип", text: "Первый час после пробуждения:",
+    opts: [
+      { text: "Кофе, завтрак, ритуал — утро начинается на кухне", sc: { kitchen: 3 } },
+      { text: "Лежу в телефоне минут 40. Потом встаю. Может быть", sc: { bedroom: 3 } },
+      { text: "Сразу за дело — открываю ноут, проверяю задачи", sc: { study: 3 } },
+      { text: "Стою на балконе с кружкой, смотрю на мир", sc: { balcony: 3 } }
+    ] },
+  { tag: "Гости · Social style", text: "К тебе неожиданно пришли гости. Реакция?",
+    opts: [
+      { text: "Отлично! Проходите! Сейчас что-нибудь соберу", sc: { living: 2, kitchen: 2 } },
+      { text: "Паника. Мне нужно было время подготовиться", sc: { study: 1, bath: 2 } },
+      { text: "Пожалуйста, позвоните заранее... я в пижаме", sc: { bedroom: 3 } },
+      { text: "Нормально, но через час я вежливо выпровожу всех", sc: { balcony: 2, bath: 1 } }
+    ] },
+  { tag: "Работа · Flow state", text: "Когда ты максимально продуктивен(-на)?",
+    opts: [
+      { text: "В команде — мозговой штурм, обсуждения, энергия", sc: { living: 3 } },
+      { text: "В полной тишине, один(-на), с закрытой дверью", sc: { study: 3 } },
+      { text: "Когда параллельно делаю что-то руками — готовлю, убираю", sc: { kitchen: 2, balcony: 1 } },
+      { text: "Ночью. Все спят, мир тихий, я — в потоке", sc: { bedroom: 2, bath: 1 } }
+    ] },
+  { tag: "Атмосфера · Aesthetics", text: "Идеальный фон для расслабления:",
+    opts: [
+      { text: "Шум голосов, кафе, ощущение жизни вокруг", sc: { living: 3 } },
+      { text: "Шум дождя, пледы, полутьма", sc: { bedroom: 2, bath: 2 } },
+      { text: "Тишина и звук печатающей клавиатуры", sc: { study: 3 } },
+      { text: "Открытое окно, ветер, звуки города внизу", sc: { balcony: 3 } }
+    ] },
+  { tag: "Суперсила · Strengths", text: "Что люди ценят в тебе больше всего?",
+    opts: [
+      { text: "Я умею создать атмосферу — рядом со мной тепло", sc: { living: 2, kitchen: 1 } },
+      { text: "Я забочусь по-настоящему — не словами, а делами", sc: { kitchen: 3 } },
+      { text: "Я глубокий — со мной можно говорить о важном", sc: { bath: 1, bedroom: 2 } },
+      { text: "Я вижу картину целиком — перспективу, которую другие не замечают", sc: { balcony: 2, study: 1 } }
+    ] },
+  { tag: "Секрет · Shadow", text: "Чего ты боишься, но не говоришь вслух?",
+    opts: [
+      { text: "Что без людей я — никто. Что мне нужны другие больше, чем они — меня", sc: { living: 3 } },
+      { text: "Что я не умею отдыхать. Что моя ценность — только в том, что я делаю", sc: { kitchen: 2, study: 2 } },
+      { text: "Что я слишком закрыт(-а) и однажды просто останусь один(-на)", sc: { bath: 3 } },
+      { text: "Что я мечтаю больше, чем живу. Что жизнь проходит мимо", sc: { bedroom: 2, balcony: 2 } }
+    ] },
+  { tag: "Дом · Identity", text: "Если бы ты был(-а) домом, ты был(-а) бы:",
+    opts: [
+      { text: "Большой семейный дом — шумный, полный людей", sc: { living: 2, kitchen: 2 } },
+      { text: "Уютная студия — всё для одного, компактно и идеально", sc: { bath: 1, study: 2 } },
+      { text: "Дом на берегу моря — тихий, с видом, вдали от всех", sc: { balcony: 3 } },
+      { text: "Мансарда под крышей — маленькая, тёплая, волшебная", sc: { bedroom: 3 } }
+    ] },
+  { tag: "Финал ·  Meta", text: "Дом — это место, где ты чувствуешь себя:",
+    opts: [
+      { text: "Нужным(-ой) — когда я кому-то важен(-на)", sc: { living: 2, kitchen: 2 } },
+      { text: "Свободным(-ой) — когда никто ничего не ждёт от меня", sc: { bath: 2, balcony: 2 } },
+      { text: "Настоящим(-ей) — когда я снимаю все маски", sc: { bedroom: 3 } },
+      { text: "Сфокусированным(-ой) — когда я создаю что-то ценное", sc: { study: 3 } }
+    ] }
+];
+
+let curQ=0, selOpt=null;
+let scores = { living:0, kitchen:0, bath:0, bedroom:0, study:0, balcony:0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  const num = String(i+1).padStart(2,'0');
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">Вопрос ${num} из ${questions.length}</div>
+      <div class="q-tag">${q.tag}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
+      <div class="options">${q.opts.map((o,j) => `
+        <div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Найти свою комнату 🏠':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i/questions.length)*100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop-10, behavior:'smooth' });
+}
+
+function sel(el,i) {
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if(selOpt===null) return;
+  const sc = questions[curQ].opts[selOpt].sc;
+  for(const [k,v] of Object.entries(sc)) scores[k]+=v;
+  selOpt=null; curQ++;
+  curQ < questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const rKey = sorted[0][0]; const r = rooms[rKey]; const maxVal = sorted[0][1];
+
+  const barsHTML = sorted.map(([key,val]) => {
+    const pct = maxVal>0?Math.round((val/maxVal)*100):0;
+    return `<div class="sc-row"><div class="sc-row-top"><span class="sc-name"><span>${scaleEmoji[key]}</span> ${scaleNames[key]}</span><span class="sc-val">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}"></div></div></div>`;
+  }).join('');
+
+  const atmoHTML = Object.entries(r.atmo).map(([k,v]) => {
+    const icons = {light:'💡',sound:'🔊',scent:'🌸',temp:'🌡️'};
+    const labels = {light:'Свет',sound:'Звук',scent:'Запах',temp:'Температура'};
+    return `<div class="atmo-item"><span class="atmo-icon">${icons[k]}</span><div class="atmo-label">${labels[k]}</div><div class="atmo-val">${v}</div></div>`;
+  }).join('');
+
+  const intHTML = r.interior.map(i => `<span class="interior-tag">${i}</span>`).join('');
+  const tipsHTML = r.tips.map(t => `<div class="guest-tip"><span class="guest-icon">💡</span><span>${t}</span></div>`).join('');
+
+  const galleryHTML = Object.entries(rooms).map(([key,rm]) => {
+    const cur = key===rKey;
+    return `<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${rm.emoji}</span><div class="gi-body"><div class="gi-name">${rm.name}</div><div class="gi-desc">${rm.tagline.slice(0,70)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;
+  }).join('');
+
+  const secondKey = sorted[1][0]; const secondR = rooms[secondKey];
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="blueprint-wrap">
+      <div class="blueprint">
+        <span class="bp-icon">${r.emoji}</span>
+        <span class="bp-name">${r.name}</span>
+        <span class="bp-sqm">${r.sqm}</span>
+      </div>
+    </div>
+
+    <div class="r-center">
+      <div class="r-label">Ты — ${r.name}</div>
+      <p class="r-tagline">${r.tagline}</p>
+    </div>
+
+    <div class="r-card"><h3>🏠 Почему именно эта комната</h3><p>${r.desc}</p></div>
+
+    <div class="r-card"><h3>🌿 Атмосфера</h3><div class="atmo-grid">${atmoHTML}</div></div>
+
+    <div class="r-card"><h3>🛋️ Интерьер</h3><p style="margin-bottom:8px">Что можно найти в твоей комнате:</p><div class="interior-row">${intHTML}</div></div>
+
+    <div class="r-card"><h3>📊 Планировка твоего дома</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🌘 Теневая сторона</h3><p>${r.shadow}</p>
+      <div class="pullquote"><p>${r.quote}</p></div>
+    </div>
+
+    <div class="r-card"><h3>💡 Советы для жильца</h3>${tipsHTML}</div>
+
+    ${sorted[1][1]>3 ? `<div class="r-card"><h3>🚪 Соседняя комната: ${secondR.emoji} ${secondR.name}</h3><p>${secondR.tagline}</p></div>` : ''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🏠 Все 6 комнат</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(() => document.querySelectorAll('.sc-fill').forEach(b => b.style.width = b.dataset.w + '%'), 400);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function shareShort() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const r = rooms[sorted[0][0]];
+  const text = `${r.emoji} Я — ${r.name}!\n\n${r.tagline}\n\nУзнай свою комнату: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share) navigator.share({title:'Какая ты комната?',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const rKey = sorted[0][0]; const r = rooms[rKey]; const maxVal = sorted[0][1];
+  const secondR = rooms[sorted[1][0]];
+  const bars = sorted.map(([k,v])=>{const p=maxVal>0?Math.round((v/maxVal)*100):0;return`  ${scaleEmoji[k]} ${scaleNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const atmo = Object.entries(r.atmo).map(([k,v])=>{const l={light:'Свет',sound:'Звук',scent:'Запах',temp:'Температура'};return`  ${l[k]}: ${v}`;}).join('\n');
+  const tips = r.tips.map(t=>`  💡 ${t}`).join('\n');
+
+  const text = `🏠 КАКАЯ ТЫ КОМНАТА? — Результат\n\n${r.emoji}  ${r.name} ${r.sqm}\n\n«${r.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🏠 Почему эта комната:\n\n${r.desc}\n\n━━━━━━━━━━━━━━━━━\n\n🌿 Атмосфера:\n${atmo}\n\n🛋️ Интерьер: ${r.interior.join(', ')}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Планировка:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Теневая сторона:\n${r.shadow}\n\n💬 «${r.quote}»\n\n━━━━━━━━━━━━━━━━━\n\n💡 Советы:\n${tips}${sorted[1][1]>3?`\n\n━━━━━━━━━━━━━━━━━\n\n🚪 Соседняя комната: ${secondR.emoji} ${secondR.name}\n${secondR.tagline}`:''}\n\n━━━━━━━━━━━━━━━━━\n→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+</script>
+</body>
+</html>
