@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Экспедиция 🏝️</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e08;
+  --bg-rgb:10,14,8;
+  --surface:rgba(180,160,100,0.04);
+  --surface2:rgba(180,160,100,0.07);
+  --surface3:rgba(180,160,100,0.11);
+  --text:#8a9070;
+  --text-dim:#5a6048;
+  --text-bright:#d8dcc0;
+  --border:rgba(180,160,100,0.08);
+  --gold:#c8a84e;
+  --green:#5a8a3c;
+  --warm:#d4a050;
+  --glow:rgba(200,168,78,0.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+#particleBg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+.container{max-width:660px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+.serif{font-family:'Lora',serif}
+
+/* Header */
+.header{text-align:center;padding:40px 0 24px;animation:fadeUp .8s ease}
+.header-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:20px}
+.header-icon{font-size:56px;display:block;margin-bottom:16px}
+h1{font-family:'Lora',serif;font-size:clamp(2rem,6.5vw,2.8rem);font-weight:700;color:var(--text-bright);line-height:1.1;margin-bottom:14px}
+h1 em{font-style:italic;color:var(--gold)}
+.lead{font-size:15px;color:var(--text-dim);max-width:460px;margin:0 auto;line-height:1.7;font-weight:300}
+
+.intro-section{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 0;margin:24px 0 28px;animation:fadeUp .8s ease .15s both;text-align:center}
+.intro-section p{font-size:14px;color:var(--text-dim);line-height:1.75;font-weight:300;margin-bottom:12px}
+.intro-stats{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.intro-stat{text-align:center}
+.intro-stat-num{font-family:'Lora',serif;font-size:24px;font-weight:700;color:var(--gold);display:block}
+.intro-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim)}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,#5a8a3c,#3a6a2c);color:#fff;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .3s both;box-shadow:0 6px 30px rgba(90,138,60,0.2)}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(90,138,60,0.3)}
+
+/* Progress */
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(var(--bg-rgb),0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.progress-count{font-size:12px;color:var(--gold);font-weight:700}
+.progress-bar{height:2px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:10px;transition:width .5s ease;width:0}
+
+/* Scene card */
+.scene-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;animation:fadeUp .5s ease}
+.scene-location{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:600;padding:4px 12px;background:var(--surface2);border-radius:8px;margin-bottom:16px;letter-spacing:1px;text-transform:uppercase;color:var(--gold)}
+.scene-text{font-family:'Lora',serif;font-size:17px;color:var(--text-bright);line-height:1.7;margin-bottom:8px;font-weight:400}
+.scene-detail{font-size:14px;color:var(--text-dim);line-height:1.6;font-style:italic;margin-bottom:24px;font-weight:300}
+
+/* Choices */
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface2);border:1.5px solid transparent;border-radius:14px;cursor:pointer;transition:all .3s ease;user-select:none}
+.choice:hover{border-color:rgba(200,168,78,0.15);background:var(--surface3);transform:translateX(4px)}
+.choice-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.choice-body{flex:1}
+.choice-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:2px}
+.choice-desc{font-size:12px;color:var(--text-dim);line-height:1.5}
+
+/* Step counter */
+.step-count{font-family:'Lora',serif;font-size:12px;color:var(--text-dim);text-align:center;margin-top:16px;font-style:italic}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+.map-title{font-family:'Lora',serif;font-size:20px;font-weight:700;color:var(--text-bright);text-align:center;margin:30px 0 16px}
+
+/* SVG Map */
+.island-map-wrap{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:20px;overflow:hidden}
+.island-map{width:100%;height:auto}
+
+.r-hero{text-align:center;padding:20px 0}
+.r-icon-big{font-size:56px;display:block;margin-bottom:12px}
+.r-label{font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:8px}
+.r-name{font-family:'Lora',serif;font-size:clamp(1.8rem,6vw,2.4rem);font-weight:700;color:var(--text-bright);margin-bottom:6px}
+.r-tagline{font-family:'Lora',serif;font-size:16px;font-style:italic;color:var(--text);max-width:460px;margin:0 auto 24px;line-height:1.6}
+
+/* Route list */
+.route-list{margin:14px 0}
+.route-step{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:13px;color:var(--text)}
+.route-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:2px solid var(--gold)}
+.route-step.visited .route-dot{background:var(--gold)}
+.route-line{width:2px;height:16px;background:var(--border);margin-left:4px}
+
+/* Metaphor reveal */
+.reveal-card{background:rgba(200,168,78,0.04);border:1px solid rgba(200,168,78,0.12);border-radius:16px;padding:20px;margin-bottom:14px}
+.reveal-card h4{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.reveal-item{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)}
+.reveal-item:last-child{border-bottom:none}
+.reveal-place{font-size:13px;font-weight:600;color:var(--text-bright);min-width:80px}
+.reveal-meaning{font-size:13px;color:var(--text-dim);line-height:1.5}
+
+/* Cards */
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px 22px;margin-bottom:14px}
+.r-card h3{font-family:'Lora',serif;font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:300}
+
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500}
+.sc-val{font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.pullquote{padding:16px 20px;border-left:3px solid var(--gold);margin:14px 0 6px;background:var(--surface2);border-radius:0 12px 12px 0}
+.pullquote p{font-family:'Lora',serif;font-size:15px;font-style:italic;color:var(--text-bright);line-height:1.6;margin:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--gold);color:var(--gold)}
+.gallery{display:none;flex-direction:column;gap:8px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.gallery-item.current{border-color:var(--gold);background:rgba(200,168,78,0.04)}
+.gi-emoji{font-size:24px;flex-shrink:0}
+.gi-body{flex:1}
+.gi-name{font-size:13px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.gi-badge{font-size:9px;padding:3px 8px;background:rgba(200,168,78,0.1);color:var(--gold);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--green),#3a6a2c);color:#fff;border:none;box-shadow:0 4px 16px rgba(90,138,60,0.2)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gold);color:var(--bg);padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:480px){
+  .container{padding:12px 14px 50px}
+  .scene-card,.r-card{padding:24px 16px}
+  .scene-text{font-size:15px}
+  .choice{padding:14px 12px}
+}
+</style>
+</head>
+<body>
+<canvas id="particleBg"></canvas>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">🧭 Глубокий тест · ~8 мин</div>
+      <span class="header-icon">🏝️</span>
+      <h1>Неизведанный <em>остров</em></h1>
+      <p class="lead">Ты просыпаешься на берегу незнакомого острова. Ни карты, ни компаса. Только выборы. Каждый шаг — твой. Каждый поворот что-то значит. Ты узнаешь, что именно — в конце.</p>
+    </div>
+    <div class="intro-section">
+      <p>Это не обычный тест. Здесь нет вопросов. Только история — и твои решения внутри неё. Остров большой. Путей много. Двух одинаковых маршрутов не бывает.</p>
+      <div class="intro-stats">
+        <div class="intro-stat"><span class="intro-stat-num">20+</span><span class="intro-stat-label">Сцен</span></div>
+        <div class="intro-stat"><span class="intro-stat-num">6</span><span class="intro-stat-label">Локаций</span></div>
+        <div class="intro-stat"><span class="intro-stat-num">∞</span><span class="intro-stat-label">Маршрутов</span></div>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startGame()">Открыть глаза 🏝️</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Экспедиция</span>
+      <span class="progress-count" id="progressCount">Шаг 1</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="sceneContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ PARTICLES ═══ */
+(function(){
+  const c=document.getElementById('particleBg'),ctx=c.getContext('2d');
+  let W,H,ps=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;ps=[];for(let i=0;i<35;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,vy:-.1-.3*Math.random(),vx:(Math.random()-.5)*.2,a:.1+Math.random()*.4,pulse:Math.random()*Math.PI*2})}
+  function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.pulse+=.02;if(p.y<-10)p.y=H+10;if(p.x<0||p.x>W)p.vx*=-1;const a=p.a*(0.5+0.5*Math.sin(p.pulse));ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,180,80,${a})`;ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);ctx.fillStyle=`rgba(200,180,80,${a*0.08})`;ctx.fill()});requestAnimationFrame(draw)}
+  resize();draw();addEventListener('resize',resize);
+})();
+
+/* ═══ SCENE DATA ═══ */
+const S = {
+  shore: {
+    loc:"🏖️ Берег", title:"Пробуждение",
+    text:"Песок под спиной. Шум волн. Ты открываешь глаза — ослепительное небо. Ты на берегу острова, которого нет ни на одной карте. Впереди — тёмная стена джунглей. Справа — скалистый берег уходит в туман. Слева — тропинка вверх, в холмы.",
+    detail:"Солёный ветер. Крики чаек. Где-то далеко — звук водопада.",
+    choices:[
+      {icon:"🌿",title:"В джунгли",desc:"Густые, тёмные, живые",next:"jungle",sc:{courage:2,curiosity:1}},
+      {icon:"🌊",title:"Вдоль берега",desc:"Скалы, туман, неизвестность",next:"coast",sc:{intuition:2,pragmatism:1}},
+      {icon:"⛰️",title:"В холмы",desc:"Выше — видно дальше",next:"hills",sc:{pragmatism:2,courage:1}}
+    ]},
+  jungle: {
+    loc:"🌿 Джунгли", title:"Зелёный сумрак",
+    text:"Кроны смыкаются над головой. Свет пробивается пятнами. Воздух тёплый, влажный, живой. Впереди тропа раздваивается: одна ведёт к звуку воды, другая — к чему-то каменному среди зелени.",
+    detail:"Насекомые стрекочут. Где-то кричит птица — или не птица.",
+    choices:[
+      {icon:"💧",title:"На звук воды",desc:"Река — значит путь",next:"river",sc:{intuition:2}},
+      {icon:"🏛️",title:"К каменным фигурам",desc:"Кто-то здесь был до тебя",next:"ruins",sc:{curiosity:3}},
+      {icon:"🌳",title:"Залезть на дерево",desc:"Посмотреть сверху",next:"canopy",sc:{pragmatism:2,courage:1}}
+    ]},
+  coast: {
+    loc:"🌊 Побережье", title:"Солёный путь",
+    text:"Камни мокрые и острые. Волны бьются о скалы, рассыпаясь белой пеной. Впереди — обрыв, за которым видна маленькая бухта. Внизу, между камнями — лужи, полные морских звёзд и анемонов.",
+    detail:"Ветер солёный, холодный. Чайки не подлетают близко.",
+    choices:[
+      {icon:"🧗",title:"Перелезть обрыв",desc:"Рискованно, но бухта рядом",next:"cove",sc:{courage:3}},
+      {icon:"🐚",title:"Исследовать лужи",desc:"Остановиться и рассмотреть",next:"tidepools",sc:{curiosity:2,empathy:1}},
+      {icon:"🔙",title:"Вернуться и пойти в джунгли",desc:"Берег — тупик",next:"jungle",sc:{pragmatism:2}}
+    ]},
+  hills: {
+    loc:"⛰️ Холмы", title:"Открытое небо",
+    text:"Трава по колено, ветер в лицо. Холмы поднимаются волнами, как застывшее море. На вершине ближайшего — вход в пещеру. Правее — каменная гряда, уходящая к горе на горизонте.",
+    detail:"Отсюда видно весь остров. Он больше, чем казалось.",
+    choices:[
+      {icon:"🕳️",title:"В пещеру",desc:"Темно, но что-то тянет",next:"cave",sc:{courage:2,intuition:1}},
+      {icon:"🗻",title:"К горе по гряде",desc:"Прямой путь к вершине",next:"ridge",sc:{resilience:2,pragmatism:1}},
+      {icon:"🌸",title:"Спуститься в долину",desc:"Внизу — цветы и тишина",next:"meadow",sc:{empathy:2,intuition:1}}
+    ]},
+  river: {
+    loc:"💧 Река", title:"Развилка течений",
+    text:"Река широкая, но неглубокая — видно камни на дне. На другом берегу — тропа в гору. Течение несёт листья куда-то вниз, к водопаду. На камне у воды сидит большая птица и смотрит на тебя.",
+    detail:"Вода прозрачная. Холодная. Живая.",
+    choices:[
+      {icon:"🏊",title:"Перейти реку вброд",desc:"На тот берег, к горе",next:"mountain_base",sc:{courage:2,resilience:1}},
+      {icon:"🦅",title:"Подойти к птице",desc:"Она не улетает. Странно",next:"bird",sc:{empathy:2,intuition:2}},
+      {icon:"🌊",title:"Пойти по течению вниз",desc:"К водопаду",next:"waterfall",sc:{curiosity:2,courage:1}}
+    ]},
+  ruins: {
+    loc:"🏛️ Руины", title:"Забытые стены",
+    text:"Каменные колонны, увитые лианами. Когда-то здесь было что-то важное — храм, дом, крепость. Стены покрыты рисунками: фигуры людей, звёзды, волны. В центре — каменный круг, засыпанный листьями.",
+    detail:"Тишина здесь другая. Плотная. Уважительная.",
+    choices:[
+      {icon:"🔍",title:"Изучить рисунки",desc:"Они что-то рассказывают",next:"drawings",sc:{curiosity:3,intuition:1}},
+      {icon:"🧹",title:"Расчистить каменный круг",desc:"Что под листьями?",next:"circle",sc:{pragmatism:2,curiosity:1}},
+      {icon:"⬆️",title:"Подняться по стене наверх",desc:"Руины — хорошая смотровая",next:"ruin_top",sc:{courage:2,pragmatism:1}}
+    ]},
+  canopy: {
+    loc:"🌳 Кроны", title:"Мир сверху",
+    text:"С высоты джунгли — зелёное море. Ты видишь: на востоке — гору с лёгким дымком на вершине. На севере — блеск реки. На западе — странные каменные фигуры среди деревьев. И везде — жизнь.",
+    detail:"Ветер качает ветку. Внизу — зелёная бездна.",
+    choices:[
+      {icon:"🗻",title:"Идти к дымящейся горе",desc:"Вулкан? Или костёр?",next:"mountain_base",sc:{courage:3}},
+      {icon:"💧",title:"К реке",desc:"Вода — это всегда путь",next:"river",sc:{pragmatism:2}},
+      {icon:"🏛️",title:"К каменным фигурам",desc:"Кто их построил?",next:"ruins",sc:{curiosity:3}}
+    ]},
+  cove: {
+    loc:"🏖️ Бухта", title:"Скрытый берег",
+    text:"Маленький пляж, закрытый скалами со всех сторон. Вода бирюзовая, тёплая, прозрачная до дна. У скалы — старая деревянная лодка. Наполовину засыпана песком, но выглядит целой.",
+    detail:"Здесь тихо. Волны не достают. Как комната без стен.",
+    choices:[
+      {icon:"🚣",title:"Откопать лодку",desc:"Может, пригодится",next:"boat",sc:{pragmatism:3,resilience:1}},
+      {icon:"🤿",title:"Нырнуть в воду",desc:"Под водой что-то блестит",next:"underwater",sc:{courage:2,curiosity:2}},
+      {icon:"🧘",title:"Просто посидеть",desc:"Иногда лучшее действие — бездействие",next:"rest_cove",sc:{intuition:3}}
+    ]},
+  tidepools: {
+    loc:"🐚 Прибрежные лужи", title:"Маленький мир",
+    text:"В каждой луже — вселенная. Морские звёзды, крошечные крабы, анемоны, которые закрываются при прикосновении. Ты наклоняешься — и забываешь про всё. Час проходит как минута.",
+    detail:"Мир бывает огромным. А бывает — размером с лужу.",
+    choices:[
+      {icon:"🦀",title:"Помочь крабу выбраться",desc:"Он застрял в расщелине",next:"help_crab",sc:{empathy:3}},
+      {icon:"🔭",title:"Пойти исследовать дальше",desc:"Здесь красиво, но остров ждёт",next:"hills",sc:{curiosity:1,resilience:2}},
+      {icon:"✏️",title:"Зарисовать на песке",desc:"Запомнить этот момент",next:"draw_sand",sc:{intuition:2,empathy:1}}
+    ]},
+  cave: {
+    loc:"🕳️ Пещера", title:"Темнота",
+    text:"Темно. По-настоящему. Через десять шагов свет исчезает полностью. Воздух прохладный и влажный. Где-то капает вода. Стены гладкие на ощупь — их кто-то обработал. Это не природная пещера.",
+    detail:"Эхо превращает каждый шаг в два. Ты не один здесь. Или кажется.",
+    choices:[
+      {icon:"🔥",title:"Зажечь факел",desc:"У входа были сухие ветки",next:"cave_deep",sc:{pragmatism:2,courage:1}},
+      {icon:"👁️",title:"Идти в темноте",desc:"Глаза привыкнут",next:"cave_blind",sc:{courage:3,intuition:1}},
+      {icon:"↩️",title:"Выйти обратно",desc:"Здесь слишком темно",next:"hills",sc:{pragmatism:1}}
+    ]},
+  meadow: {
+    loc:"🌸 Долина", title:"Место без времени",
+    text:"Цветы по пояс. Бабочки — десятки, сотни. Воздух сладкий и тёплый. В центре долины — одинокое дерево с огромной кроной. Под ним — тень, прохлада и странное ощущение, что здесь можно остаться навсегда.",
+    detail:"Ветер несёт лепестки. Время замедлилось. Или остановилось.",
+    choices:[
+      {icon:"🌳",title:"Подойти к дереву",desc:"Оно зовёт. Без слов",next:"tree",sc:{intuition:3,empathy:1}},
+      {icon:"🦋",title:"Пойти за бабочками",desc:"Они летят куда-то",next:"butterfly_path",sc:{intuition:2,curiosity:1}},
+      {icon:"⛰️",title:"Пересечь долину к горе",desc:"Красиво, но пора идти",next:"mountain_base",sc:{resilience:2,pragmatism:1}}
+    ]},
+  /* ─── Mid-game scenes ─── */
+  bird: {loc:"🦅 Птица",title:"Встреча",text:"Птица огромная — размах крыльев больше метра. Золотые глаза смотрят прямо в твои. Она не боится. Она ждала. На её лапе — тонкий шнурок с маленьким камнем.",detail:"Ты чувствуешь: это не обычная птица.",
+    choices:[{icon:"🤲",title:"Протянуть руку",desc:"Довериться",next:"bird_trust",sc:{empathy:3,intuition:2}},{icon:"📷",title:"Просто наблюдать",desc:"Не вмешиваться",next:"mountain_base",sc:{pragmatism:2}}]},
+  waterfall: {loc:"🌊 Водопад",title:"Край",text:"Река обрывается вниз. Грохот воды оглушает. За водяной стеной — тёмный проём. За водопадом — пещера? Вниз — озеро, далёкое и голубое.",detail:"Радуга висит в водяной пыли.",
+    choices:[{icon:"💦",title:"Пройти сквозь водопад",desc:"Промокнешь, но что там?",next:"cave_deep",sc:{courage:3,curiosity:1}},{icon:"⬇️",title:"Спуститься к озеру",desc:"Долгий, но безопасный путь",next:"rest_cove",sc:{pragmatism:2,resilience:1}}]},
+  cave_deep: {loc:"🔥 Глубина пещеры",title:"Свет во тьме",text:"Пещера расширяется в зал. На стенах — те же рисунки, что в руинах. Но здесь они светятся — бледным голубым. В центре зала — каменная чаша с чистой водой. На дне чаши — отражение, но не потолка. Неба.",detail:"Ты смотришь в чашу — и видишь звёзды. Днём.",
+    choices:[{icon:"💧",title:"Выпить воду",desc:"Что-то подсказывает — надо",next:"vision",sc:{intuition:3,courage:1}},{icon:"🖐️",title:"Коснуться рисунков",desc:"Они тёплые",next:"vision",sc:{curiosity:3}},{icon:"🚶",title:"Пройти дальше",desc:"Зал — не конец",next:"tunnel",sc:{resilience:2,courage:1}}]},
+  cave_blind: {loc:"👁️ Темнота",title:"Без глаз",text:"Десять минут. Двадцать. Глаза не привыкают — здесь нет света вообще. Но другие чувства обостряются. Ты слышишь ветер — откуда-то тянет. Чувствуешь тепло слева. Справа — запах воды.",detail:"В темноте ты — другой человек. Точнее, наконец настоящий.",
+    choices:[{icon:"🌬️",title:"На ветер",desc:"Ветер — это выход",next:"tunnel",sc:{pragmatism:2,intuition:1}},{icon:"🔥",title:"На тепло",desc:"Тепло — это жизнь",next:"cave_deep",sc:{intuition:3}},{icon:"💧",title:"На запах воды",desc:"Вода — это путь",next:"underground_river",sc:{courage:2,intuition:1}}]},
+  drawings: {loc:"🎨 Рисунки",title:"Послание",text:"Рисунки рассказывают историю. Люди пришли на остров. Построили храм. Нашли гору. Что-то случилось — фигуры бегут. Последний рисунок — человек стоит на вершине горы. Один. Руки подняты. Улыбается.",detail:"Рисункам тысячи лет. Но чувство, что они про тебя.",
+    choices:[{icon:"🗻",title:"Идти к горе",desc:"Как тот человек на рисунке",next:"mountain_base",sc:{courage:2,resilience:1}},{icon:"🔍",title:"Искать что-то скрытое",desc:"Последний рисунок — подсказка",next:"circle",sc:{curiosity:3}}]},
+  circle: {loc:"⭕ Каменный круг",title:"Центр",text:"Под листьями — мозаика. Карта острова, выложенная из цветных камней. Гора в центре. Река. Берег. И маленькая точка — там, где ты стоишь сейчас. Кто-то знал, что ты придёшь.",detail:"Мозаике сотни лет. Но точка — свежая.",
+    choices:[{icon:"🗻",title:"Идти к горе по карте",desc:"Теперь ты знаешь дорогу",next:"mountain_base",sc:{pragmatism:3}},{icon:"🧘",title:"Сесть в центр круга",desc:"Подождать. Послушать",next:"vision",sc:{intuition:3,empathy:1}}]},
+  ruin_top: {loc:"🏛️ Вершина руин",title:"Обзор",text:"С высоты руин видно: тропа ведёт к горе через долину цветов. Другая — к реке. Третья — обратно к берегу. Солнце клонится к западу. Нужно выбирать.",detail:"Время не бесконечно. Даже на волшебном острове.",
+    choices:[{icon:"🌸",title:"Через долину к горе",desc:"Красивый путь",next:"meadow",sc:{intuition:2}},{icon:"💧",title:"К реке",desc:"Практичный путь",next:"river",sc:{pragmatism:2}},{icon:"🗻",title:"Напрямик к горе",desc:"Быстрый путь",next:"mountain_base",sc:{courage:2,resilience:1}}]},
+  help_crab: {loc:"🦀 Краб",title:"Маленький подвиг",text:"Краб маленький, красный, отчаянно шевелит клешнями. Ты аккуратно раздвигаешь камни. Он выбирается, замирает на секунду — и уходит в воду. Не оглядываясь. Но что-то внутри тебя становится теплее.",detail:"Никто не узнает. И это делает поступок настоящим.",
+    choices:[{icon:"⛰️",title:"В холмы",desc:"Пора двигаться",next:"hills",sc:{resilience:1,empathy:1}},{icon:"🌿",title:"В джунгли",desc:"Вглубь острова",next:"jungle",sc:{curiosity:2}}]},
+  draw_sand: {loc:"✏️ Песок",title:"Рисунок",text:"Ты рисуешь на песке. Лужи, звёзды, краба. Линии грубые, но настоящие. Волна подбирается ближе — скоро смоет. И это нормально. Не всё должно оставаться. Иногда важен сам момент.",detail:"Ты рисуешь дольше, чем думал(-а). И это хорошо.",
+    choices:[{icon:"⛰️",title:"Двигаться дальше",desc:"Остров ждёт",next:"hills",sc:{resilience:2}},{icon:"🌿",title:"В джунгли",desc:"Хватит берега",next:"jungle",sc:{courage:1,curiosity:1}}]},
+  boat: {loc:"🚣 Лодка",title:"Находка",text:"Лодка старая, но крепкая. Ты откапываешь её за полчаса. Внутри — вёсла, фляга, верёвка. Кто-то собирался уплыть. Но не уплыл. Почему?",detail:"Лодка — это выход с острова. Или инструмент для исследования.",
+    choices:[{icon:"🌊",title:"Обплыть остров",desc:"Увидеть его целиком",next:"mountain_base",sc:{pragmatism:3,curiosity:1}},{icon:"🏝️",title:"Оставить. Идти вглубь",desc:"Уплыть всегда успеешь",next:"jungle",sc:{courage:2,intuition:1}}]},
+  underwater: {loc:"🤿 Под водой",title:"Другой мир",text:"Под водой — коралловый сад. Рыбы, которых ты не видел(-а) никогда. И на дне, у скалы — что-то рукотворное. Каменная табличка с тем же символом, что на руинах. Стрелка указывает вглубь острова.",detail:"Ты задерживаешь дыхание. Мир тихий и невесомый.",
+    choices:[{icon:"🏛️",title:"Следовать стрелке",desc:"К руинам",next:"ruins",sc:{curiosity:3}},{icon:"🗻",title:"Идти к горе",desc:"Стрелка, похоже, указывает туда",next:"mountain_base",sc:{intuition:2,pragmatism:1}}]},
+  rest_cove: {loc:"🧘 Отдых",title:"Пауза",text:"Ты сидишь. Дышишь. Не думаешь о маршруте, не планируешь следующий шаг. Просто — существуешь. Вода, небо, камни, ты. И в этой тишине приходит ясность: гора. Тебе нужно на гору.",detail:"Ответ пришёл не через думание. Через тишину.",
+    choices:[{icon:"🗻",title:"К горе",desc:"Теперь ты знаешь",next:"mountain_base",sc:{intuition:2,resilience:1}}]},
+  tree: {loc:"🌳 Дерево",title:"Корни",text:"Ты садишься под деревом. Крона закрывает небо. Корни выступают из земли — толстые, мощные, уходящие глубже, чем ты можешь представить. Ты прислоняешься спиной к стволу. И чувствуешь: пульс. Дерево живое. По-настоящему.",detail:"У дерева нет ног. Но оно нашло воду, свет и время. Без единого шага.",
+    choices:[{icon:"🧘",title:"Остаться надолго",desc:"Здесь есть ответы",next:"vision",sc:{intuition:3,empathy:1}},{icon:"⛰️",title:"Поблагодарить и идти",desc:"К горе",next:"mountain_base",sc:{resilience:2}}]},
+  butterfly_path: {loc:"🦋 Тропа бабочек",title:"Проводники",text:"Бабочки летят вглубь долины. Ты идёшь за ними. Тропа петляет, поднимается, спускается. Бабочки не торопятся — но и не останавливаются. Через час ты понимаешь: они привели тебя к подножию горы.",detail:"Иногда лучший навигатор — тот, кто не думает о маршруте.",
+    choices:[{icon:"🗻",title:"Подняться",desc:"Ты здесь. Пора",next:"mountain_base",sc:{intuition:2,resilience:1}}]},
+  bird_trust: {loc:"🤲 Доверие",title:"Подарок",text:"Птица наклоняет голову и опускает камень тебе в ладонь. Он тёплый и светится изнутри, как маленький уголёк. Птица расправляет крылья и взлетает — к горе. Ты понимаешь: это приглашение.",detail:"Камень мерцает в ритме твоего пульса.",
+    choices:[{icon:"🗻",title:"Следовать за птицей",desc:"К горе",next:"mountain_base",sc:{empathy:2,intuition:2}}]},
+  underground_river: {loc:"🌊 Подземная река",title:"Течение",text:"Река несёт тебя в темноте. Быстро, но не опасно. Стены мерцают — те же светящиеся рисунки. Ты не контролируешь направление. Река знает, куда нести.",detail:"Иногда нужно отпустить контроль.",
+    choices:[{icon:"🌊",title:"Довериться течению",desc:"Река знает",next:"tunnel",sc:{intuition:3}},{icon:"🧗",title:"Зацепиться и выбраться",desc:"Хватит плыть в темноте",next:"mountain_base",sc:{courage:2,pragmatism:1}}]},
+  tunnel: {loc:"🕳️ Тоннель",title:"Свет впереди",text:"Тоннель сужается. Потом расширяется. И вдруг — свет. Яркий, золотой, невозможный. Ты выходишь на склон горы. Ты внутри неё — и одновременно снаружи. Вершина близко.",detail:"Тоннель не был преградой. Он был коротким путём.",
+    choices:[{icon:"🗻",title:"На вершину",desc:"Осталось немного",next:"ascent",sc:{resilience:2,courage:1}}]},
+  vision: {loc:"✨ Видение",title:"Проблеск",text:"На секунду мир исчезает. Ты видишь остров сверху — целиком. Гору, реку, берег, джунгли, руины. И себя — маленькую точку, которая прошла свой путь. Ты видишь, что остров — это форма. Чья-то форма. Знакомая.",detail:"Видение гаснет. Но ощущение остаётся.",
+    choices:[{icon:"🗻",title:"Идти к горе",desc:"Теперь ты понимаешь зачем",next:"mountain_base",sc:{intuition:2,empathy:1}}]},
+  ridge: {loc:"🪨 Каменная гряда",title:"Хребет",text:"Камни острые, ветер сбивает с ног. Гряда узкая — по бокам обрыв. Один шаг за другим, медленно, аккуратно. Но с каждым метром гора ближе. Ты видишь: тропа ведёт прямо к подножию.",detail:"Здесь нельзя торопиться. Здесь можно только идти.",
+    choices:[{icon:"🗻",title:"Продолжать к горе",desc:"Шаг за шагом",next:"mountain_base",sc:{resilience:3,courage:1}}]},
+  /* ─── Mountain ─── */
+  mountain_base: {loc:"🗻 Подножие горы",title:"Начало подъёма",text:"Гора стоит перед тобой. Не огромная, но серьёзная. Склон крутой, покрытый мхом и камнями. Три тропы: прямой подъём по скалам, пологая тропа вокруг горы, и тёмный вход — тоннель сквозь.",detail:"Ты чувствуешь: это последний выбор. Дальше — только вершина.",
+    choices:[
+      {icon:"🧗",title:"Прямо вверх по скалам",desc:"Тяжело, быстро, честно",next:"ascent",sc:{courage:3,resilience:2}},
+      {icon:"🌀",title:"Пологой тропой",desc:"Дольше, но видишь больше",next:"spiral",sc:{pragmatism:2,empathy:1}},
+      {icon:"🕳️",title:"Через тоннель",desc:"Сквозь гору, не вокруг",next:"tunnel",sc:{intuition:2,courage:1}}
+    ]},
+  ascent: {loc:"🧗 Подъём",title:"Каждый шаг",text:"Руки в ссадинах. Ноги дрожат. Камни осыпаются. Но с каждым метром воздух чище, вид шире, мысли яснее. Ты не думаешь о цели. Ты просто поднимаешься. Шаг. Ещё. Ещё.",detail:"Подъём — не наказание. Подъём — это и есть путь.",
+    choices:[{icon:"🏔️",title:"Последний рывок",desc:"Вершина видна",next:"peak",sc:{resilience:3,courage:1}}]},
+  spiral: {loc:"🌀 Спиральная тропа",title:"Вокруг и вверх",text:"Тропа обвивает гору. С каждым витком открывается новая сторона острова. Ты видишь берег, где проснулся(-ась). Джунгли. Реку. Руины сверху — маленькие, как игрушки. Всё было рядом. Всё связано.",detail:"Спираль — не кружение. Это подъём, который не торопится.",
+    choices:[{icon:"🏔️",title:"На вершину",desc:"Последний виток",next:"peak",sc:{empathy:2,intuition:1}}]},
+  peak: {loc:"🏔️ Вершина",title:"",text:"",detail:"",choices:[]},
+};
+
+/* ═══ ARCHETYPES ═══ */
+const archetypes = {
+  courage:{emoji:"⚔️",name:"Первопроходец",color:"#e05030",tagline:"Ты шёл(-а) туда, где страшно. Не потому что не боишься — а потому что страх не принимает решения за тебя.",desc:"Первопроходец выбирает обрыв, а не обход. Тёмную пещеру, а не знакомый берег. Это не безрассудство — это доверие к себе в условиях неизвестности. На острове ты выбирал(-а) риск и прямой путь. В жизни — то же самое.",shadow:"Не каждый обрыв стоит прыжка. Иногда обходной путь — не трусость, а мудрость.",quote:"Первопроходец не знает, что впереди. Но идёт. Это и есть храбрость."},
+  curiosity:{emoji:"🔍",name:"Исследователь",color:"#3a8ad0",tagline:"Ты выбирал(-а) «а что там?» вместо «а зачем?». Мир для тебя — загадка, и каждый ответ рождает десять новых вопросов.",desc:"Исследователь идёт к руинам, читает рисунки, ныряет под воду. Не ради пользы — ради знания. На острове тебя вели не страх и не цель, а чистое любопытство. В жизни ты так же: тебя невозможно остановить, если ты увидел(-а) что-то неизвестное.",shadow:"Любопытство без направления — это блуждание. Иногда нужно не исследовать, а действовать.",quote:"Исследователь не ищет ответы. Он ищет лучшие вопросы."},
+  empathy:{emoji:"🤲",name:"Хранитель",color:"#4aba6a",tagline:"Ты помог(-ла) крабу. Подошёл(-а) к птице. Остановился(-ась) у дерева. Остров запомнит тебя — потому что ты видел(-а) его, а не только себя.",desc:"Хранитель замечает маленькое. Краба в расщелине, птицу на камне, пульс дерева. На острове ты выбирал(-а) связь, а не скорость. В жизни ты так же: люди рядом с тобой чувствуют, что их видят.",shadow:"Забота о других — прекрасна. Но если ты заботишься обо всех, кроме себя — это не доброта, а привычка.",quote:"Хранитель не спасает мир. Он замечает его. И этого достаточно."},
+  pragmatism:{emoji:"🧭",name:"Навигатор",color:"#d4a050",tagline:"Ты поднялся(-ась) на дерево, чтобы увидеть карту. Откопал(-а) лодку. Выбрал(-а) реку, потому что вода — это путь. Ты не мечтаешь. Ты делаешь.",desc:"Навигатор не блуждает. Каждый шаг — осознанный. На острове ты искал(-а) обзор, ресурсы, кратчайший путь. В жизни ты так же: пока другие мечтают, ты уже в пути. С картой.",shadow:"Эффективность — суперсила. Но не всё ценное — эффективно. Иногда стоит заблудиться, чтобы найти то, что не искал(-а).",quote:"Навигатор не знает все пути. Но всегда знает следующий шаг."},
+  intuition:{emoji:"🌙",name:"Провидец",color:"#a87cda",tagline:"Ты шёл(-а) на звук, на запах, на ощущение. Не потому что не умеешь думать — а потому что чувствуешь точнее, чем думаешь.",desc:"Провидец следует за бабочками, пьёт воду из каменной чаши, доверяет течению подземной реки. На острове тебя вели не глаза — а что-то глубже. В жизни ты так же: решения приходят не из головы, а из тела. И обычно оказываются верными.",shadow:"Интуиция — мощный инструмент. Но без проверки она становится суеверием. Иногда стоит подумать, а не только почувствовать.",quote:"Провидец не предсказывает будущее. Он слышит настоящее — там, где другие оглушены шумом."},
+  resilience:{emoji:"🪨",name:"Несгибаемый",color:"#7a9a8a",tagline:"Ты не искал(-а) лёгкий путь. Ты шёл(-а) прямо — через камни, ветер, подъём. Остров пытался тебя сломать. Не получилось.",desc:"Несгибаемый не самый быстрый и не самый умный. Но он не останавливается. На острове ты выбирал(-а) прямой подъём, долгий путь, преодоление. В жизни ты так же: когда все сдаются, ты делаешь ещё один шаг. И этот шаг — решающий.",shadow:"Стойкость прекрасна. Но упрямство — не стойкость. Иногда нужно не терпеть, а отпустить.",quote:"Несгибаемый не тот, кто не падает. А тот, кто встаёт. Каждый раз."}
+};
+
+const scaleNames={courage:'Храбрость',curiosity:'Любопытство',empathy:'Эмпатия',pragmatism:'Прагматизм',intuition:'Интуиция',resilience:'Стойкость'};
+const scaleEmoji={courage:'⚔️',curiosity:'🔍',empathy:'🤲',pragmatism:'🧭',intuition:'🌙',resilience:'🪨'};
+const aKeys=['courage','curiosity','empathy','pragmatism','intuition','resilience'];
+
+/* Map coordinates for each scene */
+const mapCoords={shore:[310,380],jungle:[200,300],coast:[410,350],hills:[280,230],river:[160,220],ruins:[240,260],canopy:[200,270],cove:[430,310],tidepools:[400,370],cave:[300,190],meadow:[220,190],bird:[140,200],waterfall:[130,250],cave_deep:[310,170],cave_blind:[320,180],drawings:[250,255],circle:[245,265],ruin_top:[235,250],help_crab:[395,365],draw_sand:[390,375],boat:[435,305],underwater:[425,320],rest_cove:[400,290],tree:[215,185],butterfly_path:[250,180],bird_trust:[150,190],underground_river:[290,160],tunnel:[280,140],vision:[260,160],ridge:[300,150],mountain_base:[260,120],ascent:[260,85],spiral:[240,100],peak:[260,55]};
+
+const metaphors=[
+  {place:"Берег",meaning:"Зона комфорта. Откуда ты начинаешь — и куда можешь вернуться"},
+  {place:"Джунгли",meaning:"Неизвестность. То, что пугает, но манит"},
+  {place:"Гора",meaning:"Твоя цель. То, к чему ты идёшь, даже не зная об этом"},
+  {place:"Пещера",meaning:"Подсознание. То, что ты прячешь даже от себя"},
+  {place:"Руины",meaning:"Прошлое. Опыт, который формирует, но не определяет"},
+  {place:"Река",meaning:"Поток жизни. Довериться или контролировать?"},
+  {place:"Долина",meaning:"Покой. Место, где ты перестаёшь бежать"},
+  {place:"Вершина",meaning:"Ясность. Момент, когда видно всё — и себя тоже"}
+];
+
+let scores={courage:0,curiosity:0,empathy:0,pragmatism:0,intuition:0,resilience:0};
+let visited=[];
+let stepCount=0;
+
+function startGame(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  goTo('shore');
+}
+
+function goTo(id){
+  if(id==='peak'){showResults();return;}
+  visited.push(id);
+  stepCount++;
+  const s=S[id];
+  const choicesHTML=s.choices.map((c,i)=>`
+    <div class="choice" onclick="choose('${id}',${i})">
+      <span class="choice-icon">${c.icon}</span>
+      <div class="choice-body"><div class="choice-title">${c.title}</div><div class="choice-desc">${c.desc}</div></div>
+    </div>`).join('');
+
+  document.getElementById('sceneContainer').innerHTML=`
+    <div class="scene-card">
+      <div class="scene-location">${s.loc}</div>
+      <div class="scene-text">${s.text}</div>
+      ${s.detail?`<div class="scene-detail">${s.detail}</div>`:''}
+      <div class="choices">${choicesHTML}</div>
+      <div class="step-count">Шаг ${stepCount} · ${visited.length} мест посещено</div>
+    </div>`;
+  document.getElementById('progressCount').textContent=`Шаг ${stepCount}`;
+  document.getElementById('progressFill').style.width=`${Math.min(95,stepCount*6)}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function choose(sceneId,choiceIdx){
+  const c=S[sceneId].choices[choiceIdx];
+  if(c.sc)for(const[k,v]of Object.entries(c.sc))scores[k]+=v;
+  goTo(c.next);
+}
+
+function showResults(){
+  visited.push('peak');stepCount++;
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('sceneContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const aKey=sorted[0][0],a=archetypes[aKey],maxVal=Math.max(sorted[0][1],1);
+
+  // Build SVG map
+  let pathD='';
+  const visitedCoords=visited.filter(v=>mapCoords[v]).map(v=>mapCoords[v]);
+  if(visitedCoords.length>1){
+    pathD='M'+visitedCoords[0].join(',')+visitedCoords.slice(1).map(c=>' L'+c.join(',')).join('');
+  }
+  const dots=visitedCoords.map((c,i)=>`<circle cx="${c[0]}" cy="${c[1]}" r="${i===0?5:i===visitedCoords.length-1?6:3}" fill="${i===visitedCoords.length-1?a.color:'#c8a84e'}" opacity="${i===0?.8:1}"/>`).join('');
+
+  const mapSVG=`<svg class="island-map" viewBox="0 0 500 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Island shape -->
+    <path d="M260,30 Q380,20 430,80 Q470,140 450,220 Q460,300 430,340 Q400,400 320,410 Q250,420 180,400 Q100,370 80,300 Q50,230 70,160 Q90,90 160,50 Q210,30 260,30Z" fill="#1a2418" stroke="#2a3a28" stroke-width="2"/>
+    <!-- Mountain -->
+    <path d="M230,120 L260,45 L290,120Z" fill="#2a3a28" stroke="#3a4a38" stroke-width="1"/>
+    <circle cx="260" cy="50" r="8" fill="none" stroke="#4a5a48" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
+    <!-- River -->
+    <path d="M160,220 Q180,200 200,220 Q220,240 160,280 Q140,300 160,320" stroke="#1a3a4a" stroke-width="3" fill="none" opacity=".4"/>
+    <!-- Route path -->
+    <path d="${pathD}" stroke="${a.color}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,4" opacity=".8"/>
+    <!-- Visited dots -->
+    ${dots}
+    <!-- Labels -->
+    <text x="310" y="395" fill="#5a6048" font-size="9" font-family="Inter">берег</text>
+    <text x="175" y="295" fill="#5a6048" font-size="9" font-family="Inter">джунгли</text>
+    <text x="255" y="40" fill="#5a6048" font-size="9" font-family="Inter" text-anchor="middle">вершина</text>
+    <text x="140" y="215" fill="#5a6048" font-size="9" font-family="Inter">река</text>
+    <text x="250" y="275" fill="#5a6048" font-size="9" font-family="Inter">руины</text>
+    <text x="290" y="200" fill="#5a6048" font-size="9" font-family="Inter">пещера</text>
+    <text x="200" y="200" fill="#5a6048" font-size="9" font-family="Inter">долина</text>
+  </svg>`;
+
+  const barsHTML=sorted.map(([key,val])=>{const pct=Math.round((val/maxVal)*100);return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${scaleEmoji[key]} ${scaleNames[key]}</span><span class="sc-val" style="color:${archetypes[key].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${archetypes[key].color}"></div></div></div>`;}).join('');
+
+  const routeHTML=visited.map(id=>{const s=S[id];if(!s)return`<div class="route-step visited"><div class="route-dot" style="background:${a.color}"></div>🏔️ Вершина</div>`;return`<div class="route-step visited"><div class="route-dot" style="background:${a.color}"></div>${s.loc} ${s.title}</div>`;}).join('');
+
+  const metaphorHTML=metaphors.map(m=>`<div class="reveal-item"><span class="reveal-place">${m.place}</span><span class="reveal-meaning">${m.meaning}</span></div>`).join('');
+
+  const galleryHTML=aKeys.map(key=>{const ar=archetypes[key],cur=key===aKey;return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${ar.emoji}</span><div class="gi-body"><div class="gi-name">${ar.name}</div><div class="gi-desc">${ar.tagline.slice(0,60)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="r-hero">
+      <span class="r-icon-big">${a.emoji}</span>
+      <div class="r-label" style="color:${a.color}">Твой архетип путешественника</div>
+      <div class="r-name">${a.name}</div>
+    </div>
+    <p class="r-tagline">${a.tagline}</p>
+
+    <div class="map-title">🗺️ Твой маршрут</div>
+    <div class="island-map-wrap">${mapSVG}</div>
+    <div style="text-align:center;font-size:12px;color:var(--text-dim);margin-bottom:20px">${stepCount} шагов · ${visited.length} локаций из ${Object.keys(S).length}</div>
+
+    <div class="r-card"><h3>🏝️ Кто ты на острове</h3><p>${a.desc}</p></div>
+
+    <div class="r-card"><h3>🗺️ Путь</h3><div class="route-list">${routeHTML}</div></div>
+
+    <div class="reveal-card"><h4>🔮 А теперь — правда</h4><p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:14px">Остров — это метафора. Каждая локация измеряла что-то настоящее. Вот что означали места, которые ты выбирал(-а):</p>${metaphorHTML}</div>
+
+    <div class="r-card"><h3>📊 Внутренний компас</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🌘 Теневая сторона</h3><p>${a.shadow}</p><div class="pullquote"><p>${a.quote}</p></div></div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Второй архетип: ${archetypes[sorted[1][0]].emoji} ${archetypes[sorted[1][0]].name}</h3><p>${archetypes[sorted[1][0]].tagline}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🏝️ Все 6 архетипов</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Пройти другим путём</button>
+    </div>`;
+
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const a=archetypes[sorted[0][0]];
+  const text=`${a.emoji} Я прошёл(-а) Экспедицию — мой архетип: ${a.name}\n\n${a.tagline}\n\n${stepCount} шагов, ${visited.length} локаций\n\n🏝️ Попробуй: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Экспедиция',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const aKey=sorted[0][0],a=archetypes[aKey],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${scaleEmoji[k]} ${scaleNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const route=visited.map(id=>{const s=S[id];return s?`  → ${s.loc} ${s.title}`:'  → 🏔️ Вершина';}).join('\n');
+
+  const text=`🏝️ ЭКСПЕДИЦИЯ — Результат\n\n${a.emoji}  ${a.name}\n\n«${a.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🗺️ Маршрут (${stepCount} шагов):\n${route}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Внутренний компас:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🏝️ Описание:\n${a.desc}\n\n🌘 Тень:\n${a.shadow}\n\n💬 «${a.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Пройти: https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
