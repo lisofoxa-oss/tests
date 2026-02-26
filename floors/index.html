@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Шесть этажей вниз 🪜</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;
+  --bg-rgb:10,10,10;
+  --surface:rgba(255,255,255,0.025);
+  --surface2:rgba(255,255,255,0.04);
+  --surface3:rgba(255,255,255,0.065);
+  --text:#707070;
+  --text-dim:#484848;
+  --text-bright:#c8c8c8;
+  --border:rgba(255,255,255,0.05);
+  --accent:#c0392b;
+  --accent-dim:rgba(192,57,43,0.08);
+  --accent-glow:rgba(192,57,43,0.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6;transition:background 2s ease}
+.mono{font-family:'IBM Plex Mono',monospace}
+.container{max-width:620px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+
+/* Grain overlay */
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")}
+
+/* Header */
+.header{text-align:center;padding:50px 0 24px;animation:fadeUp .8s ease}
+.header-badge{font-family:'IBM Plex Mono',monospace;display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
+.header-icon{font-size:48px;display:block;margin-bottom:20px;opacity:.8}
+h1{font-size:clamp(1.8rem,6vw,2.6rem);font-weight:800;color:var(--text-bright);line-height:1.15;margin-bottom:14px;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:14px;color:var(--text-dim);max-width:420px;margin:0 auto;line-height:1.8;font-weight:300}
+
+/* Warning */
+.warning{margin:24px 0;padding:16px 20px;background:var(--accent-dim);border:1px solid rgba(192,57,43,0.12);border-radius:12px;animation:fadeUp .8s ease .1s both}
+.warning p{font-size:12px;color:var(--accent);line-height:1.7;text-align:center;font-weight:400}
+
+/* Floor indicator intro */
+.floors-preview{display:flex;flex-direction:column;gap:2px;margin:20px 0 28px;animation:fadeUp .8s ease .2s both}
+.fp-row{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:6px}
+.fp-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);width:16px;text-align:right}
+.fp-bar{flex:1;height:2px;border-radius:2px}
+.fp-name{font-size:11px;color:var(--text-dim);width:100px}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:14px;background:var(--accent);color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .35s both;letter-spacing:.5px}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 8px 30px var(--accent-glow)}
+
+/* Progress */
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(var(--bg-rgb),0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase}
+.progress-count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);font-weight:700}
+.progress-bar{height:2px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:10px;transition:width .5s ease;width:0}
+.floor-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-align:center;margin-top:6px;transition:color 1s ease}
+
+/* Question card */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:30px 24px;animation:fadeUp .45s ease;transition:background 1.5s ease,border-color 1.5s ease}
+.q-floor{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;transition:color 1s ease}
+.q-floor-name{font-size:11px;font-weight:500;margin-bottom:16px;transition:color 1s ease}
+.q-text{font-size:19px;font-weight:700;color:var(--text-bright);line-height:1.4;margin-bottom:8px;letter-spacing:-.2px}
+.q-sub{font-size:13px;font-style:italic;color:var(--text-dim);margin-bottom:24px;line-height:1.6;font-weight:300}
+
+/* Options */
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:15px 16px;background:var(--surface2);border:1.5px solid transparent;border-radius:14px;cursor:pointer;transition:all .3s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(192,57,43,0.12);background:var(--surface3)}
+.option.selected{border-color:var(--accent);background:var(--accent-dim)}
+.opt-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.08);flex-shrink:0;margin-top:2px;transition:all .25s ease;position:relative}
+.option.selected .opt-dot{border-color:var(--accent);background:var(--accent)}
+.option.selected .opt-dot::after{content:'';position:absolute;inset:3px;background:#fff;border-radius:50%}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--surface2);color:var(--text-dim);opacity:0;pointer-events:none}
+.btn-next.active{opacity:1;pointer-events:all;background:var(--accent);color:#fff}
+
+/* Depth warning between floors */
+.floor-transition{text-align:center;padding:40px 20px;animation:fadeUp .6s ease}
+.ft-num{font-family:'IBM Plex Mono',monospace;font-size:48px;font-weight:700;color:var(--accent);opacity:.3;display:block;margin-bottom:8px}
+.ft-name{font-size:18px;font-weight:700;color:var(--text-bright);margin-bottom:8px}
+.ft-desc{font-size:13px;color:var(--text-dim);font-style:italic;line-height:1.6;max-width:360px;margin:0 auto 20px}
+.ft-btn{padding:14px 40px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--accent);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s ease}
+.ft-btn:hover{background:var(--accent);color:#fff}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+.r-hero{text-align:center;padding:36px 0 20px}
+.r-icon{font-size:56px;display:block;margin-bottom:12px}
+.r-label{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:8px}
+.r-name{font-size:clamp(1.6rem,5.5vw,2.2rem);font-weight:800;color:var(--text-bright);margin-bottom:6px}
+.r-tagline{font-size:15px;font-style:italic;color:var(--text);max-width:440px;margin:0 auto 24px;line-height:1.7;font-weight:300}
+
+/* Layers visualization */
+.layers-viz{margin:20px 0;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.layer-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .3s ease}
+.layer-row:last-child{border-bottom:none}
+.layer-row:hover{background:var(--surface2)}
+.layer-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);width:16px;margin-right:12px}
+.layer-name{font-size:12px;font-weight:600;color:var(--text);width:100px;flex-shrink:0}
+.layer-bar-bg{flex:1;height:4px;background:var(--surface2);border-radius:4px;overflow:hidden;margin:0 12px}
+.layer-bar-fill{height:100%;border-radius:4px;transition:width 1.2s ease;width:0}
+.layer-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;width:32px;text-align:right}
+
+/* Cards */
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px 22px;margin-bottom:14px}
+.r-card h3{font-size:14px;font-weight:700;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.5px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:300}
+
+/* Floor reveal */
+.floor-reveal{padding:12px 0;border-bottom:1px solid var(--border)}
+.floor-reveal:last-child{border-bottom:none}
+.fr-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.fr-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)}
+.fr-name{font-size:12px;font-weight:600}
+.fr-text{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+.pullquote{padding:16px 20px;border-left:3px solid var(--accent);margin:14px 0 6px;background:var(--surface2);border-radius:0 12px 12px 0}
+.pullquote p{font-size:14px;font-style:italic;color:var(--text-bright);line-height:1.6;margin:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.gallery{display:none;flex-direction:column;gap:8px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.gallery-item.current{border-color:var(--accent);background:var(--accent-dim)}
+.gi-emoji{font-size:24px;flex-shrink:0}
+.gi-body{flex:1}
+.gi-name{font-size:13px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.gi-badge{font-size:9px;padding:3px 8px;background:var(--accent-dim);color:var(--accent);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff;border:none}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:17px}.option{padding:12px 14px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">Глубокий тест · ~10 мин</div>
+      <span class="header-icon">🪜</span>
+      <h1>Шесть этажей <em>вниз</em></h1>
+      <p class="lead">Шесть уровней. С каждым — глубже. С каждым — честнее. На последнем этаже — то, в чём ты себе не признаёшься.</p>
+    </div>
+    <div class="warning"><p>⚠ Этот тест не утешает. Он не скажет, какой ты замечательный. Он покажет, что ты прячешь. Если не готов(-а) — закрой страницу. Серьёзно.</p></div>
+    <div class="floors-preview">
+      <div class="fp-row"><span class="fp-num">1</span><div class="fp-bar" style="background:linear-gradient(90deg,#888,#666);width:100%"></div><span class="fp-name">Витрина</span></div>
+      <div class="fp-row"><span class="fp-num">2</span><div class="fp-bar" style="background:linear-gradient(90deg,#666,#555);width:85%"></div><span class="fp-name">Привычки</span></div>
+      <div class="fp-row"><span class="fp-num">3</span><div class="fp-bar" style="background:linear-gradient(90deg,#555,#444);width:70%"></div><span class="fp-name">Маски</span></div>
+      <div class="fp-row"><span class="fp-num">4</span><div class="fp-bar" style="background:linear-gradient(90deg,#444,#333);width:55%"></div><span class="fp-name">Страхи</span></div>
+      <div class="fp-row"><span class="fp-num">5</span><div class="fp-bar" style="background:linear-gradient(90deg,#333,#222);width:40%"></div><span class="fp-name">Стыд</span></div>
+      <div class="fp-row"><span class="fp-num">6</span><div class="fp-bar" style="background:linear-gradient(90deg,#c0392b,#922);width:25%"></div><span class="fp-name">Ядро</span></div>
+    </div>
+    <button class="btn-start" onclick="startTest()">Спуститься 🪜</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Спуск</span>
+      <span class="progress-count" id="progressCount">01 / 21</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="floor-label" id="floorLabel">Этаж 1 · Витрина</div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const floors = [
+  {num:1,name:"Витрина",sub:"То, что ты показываешь миру",color:"#888"},
+  {num:2,name:"Привычки",sub:"То, что ты делаешь, когда никто не видит",color:"#777"},
+  {num:3,name:"Маски",sub:"То, чем ты притворяешься",color:"#666"},
+  {num:4,name:"Страхи",sub:"То, что не даёт уснуть",color:"#555"},
+  {num:5,name:"Стыд",sub:"То, что ты прячешь даже от себя",color:"#c0392b"},
+  {num:6,name:"Ядро",sub:"То, что остаётся, когда снять всё",color:"#c0392b"}
+];
+
+const questions = [
+  // ═══ FLOOR 1: ВИТРИНА ═══
+  {floor:0, text:"Что люди должны подумать о тебе при первой встрече?",
+   sub:"Не что думают — а что ты хочешь, чтобы подумали.",
+   opts:[
+     {text:"Что я умный(-ая) и интересный(-ая)",sc:{control:3,mask:1}},
+     {text:"Что я добрый(-ая) и безопасный(-ая)",sc:{attachment:3,mask:1}},
+     {text:"Что я сильный(-ая) и не нуждаюсь ни в ком",sc:{armor:3}},
+     {text:"Что я не такой(-ая) как все",sc:{shadow:2,mask:2}}
+   ]},
+  {floor:0, text:"Ты редактируешь сообщение перед отправкой. Что удаляешь?",
+   sub:"",
+   opts:[
+     {text:"Лишние эмоции — «слишком много восклицательных»",sc:{control:3}},
+     {text:"Просьбы — переформулирую, чтобы не выглядеть нуждающимся",sc:{armor:3,attachment:1}},
+     {text:"Ничего — я пишу как думаю",sc:{acceptance:3}},
+     {text:"Всё сообщение — решаю не отправлять",sc:{mask:2,armor:2}}
+   ]},
+  {floor:0, text:"Комплимент, который тебе приятнее всего услышать — но ты скрываешь, насколько он важен:",
+   sub:"",
+   opts:[
+     {text:"«Ты всегда знаешь, что делать»",sc:{control:3}},
+     {text:"«С тобой я чувствую себя в безопасности»",sc:{attachment:3}},
+     {text:"«Ты не похож(-а) ни на кого»",sc:{shadow:2,mask:2}},
+     {text:"«Ты сильнее, чем думаешь»",sc:{armor:2,vulnerability:2}}
+   ]},
+
+  // ═══ FLOOR 2: ПРИВЫЧКИ ═══
+  {floor:1, text:"Первые 10 минут наедине после долгого дня с людьми. Что делаешь?",
+   sub:"Честно. Без «я читаю книги» — что реально.",
+   opts:[
+     {text:"Залипаю в телефон. Мозг просит отключиться",sc:{shadow:1,acceptance:2}},
+     {text:"Проговариваю в голове диалоги — что сказал(-а), что нужно было сказать",sc:{control:3,mask:1}},
+     {text:"Ничего. Тишина. Просто стою или сижу",sc:{vulnerability:2,acceptance:2}},
+     {text:"Пишу кому-то. Одиночество давит сразу",sc:{attachment:3}}
+   ]},
+  {floor:1, text:"Три часа ночи. Не спишь. Куда уходят мысли?",
+   sub:"",
+   opts:[
+     {text:"В прошлое — перебираю моменты, которые хочу исправить",sc:{control:2,mask:2}},
+     {text:"В отношения — кто на самом деле меня любит, а кто нет",sc:{attachment:3}},
+     {text:"В «а что если» — альтернативные жизни, которых не будет",sc:{shadow:2,vulnerability:1}},
+     {text:"В пустоту. Просто лежу и чувствую, что что-то не так",sc:{vulnerability:3}}
+   ]},
+  {floor:1, text:"Что ты делаешь, когда тебе плохо, но никто не должен знать?",
+   sub:"Личный ритуал, который никто не видел.",
+   opts:[
+     {text:"Ем. Или наоборот — перестаю есть",sc:{shadow:2,vulnerability:1}},
+     {text:"Работаю до изнеможения. Занятость глушит всё",sc:{control:3,armor:1}},
+     {text:"Ухожу гулять. Движение вместо чувств",sc:{armor:2,acceptance:1}},
+     {text:"Плачу. Но только когда точно никто не увидит",sc:{vulnerability:3,armor:1}}
+   ]},
+  {floor:1, text:"Привычка, о которой ты не рассказываешь:",
+   sub:"",
+   opts:[
+     {text:"Проверяю соцсети людей, которые мне важны. Молча",sc:{attachment:3,control:1}},
+     {text:"Репетирую разговоры, которые могут случиться",sc:{control:3}},
+     {text:"Перечитываю старые переписки",sc:{attachment:2,shadow:1}},
+     {text:"Разговариваю сам(-а) с собой. Вслух",sc:{vulnerability:2,acceptance:2}}
+   ]},
+
+  // ═══ FLOOR 3: МАСКИ ═══
+  {floor:2, text:"Какую версию себя ты играешь чаще всего?",
+   sub:"Не кто ты — а кем притворяешься.",
+   opts:[
+     {text:"Тот(-а), у кого всё под контролем",sc:{control:3,armor:1}},
+     {text:"Тот(-а), кому всё равно",sc:{armor:3,shadow:1}},
+     {text:"Тот(-а), кто всегда в хорошем настроении",sc:{mask:3,attachment:1}},
+     {text:"Тот(-а), кому не нужна помощь",sc:{armor:2,vulnerability:2}}
+   ]},
+  {floor:2, text:"Комплимент, от которого тебе неловко — потому что он не правда:",
+   sub:"",
+   opts:[
+     {text:"«Ты такой(-ая) уверенный(-ая) в себе»",sc:{mask:3,vulnerability:1}},
+     {text:"«Ты такой(-ая) спокойный(-ая)»",sc:{control:2,mask:2}},
+     {text:"«Ты всегда такой(-ая) позитивный(-ая)»",sc:{mask:3}},
+     {text:"«Тебе не нужны люди, ты самодостаточный(-ая)»",sc:{armor:2,attachment:2}}
+   ]},
+  {floor:2, text:"Если бы твой самый близкий человек увидел твои мысли за последнюю неделю:",
+   sub:"",
+   opts:[
+     {text:"Испугался бы. Там слишком много тревоги",sc:{control:2,vulnerability:2}},
+     {text:"Обиделся бы. Там есть злость, о которой я молчу",sc:{shadow:3}},
+     {text:"Удивился бы. Я думаю о нём/ней больше, чем показываю",sc:{attachment:3}},
+     {text:"Не узнал бы меня. Внутри я совсем другой(-ая)",sc:{mask:3,vulnerability:1}}
+   ]},
+
+  // ═══ FLOOR 4: СТРАХИ ═══
+  {floor:3, text:"Что страшнее?",
+   sub:"Только одно. Выбери.",
+   opts:[
+     {text:"Что меня узнают по-настоящему — и уйдут",sc:{vulnerability:3,mask:1}},
+     {text:"Что я останусь один(-а). Насовсем",sc:{attachment:3}},
+     {text:"Что я прожил(-а) не свою жизнь",sc:{shadow:3}},
+     {text:"Что я так и не стану тем, кем мог(-ла) быть",sc:{control:2,shadow:2}}
+   ]},
+  {floor:3, text:"Мысль, которую ты отгоняешь перед сном:",
+   sub:"Та самая. Которая приходит именно тогда, когда ты расслабился(-ась).",
+   opts:[
+     {text:"«Меня на самом деле терпят, а не любят»",sc:{attachment:3,vulnerability:1}},
+     {text:"«Я притворяюсь, и скоро все поймут»",sc:{mask:3}},
+     {text:"«Я не знаю, чего хочу на самом деле»",sc:{shadow:2,acceptance:2}},
+     {text:"«Если я отпущу контроль — всё развалится»",sc:{control:3}}
+   ]},
+  {floor:3, text:"Что ты больше всего боишься потерять?",
+   sub:"",
+   opts:[
+     {text:"Человека, без которого я не знаю, кто я",sc:{attachment:3,vulnerability:1}},
+     {text:"Свой образ — то, как меня видят",sc:{mask:3,control:1}},
+     {text:"Контроль над своей жизнью",sc:{control:3}},
+     {text:"Время. Которого уже мало",sc:{shadow:2,acceptance:2}}
+   ]},
+  {floor:3, text:"Выбери фразу, которая ранит сильнее всего:",
+   sub:"",
+   opts:[
+     {text:"«Ты слишком много»",sc:{vulnerability:3}},
+     {text:"«Ты мне безразличен(-на)»",sc:{attachment:3}},
+     {text:"«Я тебя раскусил(-а)»",sc:{mask:3}},
+     {text:"«Без тебя было бы лучше»",sc:{shadow:2,vulnerability:2}}
+   ]},
+
+  // ═══ FLOOR 5: СТЫД ═══
+  {floor:4, text:"Что бы ты никогда не рассказал(-а) даже лучшему другу?",
+   sub:"Не конкретику — а область. Где стыд живёт.",
+   opts:[
+     {text:"Насколько я завишу от чужого одобрения",sc:{attachment:2,mask:2}},
+     {text:"Вещи, которые я сделал(-а), чтобы казаться лучше",sc:{mask:3,shadow:1}},
+     {text:"Насколько я на самом деле уязвим(-а)",sc:{vulnerability:3,armor:1}},
+     {text:"Мысли, за которые мне стыдно. Тёмные. Настоящие",sc:{shadow:3}}
+   ]},
+  {floor:4, text:"Какую часть себя ты притворяешься, что не существует?",
+   sub:"Ту, которая просит внимания. Которую ты гасишь.",
+   opts:[
+     {text:"Злость. Я делаю вид, что не злюсь. Но злюсь",sc:{shadow:3,armor:1}},
+     {text:"Нужда в людях. Я притворяюсь, что мне норм одному",sc:{attachment:2,armor:2}},
+     {text:"Страх. Я выгляжу храбрым, но внутри — паника",sc:{mask:2,vulnerability:2}},
+     {text:"Зависть. К тем, у кого получилось то, что не получилось у меня",sc:{shadow:3}}
+   ]},
+  {floor:4, text:"Если бы все твои мысли за сегодня появились на экране — что бы ты удалил(-а) первым?",
+   sub:"",
+   opts:[
+     {text:"Сравнения с другими. Их было много",sc:{shadow:3}},
+     {text:"Внутренний монолог самокритики",sc:{vulnerability:3}},
+     {text:"Фантазии о жизни, которой у меня нет",sc:{shadow:2,acceptance:1}},
+     {text:"То, сколько раз я проверял(-а), написал ли мне кто-то",sc:{attachment:3}}
+   ]},
+
+  // ═══ FLOOR 6: ЯДРО ═══
+  {floor:5, text:"Убери работу. Отношения. Достижения. Роли. Что осталось?",
+   sub:"Без «я — мама/папа/специалист». Кто ты без всего этого.",
+   opts:[
+     {text:"Тот(-а), кто боится, что без ролей — пустота",sc:{mask:3,vulnerability:1}},
+     {text:"Тот(-а), кто устал(-а) притворяться. Просто устал(-а)",sc:{acceptance:3}},
+     {text:"Тот(-а), кто всё ещё ищет — и это нормально",sc:{shadow:1,acceptance:3}},
+     {text:"Я не знаю. И от этого незнания — страшно",sc:{vulnerability:3}}
+   ]},
+  {floor:5, text:"Последний этаж. Одна фраза. Самая честная, которую ты можешь сказать прямо сейчас:",
+   sub:"",
+   opts:[
+     {text:"«Я боюсь, что меня недостаточно»",sc:{vulnerability:3,mask:1}},
+     {text:"«Я контролирую всё, потому что боюсь хаоса»",sc:{control:3}},
+     {text:"«Я не знаю, кто я без чужих глаз»",sc:{attachment:2,mask:2}},
+     {text:"«Я в порядке. Не идеально — но в порядке»",sc:{acceptance:4}}
+   ]}
+];
+
+const TOTAL = questions.length;
+
+const archetypes = {
+  architect:{emoji:"🏗️",name:"Архитектор",color:"#6a8a9a",
+    tagline:"Ты строишь стены. Красивые, прочные, функциональные. Проблема в том, что ты внутри. И выход заложен кирпичами.",
+    desc:"Архитектор контролирует всё: слова, эмоции, впечатление, будущее. Это не жадность — это страх. Страх, что если отпустить хотя бы одну нить — всё размотается. Исследования Carver & Scheier (1998) показывают: потребность в контроле растёт пропорционально пережитому хаосу. Где-то в прошлом ты потерял(-а) контроль — и поклялся(-ась), что больше никогда.",
+    shadow:"Ты не живёшь. Ты управляешь. А жизнь — не проект. Она не помещается в план. И твоя усталость — от попыток впихнуть её.",
+    quote:"Контроль — это иллюзия, которая работает. До тех пор, пока не перестаёт."},
+  mirror:{emoji:"🪞",name:"Зеркало",color:"#a0708a",
+    tagline:"Ты отражаешь других. Подстраиваешь длину волны, громкость, настроение. Ты так хорошо чувствуешь чужих, что забыл(-а) частоту собственного голоса.",
+    desc:"Зеркало существует в отношениях — буквально. Без чужих глаз ты теряешь фокус, контур, смысл. Это не зависимость — это стратегия выживания, сформированная в детстве, когда любовь нужно было заслужить подстройкой. Исследования attachment theory (Bowlby, Ainsworth) описывают тревожную привязанность: ты мониторишь других, чтобы не быть брошенным(-ой).",
+    shadow:"Ты так привык(-ла) отражать, что не знаешь свой настоящий цвет. Зеркало без объекта — пустое. И тебе от этого страшно.",
+    quote:"Зеркало не знает, как выглядит без того, кого отражает."},
+  fortress:{emoji:"🏰",name:"Крепость",color:"#7a8a6a",
+    tagline:"Стены толстые. Ров глубокий. Мост поднят. Ты в безопасности. Ты в абсолютной, непрошибаемой, удушающей безопасности.",
+    desc:"Крепость не пускает внутрь. Ни боль, ни людей, ни уязвимость. Это не сила — это реакция на рану, которую ты отказался(-ась) показать. Исследования Gross (2002) по emotional suppression показывают: подавление эмоций не уменьшает их — а увеличивает физиологическую реакцию. Ты не чувствуешь меньше. Ты чувствуешь всё — но запрещаешь себе.",
+    shadow:"Крепость защищает от врагов. Но также — от тех, кто хочет обнять. Ты не пускаешь людей, потому что однажды кто-то разрушил тебя изнутри.",
+    quote:"Самая надёжная крепость — самая одинокая."},
+  abyss:{emoji:"🕳️",name:"Бездна",color:"#5a5a7a",
+    tagline:"Ты заглянул(-а) внутрь — и увидел(-а) темноту. Не пугающую. Знакомую. Ты давно живёшь с ней. Просто не показываешь.",
+    desc:"Бездна — это не депрессия и не тьма. Это честность на глубине, куда другие боятся опускаться. Ты знаешь свои тёмные мысли, признаёшь зависть, злость, стыд. Юнгианская психология называет это Shadow work — интеграция тени. Ты не подавляешь свои тёмные части — ты смотришь на них. Это требует больше мужества, чем кажется.",
+    shadow:"Знать свою тьму — не значит в ней жить. Бездна затягивает. Если ты проводишь в ней больше времени, чем на поверхности — это уже не честность. Это убежище.",
+    quote:"Тот, кто борется с чудовищами, должен следить, чтобы самому не стать чудовищем. Ницше знал."},
+  crack:{emoji:"⚡",name:"Трещина",color:"#c0392b",
+    tagline:"Ты сломан(-а). Не в плохом смысле. В том смысле, что через трещину наконец видно свет. Ты перестал(-а) притворяться целым — и стало легче.",
+    desc:"Трещина — самый болезненный и самый честный архетип. Ты уязвим(-а), и ты это знаешь. Ты не прячешь свою хрупкость — ты учишься с ней жить. Исследования Brené Brown о vulnerability показывают парадокс: уязвимость — не слабость, а единственный путь к настоящей близости. Трещина — это не поломка. Это место, где растёт.",
+    shadow:"Уязвимость — суперсила. Но если она становится идентичностью — ты застреваешь в ране. Не все должны видеть твою трещину. И не всё время.",
+    quote:"Трещина — это не слабое место. Это место, где свет проходит внутрь."},
+  ground:{emoji:"🌱",name:"Почва",color:"#6a8a5a",
+    tagline:"Ты не идеальный. Не починенный. Не просветлённый. Ты просто — в порядке. И это больше, чем кажется.",
+    desc:"Почва — архетип принятия. Не смирения — а спокойного «я знаю, кто я». С тенями, страхами, стыдом — и всё равно в порядке. Исследования self-compassion (Neff, 2003) показывают: принятие себя — не про то, чтобы нравиться себе. А про то, чтобы перестать воевать. Ты перестал(-а). И обнаружил(-а), что без войны — дышится.",
+    shadow:"Принятие может быть маской лени. «Я такой(-ая)» иногда означает «я не хочу работать над собой». Честно проверь: это принятие — или оправдание?",
+    quote:"Почва не пытается быть красивой. Она просто даёт расти. Всему."}
+};
+
+const scaleNames={control:'Контроль',mask:'Маска',attachment:'Привязанность',armor:'Броня',shadow:'Тень',vulnerability:'Уязвимость',acceptance:'Принятие'};
+const aKeys=['architect','mirror','fortress','abyss','crack','ground'];
+const scaleToArch={control:'architect',mask:'mirror',armor:'fortress',shadow:'abyss',vulnerability:'crack',acceptance:'ground',attachment:'mirror'};
+
+let scores={control:0,mask:0,attachment:0,armor:0,shadow:0,vulnerability:0,acceptance:0};
+let curQ=0, selOpt=null, curFloor=-1;
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showFloorTransition(0);
+}
+
+function showFloorTransition(floorIdx){
+  curFloor=floorIdx;
+  const f=floors[floorIdx];
+  // Darken body
+  const dark=Math.min(0.95,0.05*floorIdx);
+  document.body.style.background=`rgb(${Math.round(10-10*dark)},${Math.round(10-10*dark)},${Math.round(10-10*dark)})`;
+
+  document.getElementById('qContainer').innerHTML=`
+    <div class="floor-transition">
+      <span class="ft-num">${f.num}</span>
+      <div class="ft-name" style="color:${f.color}">${f.name}</div>
+      <div class="ft-desc">${f.sub}</div>
+      <button class="ft-btn" onclick="showQ(${curQ})">Спуститься на этаж ${f.num}</button>
+    </div>`;
+  document.getElementById('floorLabel').textContent=`Этаж ${f.num} · ${f.name}`;
+  document.getElementById('floorLabel').style.color=f.color;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function showQ(i){
+  const q=questions[i], num=String(i+1).padStart(2,'0');
+  const f=floors[q.floor];
+  selOpt=null;
+
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-floor" style="color:${f.color}">Этаж ${f.num} · ${num} / ${TOTAL}</div>
+      <div class="q-floor-name" style="color:${f.color}">${f.name}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      <div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===TOTAL-1?'Увидеть себя':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${TOTAL}`;
+  document.getElementById('progressFill').style.width=`${((i+1)/TOTAL)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  selOpt=null;curQ++;
+  if(curQ>=TOTAL){showResults();return}
+  // Check if new floor
+  if(questions[curQ].floor!==questions[curQ-1].floor){
+    showFloorTransition(questions[curQ].floor);
+  } else {
+    showQ(curQ);
+  }
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+
+  // Determine archetype from top scales
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const topScale=sorted[0][0];
+  const aKey=scaleToArch[topScale]||'ground';
+  const a=archetypes[aKey];
+  const maxVal=Math.max(sorted[0][1],1);
+
+  const layersHTML=sorted.map(([key,val])=>{
+    const pct=Math.round((val/maxVal)*100);
+    const clr=archetypes[scaleToArch[key]||'ground'].color;
+    return`<div class="layer-row"><span class="layer-num">${scaleNames[key].charAt(0)}</span><span class="layer-name">${scaleNames[key]}</span><div class="layer-bar-bg"><div class="layer-bar-fill" data-w="${pct}" style="background:${clr}"></div></div><span class="layer-val" style="color:${clr}">${pct}%</span></div>`;
+  }).join('');
+
+  // Floor summaries based on answers
+  const floorSummaries=[
+    "На поверхности ты показываешь то, что безопасно. Первый этаж — витрина, отредактированная до пикселя.",
+    "Привычки — автопилот подсознания. Они честнее любых слов, потому что ты не успеваешь их отредактировать.",
+    "Маски — не ложь. Это броня, которую ты надел(-а) так давно, что забыл(-а) — она не кожа.",
+    "Страхи живут на четвёртом этаже. Не в голове — в теле. Сжатое горло, бессонница, ком в груди.",
+    "Стыд — самый тихий этаж. Здесь лежит всё, что ты запретил(-а) себе чувствовать. Но оно не исчезло.",
+    "Ядро — не ответ. Ядро — это вопрос, с которым ты живёшь. И это нормально."
+  ];
+
+  const floorsRevealHTML=floors.map((f,i)=>`<div class="floor-reveal"><div class="fr-header"><span class="fr-num">${f.num}</span><span class="fr-name" style="color:${f.color}">${f.name}</span></div><div class="fr-text">${floorSummaries[i]}</div></div>`).join('');
+
+  const galleryHTML=aKeys.map(key=>{const ar=archetypes[key],cur=key===aKey;return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${ar.emoji}</span><div class="gi-body"><div class="gi-name">${ar.name}</div><div class="gi-desc">${ar.tagline.slice(0,55)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="r-hero">
+      <span class="r-icon">${a.emoji}</span>
+      <div class="r-label" style="color:${a.color}">На дне — ты</div>
+      <div class="r-name">${a.name}</div>
+    </div>
+    <p class="r-tagline">${a.tagline}</p>
+
+    <div class="r-card"><h3>🪜 Шесть этажей — что на каждом</h3>${floorsRevealHTML}</div>
+
+    <div class="r-card"><h3>🔬 Психологический профиль</h3><div class="layers-viz">${layersHTML}</div></div>
+
+    <div class="r-card"><h3>🏗️ Кто ты на глубине</h3><p>${a.desc}</p></div>
+
+    <div class="r-card"><h3>🌘 То, что ты не хочешь слышать</h3><p>${a.shadow}</p><div class="pullquote"><p>${a.quote}</p></div></div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Второй слой: ${archetypes[scaleToArch[sorted[1][0]]||'ground'].emoji} ${archetypes[scaleToArch[sorted[1][0]]||'ground'].name}</h3><p>${archetypes[scaleToArch[sorted[1][0]]||'ground'].tagline}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🪜 Все 6 архетипов</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(()=>document.querySelectorAll('.layer-bar-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const a=archetypes[scaleToArch[sorted[0][0]]||'ground'];
+  const text=`${a.emoji} Шесть этажей вниз — мой архетип: ${a.name}\n\n${a.tagline}\n\n🪜 Спустись: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Шесть этажей вниз',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const aKey=scaleToArch[sorted[0][0]]||'ground';
+  const a=archetypes[aKey],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${scaleNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+
+  const text=`🪜 ШЕСТЬ ЭТАЖЕЙ ВНИЗ — Результат\n\n${a.emoji}  ${a.name}\n\n«${a.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🔬 Профиль:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🏗️ Описание:\n${a.desc}\n\n🌘 Тень:\n${a.shadow}\n\n💬 «${a.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Спуститься: https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
