@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Который ты час? ⏰</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #0a0a10;
+  --bg-rgb: 10,10,16;
+  --surface: rgba(255,255,255,0.025);
+  --surface2: rgba(255,255,255,0.05);
+  --surface3: rgba(255,255,255,0.075);
+  --text: #8888a0;
+  --text-dim: #50506a;
+  --text-bright: #e8e8f0;
+  --border: rgba(255,255,255,0.06);
+  --accent: #a78bfa;
+  --accent2: #818cf8;
+  --accent-glow: rgba(167,139,250,0.10);
+  --time-color: #a78bfa;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 30%, var(--accent-glow), transparent 60%);
+  pointer-events: none;
+}
+
+.container { max-width: 640px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 1; }
+.mono { font-family: 'Space Mono', monospace; }
+
+/* ─── Clock Component ─── */
+.clock-wrap { display: flex; justify-content: center; padding: 20px 0; }
+
+.clock {
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.08);
+  position: relative;
+  background: rgba(255,255,255,0.02);
+}
+
+.clock-center {
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.clock-hand {
+  position: absolute;
+  bottom: 50%; left: 50%;
+  transform-origin: bottom center;
+  border-radius: 2px;
+}
+
+.hand-hour {
+  width: 3px; height: 32px;
+  background: var(--text-bright);
+  transform: translateX(-50%) rotate(0deg);
+  transition: transform 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.hand-minute {
+  width: 2px; height: 44px;
+  background: var(--accent);
+  transform: translateX(-50%) rotate(0deg);
+  transition: transform 1.5s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* Clock ticks */
+.clock-tick {
+  position: absolute;
+  width: 1px; height: 6px;
+  background: rgba(255,255,255,0.15);
+  top: 8px; left: 50%;
+  transform-origin: 0 62px;
+}
+
+.clock-tick.major { height: 10px; width: 2px; background: rgba(255,255,255,0.3); }
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 36px 0 24px;
+  animation: fadeUp .8s ease;
+}
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 100px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 2px;
+  color: var(--text-dim); font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.header-badge .blink {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+h1 {
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 800;
+  color: var(--text-bright);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+h1 span {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lead {
+  font-size: 15px; color: var(--text-dim);
+  max-width: 440px; margin: 0 auto;
+  line-height: 1.7; font-weight: 300;
+}
+
+/* ─── Intro ─── */
+.intro {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  margin: 20px 0 28px;
+  animation: fadeUp .8s ease .15s both;
+  text-align: center;
+}
+
+.intro p { font-size: 14px; color: var(--text-dim); line-height: 1.75; font-weight: 300; }
+
+.times-preview {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 8px; margin-top: 16px;
+}
+
+.time-pill {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; padding: 6px 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text-dim);
+}
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #a78bfa, #818cf8);
+  color: #fff; font-family: 'Inter', sans-serif;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 6px 30px rgba(167,139,250,0.2);
+}
+
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(167,139,250,0.3); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+.progress-count { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 700; }
+.progress-bar { height: 2px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #a78bfa, #818cf8); border-radius: 10px; transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .45s ease;
+}
+
+.q-num { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 3px; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+
+.q-type {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--text-dim); font-weight: 600;
+  padding: 4px 10px; background: var(--surface2);
+  border-radius: 6px; margin-bottom: 16px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.q-text {
+  font-size: 22px; font-weight: 700; color: var(--text-bright);
+  line-height: 1.35; margin-bottom: 8px; letter-spacing: -0.3px;
+}
+
+.q-sub {
+  font-size: 14px; font-style: italic; color: var(--text-dim);
+  margin-bottom: 24px; line-height: 1.6; font-weight: 300;
+}
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+/* Standard options */
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .3s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover { border-color: rgba(167,139,250,0.15); background: var(--surface3); }
+.option.selected { border-color: var(--accent); background: rgba(167,139,250,0.08); }
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot { border-color: var(--accent); background: var(--accent); }
+.option.selected .opt-dot::after { content:''; position:absolute; inset:3px; background:#fff; border-radius:50%; }
+
+/* Grid options (visual choices) */
+.grid-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.grid-opt {
+  padding: 20px 14px;
+  background: var(--surface2);
+  border: 1.5px solid transparent;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .3s ease;
+  user-select: none;
+}
+
+.grid-opt:hover { border-color: rgba(167,139,250,0.15); transform: translateY(-2px); }
+.grid-opt.selected { border-color: var(--accent); background: rgba(167,139,250,0.08); }
+
+.grid-opt .go-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.grid-opt .go-title { font-size: 14px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+.grid-opt .go-desc { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, #a78bfa, #818cf8);
+  color: #fff; box-shadow: 0 4px 16px rgba(167,139,250,0.2);
+}
+
+/* ═══ RESULTS ═══ */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+.result-time-wrap { text-align: center; padding: 40px 0 8px; }
+
+.result-time {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 12px;
+  transition: color 1s ease;
+}
+
+.result-period {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.result-name {
+  font-size: 20px; font-weight: 700;
+  color: var(--text-bright); margin-bottom: 8px;
+}
+
+.r-tagline {
+  font-size: 16px; font-weight: 300; font-style: italic;
+  color: var(--text); max-width: 440px;
+  margin: 0 auto 28px; line-height: 1.6;
+}
+
+/* Sky gradient bar */
+.sky-bar {
+  height: 60px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sky-marker {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 3px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(255,255,255,0.5);
+  transition: left 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.sky-labels {
+  display: flex; justify-content: space-between;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: var(--text-dim);
+  margin-top: 6px;
+}
+
+/* ─── Cards ─── */
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+}
+
+.r-card h3 {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+/* Atmosphere grid */
+.atmo-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin: 14px 0 4px;
+}
+
+.atmo-item {
+  padding: 14px;
+  background: var(--surface2);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.atmo-icon { font-size: 22px; display: block; margin-bottom: 6px; }
+.atmo-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 500; margin-bottom: 2px; }
+.atmo-val { font-size: 12px; color: var(--text); font-weight: 500; }
+
+/* Bars */
+.sc-bars { margin: 14px 0 4px; }
+.sc-row { margin-bottom: 12px; }
+.sc-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.sc-name { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text); }
+.sc-val { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 700; }
+.sc-bg { height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.sc-fill { height: 100%; border-radius: 10px; transition: width 1.2s ease; width: 0; }
+
+/* Soundtrack */
+.soundtrack {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px; background: var(--surface2);
+  border-radius: 12px; margin-top: 12px;
+}
+
+.soundtrack .bars {
+  display: flex; align-items: end; gap: 2px; height: 20px;
+}
+
+.soundtrack .bar {
+  width: 3px; background: var(--accent);
+  border-radius: 2px;
+  animation: soundBar 1.2s ease-in-out infinite;
+}
+
+@keyframes soundBar {
+  0%,100% { height: 4px; }
+  50% { height: 18px; }
+}
+
+.soundtrack .bar:nth-child(2) { animation-delay: .2s; }
+.soundtrack .bar:nth-child(3) { animation-delay: .4s; }
+.soundtrack .bar:nth-child(4) { animation-delay: .1s; }
+.soundtrack .bar:nth-child(5) { animation-delay: .3s; }
+
+.st-text { flex: 1; }
+.st-title { font-size: 13px; color: var(--text-bright); font-weight: 600; }
+.st-desc { font-size: 11px; color: var(--text-dim); }
+
+/* Pullquote */
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--accent);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 12px 12px 0;
+}
+
+.pullquote p { font-size: 14px; font-style: italic; color: var(--text-bright); line-height: 1.6; margin: 0; }
+
+/* Gallery */
+.gallery-toggle {
+  width: 100%; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text-dim);
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-bottom: 14px;
+}
+
+.gallery-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+.gallery { display: none; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.gallery.open { display: flex; animation: fadeUp .4s ease; }
+
+.gallery-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px;
+}
+
+.gallery-item.current { border-color: var(--accent); background: rgba(167,139,250,0.05); }
+.gi-time { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; flex-shrink: 0; width: 54px; }
+.gi-body { flex: 1; }
+.gi-name { font-size: 13px; font-weight: 600; color: var(--text-bright); }
+.gi-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.gi-badge { font-size: 9px; padding: 3px 8px; background: rgba(167,139,250,0.1); color: var(--accent); border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── Actions ─── */
+.actions { display: flex; flex-direction: column; gap: 10px; padding-top: 28px; border-top: 1px solid var(--border); }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 14px;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+}
+
+.btn-primary { background: linear-gradient(135deg, #a78bfa, #818cf8); color: #fff; border: none; box-shadow: 0 4px 16px rgba(167,139,250,0.2); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 500; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--text-bright); color: var(--bg); padding: 12px 24px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+@media (max-width:480px) {
+  .container { padding: 12px 14px 50px; }
+  .q-card,.r-card { padding: 24px 16px; }
+  .q-text { font-size: 19px; }
+  .option { padding: 12px 14px; font-size: 13px; }
+  .grid-options { gap: 8px; }
+  .grid-opt { padding: 16px 12px; }
+  .clock { width: 120px; height: 120px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">⏰ <span class="blink">_</span> определение времени</div>
+
+      <div class="clock-wrap">
+        <div class="clock" id="headerClock">
+          <div class="clock-center"></div>
+          <div class="clock-hand hand-hour" id="hcHour" style="transform:translateX(-50%) rotate(0deg)"></div>
+          <div class="clock-hand hand-minute" id="hcMin" style="transform:translateX(-50%) rotate(0deg)"></div>
+        </div>
+      </div>
+
+      <h1>Который ты <span>час?</span></h1>
+      <p class="lead">14 странных, абстрактных, сенсорных вопросов. Ни один из них не про время. Но все они приведут к твоему часу.</p>
+    </div>
+
+    <div class="intro">
+      <p>У каждого человека есть «внутреннее время» — час, в который ты по-настоящему свой. Не когда ты просыпаешься, а когда ты существуешь. Мы найдём его через текстуры, звуки, образы и ощущения.</p>
+      <div class="times-preview">
+        <span class="time-pill">05:30</span>
+        <span class="time-pill">08:15</span>
+        <span class="time-pill">12:00</span>
+        <span class="time-pill">17:45</span>
+        <span class="time-pill">21:30</span>
+        <span class="time-pill">02:47</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Узнать своё время ⏰</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Вопрос</span>
+      <span class="progress-count" id="progressCount">01 / 14</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано!</div>
+
+<script>
+const times = {
+  dawn: { time: "05:30", name: "Рассвет", period: "Раннее утро",
+    color: "#f0a060", glow: "rgba(240,160,96,0.15)",
+    skyGrad: "linear-gradient(90deg, #1a1040, #3a2060, #805080, #d08060, #f0c060)",
+    skyPos: 22,
+    hourDeg: 165, minDeg: 180,
+    tagline: "Ты — тот момент, когда мир ещё спит, а ты уже видишь то, чего не видит никто. Первый свет. Тихая сила.",
+    desc: "Ты просыпаешься, когда мир ещё не решил, каким будет день. Рассветные люди — это те, кто начинает сначала: каждый день, каждый проект, каждые отношения. Исследования хронопсихологии (Roenneberg, 2012) показывают, что люди с ранним хронотипом обладают более высокой проактивностью — способностью действовать до того, как мир попросит. Ты не ждёшь возможности. Ты встаёшь и создаёшь их.",
+    atmo: { sky: "Розовая полоса на горизонте", sound: "Птицы. Первые", scent: "Роса и холодный воздух", feel: "Тихая решимость" },
+    shadow: "Ты так привык(-ла) быть первым(-ой), что устаёшь раньше остальных. Твоя энергия иссякает к вечеру. И ты не умеешь просить помощи — потому что «все ещё спят, а я уже всё сделал(-а)».",
+    soundtrack: { title: "Ambient + звук утреннего леса", desc: "Max Richter — On The Nature of Daylight" },
+    quote: "Рассвет не спрашивает разрешения. Он просто приходит. Каждый раз.",
+    people: "Те, кто встаёт на рассвете, обычно — строители. Архитекторы новых начал." },
+  morning: { time: "08:15", name: "Утро", period: "Начало дня",
+    color: "#60a8e0", glow: "rgba(96,168,224,0.15)",
+    skyGrad: "linear-gradient(90deg, #3a2060, #805080, #80a0d0, #a0d0f0, #d0e8f8)",
+    skyPos: 34,
+    hourDeg: 247, minDeg: 90,
+    tagline: "Ты — чистый лист, ясная голова, первый глоток кофе. Мир только начинается, и ты точно знаешь, что делать.",
+    desc: "08:15 — время, когда хаос ночи уже позади, а хаос дня ещё не начался. Ты — человек ясности. Твой ум работает как только что протёртое стекло: чётко, прозрачно, без искажений. Исследования когнитивной продуктивности (Wieth & Zacks, 2011) показывают, что аналитическое мышление наиболее эффективно в утренние часы. Ты не мечтатель — ты исполнитель. Ты не чувствуешь — ты понимаешь.",
+    atmo: { sky: "Чистое голубое, без облаков", sound: "Кофемашина и тихое радио", scent: "Кофе и чистые простыни", feel: "Фокус и спокойствие" },
+    shadow: "Ты настолько ценишь ясность, что боишься хаоса. А жизнь — это хаос. Ты контролируешь утро, но не можешь контролировать вечер. И это тебя пугает.",
+    soundtrack: { title: "Lo-fi chill + утренний город", desc: "Nils Frahm — Says" },
+    quote: "Утро — это обещание. Не мира тебе. А тебя — миру.",
+    people: "Утренние люди строят системы. Они видят структуру там, где другие видят туман." },
+  noon: { time: "12:00", name: "Полдень", period: "Пик дня",
+    color: "#f0c830", glow: "rgba(240,200,48,0.15)",
+    skyGrad: "linear-gradient(90deg, #805080, #a0d0f0, #e0f0ff, #f0f0e0, #f8e8a0)",
+    skyPos: 50,
+    hourDeg: 360, minDeg: 360,
+    tagline: "Ты — максимальная яркость. Полный свет. Никаких теней. С тобой всё просто, прямо и на виду.",
+    desc: "Полдень — единственное время, когда тени исчезают. Солнце строго сверху, и мир виден таким, какой он есть. Ты — человек абсолютной прямоты. Без двойного дна, без скрытых мотивов, без тумана. Исследования аутентичности (Kernis & Goldman, 2006) показывают, что люди с высокой «unbiased processing» — способностью видеть себя без фильтров — строят самые честные отношения. Ты — солнце в зените: яркий, прямой, невозможно не заметить.",
+    atmo: { sky: "Белое, слепящее", sound: "Шум улицы на пике", scent: "Раскалённый асфальт и жизнь", feel: "Энергия и ясность" },
+    shadow: "Ты не оставляешь места тайне. Людям иногда нужны тени — полутона, недосказанность, мягкость. Твоя прямота может ослеплять, как полуденное солнце.",
+    soundtrack: { title: "Энергичный поп + городской шум", desc: "Pharrell — Happy (но неиронично)" },
+    quote: "В полдень тени исчезают. И видно всё как есть. Не все к этому готовы.",
+    people: "Полуденные люди — генераторы энергии. С ними невозможно быть вялым." },
+  golden: { time: "17:45", name: "Золотой час", period: "Предзакатное время",
+    color: "#e8a050", glow: "rgba(232,160,80,0.15)",
+    skyGrad: "linear-gradient(90deg, #a0d0f0, #f0e0a0, #f0c060, #e08040, #c04040)",
+    skyPos: 74,
+    hourDeg: 147 + 180, minDeg: 270,
+    tagline: "Ты — тёплый свет перед закатом. Всё, к чему ты прикасаешься, становится красивее. Золотой час длится недолго — и в этом его магия.",
+    desc: "17:45 — фотографы называют это golden hour: свет мягкий, тёплый, всё выглядит идеально. Ты — человек, который делает обычные вещи красивыми. Не через усилие, а через присутствие. Исследования ностальгии (Sedikides et al., 2008) показывают, что тёплые воспоминания активируют те же зоны мозга, что и реальная близость. Ты — живое воспоминание: рядом с тобой люди чувствуют, что всё будет хорошо.",
+    atmo: { sky: "Золотисто-розовое", sound: "Тихий смех вдалеке", scent: "Тёплый хлеб и вечерний воздух", feel: "Нежная ностальгия" },
+    shadow: "Золотой час длится 30 минут. Ты знаешь, что красота проходит — и это делает тебя грустным. Ты ловишь моменты, но не можешь их удержать. И боишься, что лучшее уже позади.",
+    soundtrack: { title: "Инди-фолк + закатные аккорды", desc: "Bon Iver — Skinny Love" },
+    quote: "Золотой час существует, чтобы напомнить: самое красивое — всегда мимолётно.",
+    people: "Золотые люди — романтики. Не наивные, а те, кто видит красоту в уходящем." },
+  evening: { time: "21:30", name: "Вечер", period: "Глубокий вечер",
+    color: "#7070c0", glow: "rgba(112,112,192,0.15)",
+    skyGrad: "linear-gradient(90deg, #f0c060, #c04040, #602060, #301050, #1a1040)",
+    skyPos: 86,
+    hourDeg: 285 + 180, minDeg: 180,
+    tagline: "Ты — разговор на кухне в полутьме. Чай, свечи, откровенность. Днём ты нормальный, но настоящий ты — вечером.",
+    desc: "21:30 — маски сняты, свет приглушён, разговоры становятся настоящими. Ты — человек глубины, который раскрывается не сразу. Днём ты функционируешь, вечером — живёшь. Исследования self-disclosure (Jourard, 1971) показывают, что люди открываются сильнее в приглушённом свете и расслабленной обстановке. Ты создаёшь эту обстановку просто своим присутствием.",
+    atmo: { sky: "Фиолетово-синее, первые звёзды", sound: "Тихая музыка и голоса", scent: "Свечи и красное вино", feel: "Интимность и тепло" },
+    shadow: "Ты прячешь настоящего себя до вечера. Днём ты — персонаж, вечером — человек. Но что, если кто-то хочет увидеть тебя при свете дня?",
+    soundtrack: { title: "Джаз + тихий разговор", desc: "Chet Baker — Almost Blue" },
+    quote: "Настоящие разговоры начинаются, когда выключают верхний свет.",
+    people: "Вечерние люди — хранители секретов. Им доверяют то, что не скажут днём." },
+  night: { time: "02:47", name: "Глубокая ночь", period: "Самый тихий час",
+    color: "#8080f0", glow: "rgba(128,128,240,0.2)",
+    skyGrad: "linear-gradient(90deg, #602060, #1a1040, #0a0820, #0a0820, #1a1040)",
+    skyPos: 12,
+    hourDeg: 83, minDeg: 282,
+    tagline: "Ты — 2:47 ночи. Когда все спят, а ты думаешь о смысле жизни, стоя у холодильника. Гений или безумец? Грань тонка.",
+    desc: "02:47 — это час, которого не существует для большинства. Мир спит, город молчит, и в этой тишине рождаются самые странные мысли, самые сильные идеи и самые честные чувства. Ты — ночной мыслитель. Исследования креативности (Wieth & Zacks, 2011) показывают парадокс: неоптимальное время (ночь для «жаворонков», утро для «сов») усиливает дивергентное мышление. Твоя усталость отключает фильтры — и ты думаешь свободнее, чем кто-либо днём.",
+    atmo: { sky: "Абсолютная темнота + далёкие огни", sound: "Тишина. Холодильник. Мысли", scent: "Ночной холод через окно", feel: "Одиночество, но не грустное" },
+    shadow: "Ты живёшь в часе, который не предназначен для жизни. Твоя глубина оплачена бессонницей. Мир работает днём — а ты приходишь к выводам ночью, когда некому их рассказать.",
+    soundtrack: { title: "Ambient + тишина между нотами", desc: "Brian Eno — An Ending (Ascent)" },
+    quote: "В 2:47 ночи ты не можешь врать себе. Слишком тихо. Слишком честно.",
+    people: "Ночные люди — философы. Они знают ответы на вопросы, которые другие не догадываются задать." }
+};
+
+const timeKeys = ['dawn','morning','noon','golden','evening','night'];
+const scaleNames = { dawn:'05:30', morning:'08:15', noon:'12:00', golden:'17:45', evening:'21:30', night:'02:47' };
+
+const questions = [
+  { type: "🎨 Ощущение", text: "Закрой глаза на секунду. Какой цвет ты видишь?",
+    sub: "Не думай. Первый, который пришёл.",
+    layout: "grid",
+    opts: [
+      { icon: "🌅", title: "Тёплый розовый", desc: "Как небо перед рассветом", sc: { dawn: 3, golden: 1 } },
+      { icon: "🔵", title: "Чистый голубой", desc: "Прозрачный, как утро", sc: { morning: 3 } },
+      { icon: "🟡", title: "Яркий жёлтый", desc: "Слепящий, честный", sc: { noon: 3 } },
+      { icon: "🟣", title: "Глубокий фиолетовый", desc: "Тёмный, бархатный", sc: { night: 2, evening: 2 } }
+    ] },
+  { type: "👆 Текстура", text: "Проведи пальцем по воображаемой поверхности. Какая она?",
+    sub: "",
+    layout: "grid",
+    opts: [
+      { icon: "🪨", title: "Холодный камень", desc: "Гладкий, с утренней росой", sc: { dawn: 2, morning: 1 } },
+      { icon: "🪵", title: "Тёплое дерево", desc: "Живое, с историей", sc: { golden: 3 } },
+      { icon: "🧊", title: "Стекло", desc: "Идеально ровное, прозрачное", sc: { morning: 2, noon: 1 } },
+      { icon: "🌿", title: "Мягкий мох", desc: "Влажный, тайный, лесной", sc: { night: 2, evening: 1 } }
+    ] },
+  { type: "👂 Звук", text: "Тишина. И вдруг — один звук. Какой?",
+    sub: "Не что ты хочешь услышать. Что ты слышишь.",
+    layout: "standard",
+    opts: [
+      { text: "Птица. Одна. Первая за день", sc: { dawn: 3 } },
+      { text: "Далёкий поезд. Едет куда-то", sc: { night: 2, evening: 1 } },
+      { text: "Смех. Чей-то, из открытого окна", sc: { golden: 2, noon: 1 } },
+      { text: "Дождь по стеклу. Ровный, бесконечный", sc: { evening: 3 } }
+    ] },
+  { type: "🚪 Выбор", text: "Четыре двери. За каждой — комната. Ты не знаешь, что внутри. Выбери по ощущению.",
+    sub: "",
+    layout: "grid",
+    opts: [
+      { icon: "🚪", title: "Деревянная, тёплая", desc: "Пахнет хлебом и дымом", sc: { golden: 3, evening: 1 } },
+      { icon: "🚪", title: "Стеклянная, прозрачная", desc: "Видно свет за ней", sc: { morning: 2, noon: 2 } },
+      { icon: "🚪", title: "Старая, скрипучая", desc: "Неизвестно, что за ней", sc: { night: 3 } },
+      { icon: "🚪", title: "Белая, только что покрашенная", desc: "Пахнет чем-то новым", sc: { dawn: 3 } }
+    ] },
+  { type: "🌡️ Температура", text: "Какой воздух тебе нужен прямо сейчас?",
+    sub: "Не комфортный. А правильный.",
+    layout: "standard",
+    opts: [
+      { text: "Холодный, бодрящий — как первый вдох зимнего утра", sc: { dawn: 3 } },
+      { text: "Прохладный и свежий — как после дождя", sc: { morning: 2, evening: 1 } },
+      { text: "Тёплый, почти горячий — как летний полдень", sc: { noon: 3 } },
+      { text: "Душный, ночной — с запахом города и тайны", sc: { night: 3 } }
+    ] },
+  { type: "💭 Мысль", text: "Какая фраза звучит у тебя в голове чаще всего?",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "«Надо начать. Прямо сейчас»", sc: { dawn: 2, morning: 2 } },
+      { text: "«Всё будет хорошо. Всё уже хорошо»", sc: { golden: 3 } },
+      { text: "«А какой во всём этом смысл?»", sc: { night: 3 } },
+      { text: "«Давай! Поехали! Действуем!»", sc: { noon: 3 } }
+    ] },
+  { type: "🪟 Окно", text: "Ты подходишь к окну. Что за ним?",
+    sub: "Не что ты хочешь увидеть. Что ты видишь.",
+    layout: "standard",
+    opts: [
+      { text: "Пустая улица, розовое небо, ни одного человека", sc: { dawn: 3 } },
+      { text: "Город на паузе: кофейни открываются, люди идут на работу", sc: { morning: 3 } },
+      { text: "Закатные крыши, золотой свет на стенах домов", sc: { golden: 3 } },
+      { text: "Огни, темнота, чьё-то горящее окно напротив", sc: { night: 2, evening: 2 } }
+    ] },
+  { type: "🫂 Близость", text: "Когда ты чувствуешь себя ближе всего к человеку?",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "Утром, когда мы ещё сонные и настоящие", sc: { dawn: 2, morning: 1 } },
+      { text: "Днём, когда мы делаем что-то вместе", sc: { noon: 3 } },
+      { text: "Вечером, когда мы разговариваем при свечах", sc: { evening: 3 } },
+      { text: "Ночью, когда молчим и всё равно понимаем друг друга", sc: { night: 3 } }
+    ] },
+  { type: "📖 Страница", text: "Ты открываешь книгу на случайной странице. Первое предложение:",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "«Он проснулся до будильника и знал: сегодня всё изменится»", sc: { dawn: 3 } },
+      { text: "«Солнце стояло так высоко, что тени исчезли»", sc: { noon: 2, morning: 1 } },
+      { text: "«Свет в окне стал медовым, и она поняла — лето кончается»", sc: { golden: 3 } },
+      { text: "«В 3 часа ночи телефон зазвонил. Он знал, кто это»", sc: { night: 3 } }
+    ] },
+  { type: "🎵 Тишина", text: "Какая тишина тебе ближе?",
+    sub: "Да, у тишины есть разновидности.",
+    layout: "grid",
+    opts: [
+      { icon: "🌄", title: "Тишина ожидания", desc: "Перед чем-то важным", sc: { dawn: 3 } },
+      { icon: "☀️", title: "Тишина фокуса", desc: "Когда ты полностью в задаче", sc: { morning: 2, noon: 1 } },
+      { icon: "🕯️", title: "Тишина близости", desc: "Когда слова не нужны", sc: { evening: 3 } },
+      { icon: "🌌", title: "Тишина космоса", desc: "Абсолютная. Головокружительная", sc: { night: 3 } }
+    ] },
+  { type: "🔮 Странный вопрос", text: "Если бы у времени был вкус — какой у тебя?",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "Холодная вода из родника — чистый, без примесей", sc: { dawn: 2, morning: 2 } },
+      { text: "Мёд — густой, тёплый, тягучий", sc: { golden: 3 } },
+      { text: "Чёрный кофе — горький, бодрящий, честный", sc: { noon: 2, evening: 1 } },
+      { text: "Дым — ты его чувствуешь, но не можешь поймать", sc: { night: 3 } }
+    ] },
+  { type: "🏃 Движение", text: "Ты идёшь по улице. Как ты идёшь?",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "Быстро, целенаправленно — я знаю куда", sc: { morning: 3 } },
+      { text: "Уверенно, широко — мир принадлежит мне", sc: { noon: 3 } },
+      { text: "Медленно, замечая детали — свет, стены, лица", sc: { golden: 2, evening: 1 } },
+      { text: "Бесцельно. Иду, потому что не могу не идти", sc: { night: 3 } }
+    ] },
+  { type: "💡 Свет", text: "Какой свет тебя описывает?",
+    sub: "Не какой нравится. Какой — ты.",
+    layout: "grid",
+    opts: [
+      { icon: "🌅", title: "Первый луч", desc: "Тонкий, робкий, обещающий", sc: { dawn: 3 } },
+      { icon: "💡", title: "Лампа на столе", desc: "Направленный, тёплый, рабочий", sc: { morning: 2, noon: 1 } },
+      { icon: "🕯️", title: "Свеча", desc: "Живой, дрожащий, интимный", sc: { evening: 3, golden: 1 } },
+      { icon: "🌟", title: "Далёкая звезда", desc: "Холодный, вечный, одинокий", sc: { night: 3 } }
+    ] },
+  { type: "⏰ Финальный", text: "Прямо сейчас — какое время в твоей душе?",
+    sub: "Не на часах. Внутри.",
+    layout: "standard",
+    opts: [
+      { text: "Раннее утро. Всё впереди. Тихая надежда", sc: { dawn: 2, morning: 1 } },
+      { text: "День. Энергия. Движение. Жизнь на полную", sc: { noon: 2, morning: 1 } },
+      { text: "Вечер. Тепло. Свечи. Разговоры", sc: { golden: 1, evening: 2 } },
+      { text: "Ночь. Тишина. Мысли. Бесконечность", sc: { night: 3 } }
+    ] }
+];
+
+let curQ = 0, selOpt = null;
+let scores = { dawn:0, morning:0, noon:0, golden:0, evening:0, night:0 };
+
+// Animate header clock
+function animHeaderClock() {
+  const now = new Date();
+  const h = now.getHours() % 12, m = now.getMinutes();
+  document.getElementById('hcHour').style.transform = `translateX(-50%) rotate(${h*30 + m*0.5}deg)`;
+  document.getElementById('hcMin').style.transform = `translateX(-50%) rotate(${m*6}deg)`;
+}
+animHeaderClock();
+
+function startTest() {
+  document.getElementById('headerSection').style.display = 'none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  const num = String(i+1).padStart(2,'0');
+
+  let optsHTML;
+  if (q.layout === 'grid') {
+    optsHTML = `<div class="grid-options">${q.opts.map((o,j) =>
+      `<div class="grid-opt" onclick="sel(this,${j})"><span class="go-icon">${o.icon}</span><div class="go-title">${o.title}</div><div class="go-desc">${o.desc}</div></div>`
+    ).join('')}</div>`;
+  } else {
+    optsHTML = `<div class="options">${q.opts.map((o,j) =>
+      `<div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`
+    ).join('')}</div>`;
+  }
+
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-type">${q.type}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
+      ${optsHTML}
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать своё время ⏰':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent = `${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(i/questions.length)*100}%`;
+  window.scrollTo({ top: document.getElementById('progressBar').offsetTop-10, behavior:'smooth' });
+}
+
+function sel(el,i) {
+  document.querySelectorAll('.option,.grid-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt = i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if(selOpt===null) return;
+  const sc = questions[curQ].opts[selOpt].sc;
+  for(const [k,v] of Object.entries(sc)) scores[k]+=v;
+  selOpt=null; curQ++;
+  curQ<questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const tKey = sorted[0][0]; const t = times[tKey]; const maxVal = sorted[0][1];
+
+  document.documentElement.style.setProperty('--accent', t.color);
+  document.documentElement.style.setProperty('--accent-glow', t.glow);
+  document.documentElement.style.setProperty('--time-color', t.color);
+
+  const barsHTML = sorted.map(([key,val]) => {
+    const pct = maxVal>0?Math.round((val/maxVal)*100):0;
+    return `<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${scaleNames[key]}</span><span class="sc-val">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${times[key].color}"></div></div></div>`;
+  }).join('');
+
+  const atmoHTML = Object.entries(t.atmo).map(([k,v]) => {
+    const icons = {sky:'🌤️',sound:'🔊',scent:'🌸',feel:'💭'};
+    const labels = {sky:'Небо',sound:'Звук',scent:'Запах',feel:'Ощущение'};
+    return `<div class="atmo-item"><span class="atmo-icon">${icons[k]}</span><div class="atmo-label">${labels[k]}</div><div class="atmo-val">${v}</div></div>`;
+  }).join('');
+
+  const galleryHTML = timeKeys.map(key => {
+    const tm = times[key]; const cur = key===tKey;
+    return `<div class="gallery-item ${cur?'current':''}"><span class="gi-time" style="color:${tm.color}">${tm.time}</span><div class="gi-body"><div class="gi-name">${tm.name}</div><div class="gi-desc">${tm.tagline.slice(0,65)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;
+  }).join('');
+
+  const section = document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML = `
+    <div class="clock-wrap">
+      <div class="clock">
+        <div class="clock-center"></div>
+        <div class="clock-hand hand-hour" id="resHour" style="transform:translateX(-50%) rotate(0deg)"></div>
+        <div class="clock-hand hand-minute" id="resMin" style="transform:translateX(-50%) rotate(0deg)"></div>
+      </div>
+    </div>
+
+    <div class="result-time-wrap">
+      <div class="result-period" style="color:${t.color}">${t.period}</div>
+      <div class="result-time" style="color:${t.color}">${t.time}</div>
+      <div class="result-name">${t.name}</div>
+    </div>
+
+    <p class="r-tagline">${t.tagline}</p>
+
+    <div class="sky-bar" style="background:${t.skyGrad}">
+      <div class="sky-marker" id="skyMarker" style="left:0%"></div>
+    </div>
+    <div class="sky-labels"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+
+    <div class="r-card"><h3>🕐 Кто ты в этом часе</h3><p>${t.desc}</p></div>
+
+    <div class="r-card"><h3>🌤️ Атмосфера</h3><div class="atmo-grid">${atmoHTML}</div></div>
+
+    <div class="r-card"><h3>📊 Твои сутки</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🎵 Саундтрек</h3><p>${t.people}</p>
+      <div class="soundtrack">
+        <div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+        <div class="st-text"><div class="st-title">${t.soundtrack.title}</div><div class="st-desc">${t.soundtrack.desc}</div></div>
+      </div>
+    </div>
+
+    <div class="r-card"><h3>🌘 Теневая сторона</h3><p>${t.shadow}</p>
+      <div class="pullquote"><p>${t.quote}</p></div>
+    </div>
+
+    ${sorted[1][1]>3 ? `<div class="r-card"><h3>🔀 Соседний час: <span class="mono" style="color:${times[sorted[1][0]].color}">${times[sorted[1][0]].time}</span> ${times[sorted[1][0]].name}</h3><p>${times[sorted[1][0]].tagline}</p></div>` : ''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">⏰ Все 6 часов</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(() => {
+    document.getElementById('resHour').style.transform = `translateX(-50%) rotate(${t.hourDeg}deg)`;
+    document.getElementById('resMin').style.transform = `translateX(-50%) rotate(${t.minDeg}deg)`;
+    document.getElementById('skyMarker').style.left = t.skyPos + '%';
+    document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%');
+  }, 300);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function shareShort() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const t = times[sorted[0][0]];
+  const text = `⏰ Моё внутреннее время — ${t.time}\n${t.name}\n\n${t.tagline}\n\nУзнай своё: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share) navigator.share({title:'Который ты час?',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const tKey=sorted[0][0]; const t=times[tKey]; const maxVal=sorted[0][1];
+  const bars = sorted.map(([k,v])=>{const p=maxVal>0?Math.round((v/maxVal)*100):0;return`  ${scaleNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const atmo = Object.entries(t.atmo).map(([k,v])=>{const l={sky:'Небо',sound:'Звук',scent:'Запах',feel:'Ощущение'};return`  ${l[k]}: ${v}`;}).join('\n');
+
+  const text = `⏰ КОТОРЫЙ ТЫ ЧАС? — Результат\n\n${t.time}  ${t.name}\n${t.period}\n\n«${t.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🕐 Кто ты в этом часе:\n\n${t.desc}\n\n━━━━━━━━━━━━━━━━━\n\n🌤️ Атмосфера:\n${atmo}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Сутки:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Теневая сторона:\n${t.shadow}\n\n💬 «${t.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+</script>
+</body>
+</html>
