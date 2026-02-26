@@ -442,9 +442,25 @@ h1 em { font-style: italic; color: var(--w-color); }
     </div>
 
     <div class="weather-scene" id="headerScene">
-      <div class="cloud" style="width:120px;height:40px;top:20px;left:10%;animation:drift 25s linear infinite"></div>
-      <div class="cloud" style="width:80px;height:30px;top:50px;left:60%;animation:drift 18s linear infinite reverse"></div>
+      <div class="cloud" style="width:160px;height:50px;top:10px;left:5%;animation:drift 25s linear infinite;background:rgba(255,255,255,0.06)"></div>
+      <div class="cloud" style="width:200px;height:60px;top:5px;left:30%;animation:drift 20s linear infinite reverse;background:rgba(255,255,255,0.08)"></div>
+      <div class="cloud" style="width:140px;height:45px;top:15px;left:65%;animation:drift 22s linear infinite;background:rgba(255,255,255,0.05)"></div>
     </div>
+    <script>
+    // Generate rain drops
+    (function(){
+      const scene = document.getElementById('headerScene');
+      for(let i=0;i<30;i++){
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.style.left = Math.random()*100+'%';
+        drop.style.height = (12+Math.random()*16)+'px';
+        drop.style.animationDuration = (0.6+Math.random()*0.8)+'s';
+        drop.style.animationDelay = Math.random()*2+'s';
+        scene.appendChild(drop);
+      }
+    })();
+    </script>
     <style>@keyframes drift{0%{transform:translateX(-50px)}100%{transform:translateX(50px)}}</style>
 
     <div class="intro">
