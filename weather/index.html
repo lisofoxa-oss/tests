@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какая ты погода? 🌦️</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --bg: #0c1018;
+  --bg-rgb: 12,16,24;
+  --surface: rgba(255,255,255,0.025);
+  --surface2: rgba(255,255,255,0.05);
+  --surface3: rgba(255,255,255,0.075);
+  --text: #8090a8;
+  --text-dim: #4a5a70;
+  --text-bright: #d8e0ec;
+  --border: rgba(255,255,255,0.06);
+  --w-color: #64b5f6;
+  --w-glow: rgba(100,181,246,0.12);
+}
+
+html{scroll-behavior:smooth}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 30% 20%, var(--w-glow), transparent 50%),
+    radial-gradient(ellipse 40% 50% at 70% 80%, rgba(100,140,200,0.06), transparent 50%);
+  pointer-events: none;
+  transition: background 1.5s ease;
+}
+
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+.serif{font-family:'Instrument Serif',serif}
+
+/* ─── Weather Animations ─── */
+.weather-scene {
+  position: relative;
+  height: 120px;
+  margin: 0 -16px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(100,181,246,0.06), transparent);
+}
+
+/* Rain */
+.rain-drop {
+  position: absolute;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(100,181,246,0.4));
+  animation: rain linear infinite;
+}
+
+@keyframes rain {
+  0% { transform: translateY(-20px); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(140px); opacity: 0; }
+}
+
+/* Clouds */
+.cloud {
+  position: absolute;
+  background: rgba(255,255,255,0.03);
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  padding: 40px 0 24px;
+  animation: fadeUp .8s ease;
+}
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 100px;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim); font-weight: 500; margin-bottom: 20px;
+}
+
+.header-icon { font-size: 56px; display: block; margin-bottom: 16px; }
+
+h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 400;
+  color: var(--text-bright);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+h1 em { font-style: italic; color: var(--w-color); }
+
+.lead {
+  font-size: 15px; color: var(--text-dim);
+  max-width: 460px; margin: 0 auto;
+  line-height: 1.7; font-weight: 300;
+}
+
+.lead strong { color: var(--text); font-weight: 500; }
+
+/* ─── Intro ─── */
+.intro {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0; margin: 20px 0 28px;
+  animation: fadeUp .8s ease .15s both;
+  text-align: center;
+}
+
+.intro p { font-size: 14px; color: var(--text-dim); line-height: 1.75; font-weight: 300; }
+
+.weather-preview {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 8px; margin-top: 16px;
+}
+
+.wp-item {
+  padding: 6px 14px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 100px;
+  font-size: 12px; color: var(--text-dim);
+  display: flex; align-items: center; gap: 6px;
+}
+
+.btn-start {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px; border: none; border-radius: 16px;
+  background: linear-gradient(135deg, #64b5f6, #5c6bc0);
+  color: #fff; font-family: 'DM Sans', sans-serif;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease;
+  animation: fadeUp .8s ease .3s both;
+  box-shadow: 0 6px 30px rgba(100,181,246,0.2);
+}
+
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(100,181,246,0.3); }
+
+/* ─── Progress ─── */
+.progress-container {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(var(--bg-rgb), 0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border); display: none;
+}
+.progress-container.active { display: block; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+.progress-count { font-size: 12px; color: var(--w-color); font-weight: 700; }
+.progress-bar { height: 2px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #64b5f6, #5c6bc0); border-radius: 10px; transition: width .5s ease; width: 0; }
+
+/* ─── Questions ─── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 24px;
+  animation: fadeUp .45s ease;
+}
+
+.q-num { font-size: 11px; letter-spacing: 2px; color: var(--w-color); font-weight: 600; margin-bottom: 4px; text-transform: uppercase; }
+
+.q-type {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; color: var(--text-dim); font-weight: 600;
+  padding: 4px 10px; background: var(--surface2);
+  border-radius: 6px; margin-bottom: 16px;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.q-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 22px; font-weight: 400; color: var(--text-bright);
+  line-height: 1.35; margin-bottom: 8px;
+}
+
+.q-sub {
+  font-size: 14px; font-style: italic; color: var(--text-dim);
+  margin-bottom: 24px; line-height: 1.6; font-weight: 300;
+}
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 14px;
+  cursor: pointer; transition: all .3s ease;
+  font-size: 14px; color: var(--text); line-height: 1.5; user-select: none;
+}
+
+.option:hover { border-color: rgba(100,181,246,0.15); background: var(--surface3); }
+.option.selected { border-color: var(--w-color); background: rgba(100,181,246,0.06); }
+
+.opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all .25s ease; position: relative;
+}
+
+.option.selected .opt-dot { border-color: var(--w-color); background: var(--w-color); }
+.option.selected .opt-dot::after { content:''; position:absolute; inset:3px; background:#fff; border-radius:50%; }
+
+/* Grid opts */
+.grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.grid-opt {
+  padding: 20px 14px; background: var(--surface2);
+  border: 1.5px solid transparent; border-radius: 16px;
+  text-align: center; cursor: pointer; transition: all .3s ease; user-select: none;
+}
+
+.grid-opt:hover { border-color: rgba(100,181,246,0.15); transform: translateY(-2px); }
+.grid-opt.selected { border-color: var(--w-color); background: rgba(100,181,246,0.06); }
+
+.grid-opt .go-icon { font-size: 30px; display: block; margin-bottom: 8px; }
+.grid-opt .go-title { font-size: 14px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+.grid-opt .go-desc { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+
+.btn-next {
+  width: 100%; padding: 14px; border: none; border-radius: 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-top: 14px;
+  background: var(--surface2); color: var(--text-dim); opacity: 0; pointer-events: none;
+}
+
+.btn-next.active {
+  opacity: 1; pointer-events: all;
+  background: linear-gradient(135deg, #64b5f6, #5c6bc0);
+  color: #fff; box-shadow: 0 4px 16px rgba(100,181,246,0.2);
+}
+
+/* ═══ RESULTS ═══ */
+.results-section { display: none; }
+.results-section.active { display: block; animation: fadeUp .8s ease; }
+
+/* Weather result hero */
+.w-hero {
+  text-align: center;
+  padding: 36px 0 20px;
+}
+
+.w-icon-big { font-size: 72px; display: block; margin-bottom: 12px; }
+
+.w-temp {
+  font-family: 'Instrument Serif', serif;
+  font-size: 48px; font-weight: 400;
+  margin-bottom: 4px; line-height: 1;
+}
+
+.w-label {
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 3px; font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.w-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(1.8rem, 6vw, 2.5rem);
+  font-weight: 400; color: var(--text-bright);
+  margin-bottom: 6px;
+}
+
+.w-tagline {
+  font-family: 'Instrument Serif', serif;
+  font-size: 16px; font-style: italic;
+  color: var(--text); max-width: 440px;
+  margin: 0 auto 24px; line-height: 1.6;
+}
+
+/* Forecast bar */
+.forecast-bar {
+  display: flex; gap: 6px; justify-content: center;
+  margin-bottom: 24px; flex-wrap: wrap;
+}
+
+.fc-item {
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+  min-width: 64px;
+}
+
+.fc-item.current { border-color: var(--w-color); background: rgba(100,181,246,0.06); }
+.fc-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+.fc-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── Cards ─── */
+.r-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+}
+
+.r-card h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 17px; font-weight: 400;
+  color: var(--text-bright); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.r-card p { font-size: 14px; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+/* Weather data grid */
+.wd-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin: 14px 0 4px;
+}
+
+.wd-item {
+  padding: 14px; background: var(--surface2);
+  border-radius: 12px; text-align: center;
+}
+
+.wd-icon { font-size: 20px; display: block; margin-bottom: 6px; }
+.wd-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 2px; font-weight: 500; }
+.wd-val { font-size: 12px; color: var(--text); font-weight: 500; }
+
+/* Bars */
+.sc-bars { margin: 14px 0 4px; }
+.sc-row { margin-bottom: 12px; }
+.sc-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.sc-name { font-size: 12px; color: var(--text); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.sc-val { font-size: 11px; font-weight: 700; }
+.sc-bg { height: 5px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.sc-fill { height: 100%; border-radius: 10px; transition: width 1.2s ease; width: 0; }
+
+/* Effect list */
+.effect-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.effect-item:last-child { border-bottom: none; }
+.effect-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.effect-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+
+/* Pullquote */
+.pullquote {
+  padding: 16px 20px;
+  border-left: 3px solid var(--w-color);
+  margin: 14px 0 6px;
+  background: var(--surface2);
+  border-radius: 0 12px 12px 0;
+}
+
+.pullquote p { font-family: 'Instrument Serif', serif; font-size: 15px; font-style: italic; color: var(--text-bright); line-height: 1.6; margin: 0; }
+
+/* Gallery */
+.gallery-toggle {
+  width: 100%; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text-dim);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; margin-bottom: 14px;
+}
+
+.gallery-toggle:hover { border-color: var(--w-color); color: var(--w-color); }
+
+.gallery { display: none; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.gallery.open { display: flex; animation: fadeUp .4s ease; }
+
+.gallery-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 14px;
+}
+
+.gallery-item.current { border-color: var(--w-color); background: rgba(100,181,246,0.04); }
+.gi-emoji { font-size: 24px; flex-shrink: 0; }
+.gi-body { flex: 1; }
+.gi-name { font-size: 13px; font-weight: 600; color: var(--text-bright); }
+.gi-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.gi-badge { font-size: 9px; padding: 3px 8px; background: rgba(100,181,246,0.1); color: var(--w-color); border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── Actions ─── */
+.actions { display: flex; flex-direction: column; gap: 10px; padding-top: 28px; border-top: 1px solid var(--border); }
+
+.btn-act {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px; border-radius: 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .3s ease; text-decoration: none;
+}
+
+.btn-primary { background: linear-gradient(135deg, var(--w-color), #5c6bc0); color: #fff; border: none; box-shadow: 0 4px 16px var(--w-glow); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--w-color); color: var(--w-color); }
+.btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); font-weight: 400; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--text-bright); color: var(--bg); padding: 12px 24px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 999; transition: transform .4s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+@media(max-width:480px) {
+  .container{padding:12px 14px 50px}
+  .q-card,.r-card{padding:24px 16px}
+  .q-text{font-size:19px}
+  .option{padding:12px 14px;font-size:13px}
+  .grid-options{gap:8px}
+  .grid-opt{padding:16px 10px}
+  .wd-grid{grid-template-columns:1fr 1fr}
+  .forecast-bar{gap:4px}
+  .fc-item{min-width:52px;padding:8px 6px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">🌦️ Метеопсихология</div>
+      <span class="header-icon">🌦️</span>
+      <h1>Какая ты <em>погода?</em></h1>
+      <p class="lead">14 вопросов — и ни один не о погоде. Мы определим не погоду, которую ты <strong>любишь</strong>, а погоду, которой ты <strong>являешься</strong> для окружающих.</p>
+    </div>
+
+    <div class="weather-scene" id="headerScene">
+      <div class="cloud" style="width:120px;height:40px;top:20px;left:10%;animation:drift 25s linear infinite"></div>
+      <div class="cloud" style="width:80px;height:30px;top:50px;left:60%;animation:drift 18s linear infinite reverse"></div>
+    </div>
+    <style>@keyframes drift{0%{transform:translateX(-50px)}100%{transform:translateX(50px)}}</style>
+
+    <div class="intro">
+      <p>У каждого человека есть «атмосферное влияние» — то, как меняется воздух вокруг, когда ты входишь в комнату. Кто-то приносит грозу, кто-то — первый снег. Исследования эмоционального заражения (Hatfield, 1994) доказали: мы буквально меняем «климат» вокруг себя.</p>
+      <div class="weather-preview">
+        <span class="wp-item">⛈️ Гроза</span>
+        <span class="wp-item">🌫️ Туман</span>
+        <span class="wp-item">☀️ Солнце</span>
+        <span class="wp-item">❄️ Снег</span>
+        <span class="wp-item">🌧️ Дождь</span>
+        <span class="wp-item">🌬️ Ветер</span>
+      </div>
+    </div>
+
+    <button class="btn-start" onclick="startTest()">Узнать свою погоду 🌦️</button>
+  </div>
+
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Наблюдение</span>
+      <span class="progress-count" id="progressCount">01 / 14</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано!</div>
+
+<script>
+const weathers = {
+  storm: { emoji: "⛈️", name: "Гроза", temp: "+28°", pressure: "↓ 740",
+    color: "#a78bfa", glow: "rgba(167,139,250,0.15)",
+    tagline: "Ты не разрушаешь — ты обновляешь. После тебя воздух чище, земля мягче, а все вокруг наконец дышат. Но пока ты бушуешь — никто не рискнёт выйти.",
+    desc: "Гроза — самое мощное атмосферное явление на планете. Ты входишь в комнату — и напряжение растёт. Это не агрессия — это энергия, которую ты не можешь сдержать. Исследования эмоциональной интенсивности (Larsen & Diener, 1987) показывают: люди-«грозы» чувствуют на 200% ярче остальных. Радость — ярче, боль — острее, любовь — до дрожи. Ты пугаешь? Да. Но после тебя мир становится чище.",
+    data: { intensity: "Максимальная", frequency: "Периодически", duration: "Коротко, но мощно", aftermath: "Свежий воздух" },
+    effects: ["Люди рядом с тобой начинают говорить правду", "После конфликтов с тобой отношения становятся честнее", "Ты заряжаешь пространство электричеством — некоторые это обожают, остальные прячутся", "Тебя невозможно игнорировать. Вообще"],
+    shadow: "Ты бьёшь молнией раньше, чем успеваешь подумать. Твоя интенсивность — не только дар, но и разрушение. Не все деревья переживают грозу. Научись быть дождём без молний.",
+    quote: "После грозы воздух пахнет озоном. Это запах обновления. Не разрушения." },
+  fog: { emoji: "🌫️", name: "Туман", temp: "+6°", pressure: "→ 760",
+    color: "#90a4ae", glow: "rgba(144,164,174,0.15)",
+    tagline: "Рядом с тобой мир замедляется. Шум стихает, контуры размываются. Ты — пауза, которую все забывают делать.",
+    desc: "Туман — не отсутствие погоды. Это самая тихая форма присутствия. Ты не претендуешь на внимание — ты незаметно меняешь восприятие тех, кто рядом. Исследования mindfulness (Kabat-Zinn, 1990) описывают состояние, которое ты создаёшь своим присутствием: мир замедляется, детали проступают, тревога отступает. Ты не решаешь чужие проблемы — ты создаёшь пространство, в котором они растворяются сами.",
+    data: { intensity: "Минимальная", frequency: "Утром и вечером", duration: "Пока не поднимется солнце", aftermath: "Тишина и ясность" },
+    effects: ["Люди рядом с тобой начинают говорить медленнее и тише", "В твоём присутствии исчезает суета", "Ты создаёшь ощущение, что торопиться некуда", "Некоторые находят тебя загадочным(-ой) — и не могут объяснить почему"],
+    shadow: "Туман красив, но в нём легко заблудиться. Твоя неопределённость — не всегда глубина. Иногда людям нужна ясность, а не ещё одна загадка. Не прячь себя за пеленой.",
+    quote: "Туман не скрывает мир. Он показывает только то, что действительно близко." },
+  sun: { emoji: "☀️", name: "Солнце", temp: "+30°", pressure: "↑ 770",
+    color: "#ffd54f", glow: "rgba(255,213,79,0.15)",
+    tagline: "Ты — тепло. Не метафорическое, а физическое. Рядом с тобой людям буквально становится легче. Ты не стараешься — ты просто светишь.",
+    desc: "Солнце — источник всей энергии на Земле. Без него ничего не растёт, ничего не живёт. Ты — человек, рядом с которым люди расцветают. Не потому что ты делаешь что-то особенное, а потому что твоя энергия питает. Исследования социальной поддержки (Cohen & Wills, 1985) показывают: присутствие «солнечных» людей снижает уровень кортизола у окружающих. Ты буквально лечишь стресс. Своим присутствием.",
+    data: { intensity: "Стабильно высокая", frequency: "Каждый день", duration: "Пока ты рядом", aftermath: "Все загорелые и счастливые" },
+    effects: ["Люди улыбаются чаще, когда ты рядом", "Ты превращаешь обычный день в хороший", "Тебя зовут, когда нужно поднять настроение", "Растения у тебя дома живут дольше (не факт, но похоже)"],
+    shadow: "Солнце не умеет выключаться. Ты светишь даже когда тебе самому темно. Твой оптимизм иногда — не сила, а маска. Позволь себе побыть облаком. Мир не рухнет.",
+    quote: "Солнце не просит аплодисментов за рассвет. Оно просто встаёт. Каждый день." },
+  snow: { emoji: "❄️", name: "Снег", temp: "−8°", pressure: "↑ 775",
+    color: "#e0e8f0", glow: "rgba(224,232,240,0.12)",
+    tagline: "Ты — красота, от которой замирают. Мир под тобой становится тише, чище, новее. Ты укрываешь всё — и его уродство тоже.",
+    desc: "Снег — самое трансформативное явление в природе. За одну ночь он превращает хаос в белое полотно. Ты так же влияешь на людей: рядом с тобой всё обнуляется. Прошлое засыпано, поверхность чиста, можно начать сначала. Исследования emotional blanking (Gross, 2001) описывают людей, которые умеют создавать «чистый лист» для окружающих. Ты не решаешь проблемы — ты создаёшь ощущение, что их можно оставить позади.",
+    data: { intensity: "Тихая, но тотальная", frequency: "Редко, но метко", duration: "Пока не растаешь", aftermath: "Чистый лист" },
+    effects: ["Рядом с тобой люди чувствуют себя «обнулёнными» — в хорошем смысле", "Ты создаёшь ощущение новизны даже в старых местах", "Твоя красота завораживает — но держит дистанцию", "После общения с тобой хочется начать что-то с нуля"],
+    shadow: "Снег красив, но холоден. Ты укрываешь мир — но и замораживаешь его. Твоя дистанция — не элегантность. Иногда это страх. Позволь кому-нибудь растопить верхний слой.",
+    quote: "Снег падает бесшумно. Но утром мир неузнаваем." },
+  rain: { emoji: "🌧️", name: "Дождь", temp: "+14°", pressure: "↓ 748",
+    color: "#64b5f6", glow: "rgba(100,181,246,0.15)",
+    tagline: "Ты — меланхолия, от которой не хочется прятаться. Плед, чай, честный разговор. Рядом с тобой хочется быть настоящим.",
+    desc: "Дождь — самый близкий контакт неба с землёй. Каждая капля — прикосновение. Ты — человек, рядом с которым люди раскрываются. Не потому что ты задаёшь вопросы, а потому что твоя «температура» располагает. Исследования vulnerability (Brown, 2012) показывают: люди открываются в обстановке «мягкой грусти» легче, чем в веселье. Ты создаёшь эту обстановку. Ты — безопасное место для чужих слёз.",
+    data: { intensity: "Мягкая, постоянная", frequency: "Часто", duration: "Может идти весь день", aftermath: "Всё зеленеет" },
+    effects: ["Люди рассказывают тебе то, что не говорят другим", "Рядом с тобой не стыдно грустить", "Ты создаёшь атмосферу, в которой хочется остаться дома", "После тебя люди чувствуют, что их услышали"],
+    shadow: "Ты так привык(-ла) быть дождём, что забываешь про солнце. Твоя меланхолия — не всегда глубина. Иногда это привычка. Мир не всегда нуждается в грусти, даже красивой.",
+    quote: "Дождь не извиняется за то, что мочит. Он просто идёт. И всё, что нужно — растёт." },
+  wind: { emoji: "🌬️", name: "Ветер", temp: "+18°", pressure: "↕ переменно",
+    color: "#4dd0e1", glow: "rgba(77,208,225,0.15)",
+    tagline: "Ты — движение. Перемены. Свежий воздух. Тебя нельзя увидеть — но тебя невозможно не почувствовать.",
+    desc: "Ветер — невидимая сила, которая движет облака, поднимает волны и приносит перемены. Ты не оставляешь следов, но после тебя всё меняется. Исследования social catalysts (Levi, 2019) описывают людей-катализаторов: они не участвуют в реакции, но без них она не произойдёт. Ты врываешься в чужую жизнь — и всё начинает двигаться. Лица, города, работы. Рядом с тобой застой невозможен.",
+    data: { intensity: "Переменная", frequency: "Непредсказуемо", duration: "Пока не стихнет", aftermath: "Всё по-другому" },
+    effects: ["Рядом с тобой люди принимают решения, которые откладывали годами", "Ты приносишь свежий воздух — буквально и метафорически", "После тебя люди меняют причёску. Или работу. Или жизнь", "Тебя невозможно контролировать. И это магнитит"],
+    shadow: "Ветер не умеет остановиться. Ты несёшь перемены — но иногда людям нужна стабильность, а не ещё один вихрь. Научись быть бризом, а не штормом.",
+    quote: "Ветер не видно. Но посмотри на деревья — и поймёшь, что он здесь." }
+};
+
+const wKeys = ['storm','fog','sun','snow','rain','wind'];
+const scaleNames = { storm:'Гроза', fog:'Туман', sun:'Солнце', snow:'Снег', rain:'Дождь', wind:'Ветер' };
+const scaleEmoji = { storm:'⛈️', fog:'🌫️', sun:'☀️', snow:'❄️', rain:'🌧️', wind:'🌬️' };
+
+const questions = [
+  { type: "🫂 Чужие глаза", text: "Ты входишь в комнату, где тебя не знают. Что чувствуют люди?",
+    sub: "Не что ты хочешь. А что реально происходит.",
+    layout: "standard",
+    opts: [
+      { text: "Напряжение — как будто что-то сейчас произойдёт", sc: { storm: 3 } },
+      { text: "Тепло — как будто стало чуть уютнее", sc: { sun: 3 } },
+      { text: "Не замечают — но через полчаса все разговаривают тише", sc: { fog: 2, rain: 1 } },
+      { text: "Движение — как будто кто-то открыл окно", sc: { wind: 3 } }
+    ] },
+  { type: "💧 Метафора", text: "Если бы твоё настроение было жидкостью — какой?",
+    sub: "",
+    layout: "grid",
+    opts: [
+      { icon: "⚡", title: "Кипяток", desc: "Горячий, бурлит, обжигает", sc: { storm: 3 } },
+      { icon: "🫖", title: "Тёплый чай", desc: "Успокаивает, согревает", sc: { sun: 2, rain: 1 } },
+      { icon: "🧊", title: "Талая вода", desc: "Чистая, холодная, свежая", sc: { snow: 3 } },
+      { icon: "💨", title: "Пар", desc: "Невидимый, но горячий", sc: { fog: 2, wind: 1 } }
+    ] },
+  { type: "📞 Ситуация", text: "Другу плохо. Он(-а) звонит тебе. Что ты делаешь?",
+    sub: "Честно, не как «должен(а)».",
+    layout: "standard",
+    opts: [
+      { text: "Говорю прямо: что случилось, что надо делать, хватит страдать", sc: { storm: 2, wind: 1 } },
+      { text: "Слушаю молча. Иногда тишина — лучший ответ", sc: { rain: 3 } },
+      { text: "Шучу, отвлекаю, вытаскиваю из ямы энергией", sc: { sun: 3 } },
+      { text: "Создаю план: «Сейчас делаем вот что…» — и меняю ситуацию", sc: { wind: 2, storm: 1 } }
+    ] },
+  { type: "🪟 Наблюдение", text: "Какую погоду ты создаёшь в рабочем чате?",
+    sub: "Подумай, как люди реагируют на твои сообщения.",
+    layout: "standard",
+    opts: [
+      { text: "Энергия — мои сообщения поднимают настроение", sc: { sun: 3 } },
+      { text: "Движение — после моих сообщений все начинают действовать", sc: { wind: 3 } },
+      { text: "Тишина — я пишу редко, но каждое сообщение весомое", sc: { snow: 2, fog: 1 } },
+      { text: "Гром — иногда жёстко, но потом все благодарят за честность", sc: { storm: 3 } }
+    ] },
+  { type: "🔮 Странный вопрос", text: "Закрой глаза. Ты — явление природы. Что люди чувствуют кожей рядом с тобой?",
+    sub: "",
+    layout: "grid",
+    opts: [
+      { icon: "🔥", title: "Тепло", desc: "Приятное, как весеннее солнце", sc: { sun: 3 } },
+      { icon: "💧", title: "Влажность", desc: "Мягкая, обволакивающая", sc: { rain: 2, fog: 1 } },
+      { icon: "❄️", title: "Прохладу", desc: "Свежую, бодрящую", sc: { snow: 2, wind: 1 } },
+      { icon: "⚡", title: "Статическое электричество", desc: "Покалывание, мурашки", sc: { storm: 3 } }
+    ] },
+  { type: "🎭 Конфликт", text: "Ты в серьёзной ссоре. Как это выглядит?",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "Вспышка — громко, ярко, быстро. Потом тишина и примирение", sc: { storm: 3 } },
+      { text: "Замалчиваю — становлюсь холодным(-ой) и далёким(-ой)", sc: { snow: 3 } },
+      { text: "Расстраиваюсь тихо — мне нужно время пережить", sc: { rain: 3 } },
+      { text: "Меняю тему — переключаю фокус, двигаюсь дальше", sc: { wind: 2, sun: 1 } }
+    ] },
+  { type: "🫂 Влияние", text: "Друзья говорят, что после общения с тобой они чувствуют:",
+    sub: "Спроси у них мысленно. Что они реально скажут?",
+    layout: "standard",
+    opts: [
+      { text: "Заряд энергии — хочется делать, жить, двигаться", sc: { sun: 2, storm: 1 } },
+      { text: "Спокойствие — будто мир замедлился", sc: { fog: 2, rain: 1 } },
+      { text: "Ясность — мысли как-то сами разложились по полочкам", sc: { snow: 2, wind: 1 } },
+      { text: "Перемены — вдруг захотелось что-то изменить в жизни", sc: { wind: 3 } }
+    ] },
+  { type: "🏠 Пространство", text: "В твоём идеальном доме окно всегда открыто или закрыто?",
+    sub: "И почему.",
+    layout: "grid",
+    opts: [
+      { icon: "🪟", title: "Настежь", desc: "Мне нужен воздух и звук улицы", sc: { wind: 3, sun: 1 } },
+      { icon: "🌧️", title: "Приоткрыто", desc: "Слышен дождь, но тепло", sc: { rain: 3 } },
+      { icon: "❄️", title: "Закрыто, но видно", desc: "Красиво смотреть на мир из тишины", sc: { snow: 2, fog: 2 } },
+      { icon: "⛈️", title: "Зависит от настроения", desc: "Иногда настежь, иногда заколочено", sc: { storm: 3 } }
+    ] },
+  { type: "💬 Разговор", text: "Твой стиль общения больше похож на:",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "Гром и молния — прямо, ярко, иногда слишком", sc: { storm: 3 } },
+      { text: "Шёпот — тихо, но люди наклоняются послушать", sc: { fog: 2, rain: 1 } },
+      { text: "Солнечный луч — тепло, позитивно, с улыбкой", sc: { sun: 3 } },
+      { text: "Порыв ветра — неожиданно, с новым направлением", sc: { wind: 3 } }
+    ] },
+  { type: "🌡️ Температура", text: "Какое слово описывает твоё присутствие для других?",
+    sub: "Не кто ты. А как тебя ощущают.",
+    layout: "standard",
+    opts: [
+      { text: "Тепло", sc: { sun: 3, rain: 1 } },
+      { text: "Напряжение", sc: { storm: 3 } },
+      { text: "Тишина", sc: { fog: 2, snow: 2 } },
+      { text: "Движение", sc: { wind: 3 } }
+    ] },
+  { type: "🎵 Звук", text: "Если бы у тебя был звук — какой?",
+    sub: "",
+    layout: "grid",
+    opts: [
+      { icon: "⚡", title: "Раскат грома", desc: "Мощный, вибрирующий", sc: { storm: 3 } },
+      { icon: "🌧️", title: "Шум дождя", desc: "Ровный, успокаивающий", sc: { rain: 3 } },
+      { icon: "🍃", title: "Шелест листьев", desc: "Лёгкий, ненавязчивый", sc: { fog: 1, wind: 2 } },
+      { icon: "❄️", title: "Хруст снега", desc: "Тихий, чёткий, чистый", sc: { snow: 3 } }
+    ] },
+  { type: "🌍 Масштаб", text: "Твоё влияние на людей — это:",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "Точечное — я влияю на одного-двоих, но очень сильно", sc: { rain: 2, fog: 1 } },
+      { text: "Масштабное — когда я появляюсь, меняется вся атмосфера", sc: { storm: 2, sun: 1 } },
+      { text: "Незаметное — люди не понимают, что изменились, пока я не уйду", sc: { snow: 2, fog: 2 } },
+      { text: "Каталитическое — я запускаю процессы, которые продолжаются без меня", sc: { wind: 3 } }
+    ] },
+  { type: "🌙 Ночной вопрос", text: "Чего о тебе не знают даже близкие?",
+    sub: "",
+    layout: "standard",
+    opts: [
+      { text: "Что мне бывает страшно. По-настоящему. Чаще, чем кажется", sc: { storm: 2, rain: 1 } },
+      { text: "Что мне одиноко. Даже в компании. Даже когда смеюсь", sc: { sun: 2, fog: 1 } },
+      { text: "Что я устал(-а). От роли, которую играю каждый день", sc: { wind: 2, snow: 1 } },
+      { text: "Что я чувствую гораздо больше, чем показываю", sc: { snow: 2, rain: 2 } }
+    ] },
+  { type: "🌦️ Финальный", text: "Прямо сейчас — какая ты погода?",
+    sub: "Не думай. Чувствуй.",
+    layout: "grid",
+    opts: [
+      { icon: "⛈️", title: "Электричество", desc: "Внутри всё гудит", sc: { storm: 3 } },
+      { icon: "☀️", title: "Свет", desc: "Тихое, тёплое спокойствие", sc: { sun: 2, rain: 1 } },
+      { icon: "❄️", title: "Тишина", desc: "Всё замерло", sc: { snow: 2, fog: 2 } },
+      { icon: "🌬️", title: "Порыв", desc: "Хочется куда-то. Прямо сейчас", sc: { wind: 3 } }
+    ] }
+];
+
+let curQ=0, selOpt=null;
+let scores = { storm:0, fog:0, sun:0, snow:0, rain:0, wind:0 };
+
+function startTest() {
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = questions[i];
+  const num = String(i+1).padStart(2,'0');
+  let optsHTML;
+  if(q.layout==='grid') {
+    optsHTML = `<div class="grid-options">${q.opts.map((o,j)=>`<div class="grid-opt" onclick="sel(this,${j})"><span class="go-icon">${o.icon}</span><div class="go-title">${o.title}</div><div class="go-desc">${o.desc}</div></div>`).join('')}</div>`;
+  } else {
+    optsHTML = `<div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>`;
+  }
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-type">${q.type}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      ${optsHTML}
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать свою погоду 🌦️':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i) {
+  document.querySelectorAll('.option,.grid-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt() {
+  if(selOpt===null) return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const [k,v] of Object.entries(sc)) scores[k]+=v;
+  selOpt=null; curQ++;
+  curQ<questions.length ? showQ(curQ) : showResults();
+}
+
+function showResults() {
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const wKey=sorted[0][0]; const w=weathers[wKey]; const maxVal=sorted[0][1];
+
+  document.documentElement.style.setProperty('--w-color',w.color);
+  document.documentElement.style.setProperty('--w-glow',w.glow);
+
+  const barsHTML=sorted.map(([key,val])=>{
+    const pct=maxVal>0?Math.round((val/maxVal)*100):0;
+    return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${scaleEmoji[key]} ${scaleNames[key]}</span><span class="sc-val" style="color:${weathers[key].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${weathers[key].color}"></div></div></div>`;
+  }).join('');
+
+  const dataHTML=Object.entries(w.data).map(([k,v])=>{
+    const icons={intensity:'💥',frequency:'📅',duration:'⏱️',aftermath:'🌈'};
+    const labels={intensity:'Интенсивность',frequency:'Частота',duration:'Длительность',aftermath:'Последствия'};
+    return`<div class="wd-item"><span class="wd-icon">${icons[k]}</span><div class="wd-label">${labels[k]}</div><div class="wd-val">${v}</div></div>`;
+  }).join('');
+
+  const effectsHTML=w.effects.map(e=>`<div class="effect-item"><span class="effect-icon">🌦️</span><span class="effect-text">${e}</span></div>`).join('');
+
+  const fcHTML=wKeys.map(key=>{
+    const ww=weathers[key]; const cur=key===wKey;
+    return`<div class="fc-item ${cur?'current':''}"><span class="fc-icon">${ww.emoji}</span><div class="fc-label">${scaleNames[key]}</div></div>`;
+  }).join('');
+
+  const galleryHTML=wKeys.map(key=>{
+    const ww=weathers[key]; const cur=key===wKey;
+    return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${ww.emoji}</span><div class="gi-body"><div class="gi-name">${ww.name}</div><div class="gi-desc">${ww.tagline.slice(0,65)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;
+  }).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="w-hero">
+      <span class="w-icon-big">${w.emoji}</span>
+      <div class="w-label" style="color:${w.color}">Твоя погода</div>
+      <div class="w-name">${w.name}</div>
+      <div style="display:flex;justify-content:center;gap:16px;margin:8px 0">
+        <span style="font-size:13px;color:var(--text-dim)">🌡️ ${w.temp}</span>
+        <span style="font-size:13px;color:var(--text-dim)">📊 ${w.pressure}</span>
+      </div>
+    </div>
+
+    <p class="w-tagline">${w.tagline}</p>
+
+    <div class="forecast-bar">${fcHTML}</div>
+
+    <div class="r-card"><h3>🌦️ Метеопрофиль</h3><p>${w.desc}</p></div>
+
+    <div class="r-card"><h3>📡 Метеоданные</h3><div class="wd-grid">${dataHTML}</div></div>
+
+    <div class="r-card"><h3>🌍 Твоё влияние на окружающих</h3>${effectsHTML}</div>
+
+    <div class="r-card"><h3>📊 Атмосферный профиль</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🌘 Теневая сторона</h3><p>${w.shadow}</p>
+      <div class="pullquote"><p>${w.quote}</p></div>
+    </div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Вторая погода: ${weathers[sorted[1][0]].emoji} ${weathers[sorted[1][0]].name}</h3><p>${weathers[sorted[1][0]].tagline}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🌦️ Все 6 типов погоды</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать результат</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort() {
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const w=weathers[sorted[0][0]];
+  const text=`${w.emoji} Моя погода — ${w.name}\n🌡️ ${w.temp}\n\n${w.tagline}\n\nУзнай свою: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share) navigator.share({title:'Какая ты погода?',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Ссылка скопирована!'));
+}
+
+function copyFull() {
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const wKey=sorted[0][0]; const w=weathers[wKey]; const maxVal=sorted[0][1];
+  const bars=sorted.map(([k,v])=>{const p=maxVal>0?Math.round((v/maxVal)*100):0;return`  ${scaleEmoji[k]} ${scaleNames[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const data=Object.entries(w.data).map(([k,v])=>{const l={intensity:'Интенсивность',frequency:'Частота',duration:'Длительность',aftermath:'Последствия'};return`  ${l[k]}: ${v}`;}).join('\n');
+  const eff=w.effects.map(e=>`  🌦️ ${e}`).join('\n');
+
+  const text=`🌦️ КАКАЯ ТЫ ПОГОДА? — Результат\n\n${w.emoji}  ${w.name}\n🌡️ ${w.temp}  📊 ${w.pressure}\n\n«${w.tagline}»\n\n━━━━━━━━━━━━━━━━━\n\n🌦️ Метеопрофиль:\n\n${w.desc}\n\n━━━━━━━━━━━━━━━━━\n\n📡 Метеоданные:\n${data}\n\n━━━━━━━━━━━━━━━━━\n\n🌍 Влияние:\n${eff}\n\n━━━━━━━━━━━━━━━━━\n\n📊 Профиль:\n${bars}\n\n━━━━━━━━━━━━━━━━━\n\n🌘 Теневая сторона:\n${w.shadow}\n\n💬 «${w.quote}»\n\n━━━━━━━━━━━━━━━━━\n→ Пройти тест: https://lisofoxa-oss.github.io/tests/`;
+
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Результат скопирован!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>
