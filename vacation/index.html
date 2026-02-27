@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какой ты отпуск 🏖️</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f6fa;--bg2:#e6eff6;
+  --surface:#fff;--surface2:#f4f9fd;
+  --text:#4a6278;--text-dim:#7a96aa;--text-bright:#1a3448;
+  --border:rgba(100,160,210,0.12);
+  --sky:#5aafe6;--sea:#3d9be0;--sand:#f0d8a0;--sun:#ffc94a;--palm:#5ab87a;--coral:#ff7a7a;
+  --glow:rgba(90,175,230,0.12);
+  --card-shadow:0 2px 16px rgba(60,120,180,0.06);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+.fun{font-family:'Nunito',sans-serif}
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+
+/* Sky gradient bg */
+.sky-bg{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,#d4eaf8 0%,#e8f2fa 30%,#f0f6fa 60%,#f8f4e8 100%);pointer-events:none}
+
+/* Floating clouds */
+.clouds{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.cloud{position:absolute;background:#fff;border-radius:50px;opacity:.5;animation:drift linear infinite}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+@keyframes drift{from{transform:translateX(-200px)}to{transform:translateX(calc(100vw + 200px))}}
+
+.header{text-align:center;padding:40px 0 24px;animation:fadeUp .8s ease}
+.header-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(90,175,230,0.1);border:1px solid rgba(90,175,230,0.15);border-radius:100px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--sea);font-weight:600;margin-bottom:20px}
+.header-scene{font-size:40px;display:flex;justify-content:center;gap:4px;margin-bottom:16px}
+h1{font-family:'Nunito',sans-serif;font-size:clamp(2rem,7vw,3rem);font-weight:900;color:var(--text-bright);line-height:1.1;margin-bottom:14px}
+h1 span{color:var(--sea)}
+.lead{font-size:15px;color:var(--text-dim);max-width:440px;margin:0 auto;line-height:1.7;font-weight:400}
+
+.intro-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;margin:24px 0 28px;box-shadow:var(--card-shadow);animation:fadeUp .8s ease .15s both}
+.intro-box p{font-size:14px;color:var(--text-dim);line-height:1.7;text-align:center}
+.intro-icons{display:flex;justify-content:center;gap:16px;margin-top:14px;font-size:28px}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:16px;background:linear-gradient(135deg,var(--sky),var(--sea));color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .3s both;box-shadow:0 6px 30px var(--glow)}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(90,175,230,0.25)}
+
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(240,246,250,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-family:'Nunito',sans-serif;font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:700}
+.progress-count{font-size:12px;color:var(--sea);font-weight:700}
+.progress-bar{height:4px;background:rgba(90,175,230,0.1);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--sun));border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;box-shadow:var(--card-shadow);animation:fadeUp .45s ease}
+.q-num{font-family:'Nunito',sans-serif;font-size:11px;letter-spacing:2px;color:var(--sea);font-weight:800;margin-bottom:14px}
+.q-text{font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;color:var(--text-bright);line-height:1.35;margin-bottom:8px}
+.q-sub{font-size:14px;font-style:italic;color:var(--text-dim);margin-bottom:22px;line-height:1.6;font-weight:400}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--surface2);border:2px solid transparent;border-radius:14px;cursor:pointer;transition:all .25s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(90,175,230,0.2);background:#edf5fc}
+.option.selected{border-color:var(--sea);background:rgba(90,175,230,0.06)}
+.opt-emoji{font-size:22px;flex-shrink:0}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--bg2);color:var(--text-dim);opacity:0;pointer-events:none}
+.btn-next.active{opacity:1;pointer-events:all;background:linear-gradient(135deg,var(--sky),var(--sea));color:#fff;box-shadow:0 4px 16px var(--glow)}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+/* Vacation card */
+.vac-card{background:linear-gradient(135deg,#d8f0ff,#e0f0ff,#f0f8ff);border:1px solid rgba(90,175,230,0.15);border-radius:24px;padding:30px 24px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden}
+.vac-card::before{content:'';position:absolute;top:-40%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(255,201,74,0.15),transparent 70%);pointer-events:none}
+.vac-icon{font-size:72px;display:block;margin-bottom:12px;position:relative;z-index:1}
+.vac-label{font-family:'Nunito',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:800;color:var(--sea);margin-bottom:8px}
+.vac-name{font-family:'Nunito',sans-serif;font-size:clamp(1.8rem,6vw,2.4rem);font-weight:900;color:var(--text-bright);margin-bottom:4px}
+.vac-aka{font-size:13px;color:var(--sea);font-style:italic;margin-bottom:16px}
+.vac-tagline{font-size:15px;color:var(--text);max-width:440px;margin:0 auto;line-height:1.65;font-weight:400}
+
+/* Fun scales */
+.fun-scales{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 20px;margin-bottom:14px;box-shadow:var(--card-shadow)}
+.fun-scales h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text-bright);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.fs-row{margin-bottom:16px}
+.fs-label{display:flex;justify-content:space-between;margin-bottom:6px}
+.fs-name{font-size:12px;font-weight:600;color:var(--text)}
+.fs-val{font-size:12px;font-weight:700;color:var(--sea)}
+.fs-bar{height:8px;background:rgba(90,175,230,0.08);border-radius:8px;overflow:hidden}
+.fs-fill{height:100%;border-radius:8px;transition:width 1.2s ease;width:0}
+
+/* Packing list */
+.pack-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pack-item{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(90,175,230,0.06);border-radius:10px;font-size:12px;color:var(--text);font-weight:500}
+
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px 22px;margin-bottom:14px;box-shadow:var(--card-shadow)}
+.r-card h3{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:400}
+
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500}
+.sc-val{font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:rgba(90,175,230,0.08);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--sea);color:var(--sea)}
+.gallery{display:none;flex-direction:column;gap:8px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.gallery-item.current{border-color:var(--sea);background:rgba(90,175,230,0.04)}
+.gi-emoji{font-size:24px;flex-shrink:0}
+.gi-body{flex:1}
+.gi-name{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--text-bright)}
+.gi-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.gi-badge{font-size:9px;padding:3px 8px;background:rgba(90,175,230,0.1);color:var(--sea);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--sky),var(--sea));color:#fff;border:none;box-shadow:0 4px 16px var(--glow)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--sea);color:var(--sea)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--sea);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:18px}.option{padding:12px 14px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="sky-bg"></div>
+<div class="clouds">
+  <div class="cloud" style="width:120px;height:36px;top:8%;left:-100px;animation-duration:45s;opacity:.35"></div>
+  <div class="cloud" style="width:80px;height:26px;top:15%;left:-80px;animation-duration:55s;animation-delay:8s;opacity:.25"></div>
+  <div class="cloud" style="width:140px;height:40px;top:5%;left:-140px;animation-duration:65s;animation-delay:20s;opacity:.3"></div>
+</div>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">🌴 развлекательный тест</div>
+      <div class="header-scene">🌊🏖️☀️🌴🍹</div>
+      <h1>Какой ты <span>отпуск</span></h1>
+      <p class="lead">Не куда ты хочешь поехать — а какой ты отпуск как человек. Тюлень? Авантюрист? Экскурсовод, от которого все прячутся?</p>
+    </div>
+    <div class="intro-box">
+      <p>12 вопросов. Ноль науки. Максимум узнаваемости. Шкалы уровня тюленя и шила в одном месте — включены.</p>
+      <div class="intro-icons">🧳🗺️🧴🩴🍉🏔️</div>
+    </div>
+    <button class="btn-start" onclick="startTest()">Улететь в отпуск ✈️</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Отпуск</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const types={
+  seal:{emoji:"🦭",name:"Тюлень олл-инклюзив",aka:"он же «не трогайте меня»",color:"#5aafe6",
+    tagline:"Твой идеальный отпуск — горизонтальный. Лежак, коктейль, шведский стол, повторить. Ты отдыхаешь по-настоящему — то есть вообще ничего не делаешь. И это прекрасно.",
+    desc:"Ты приехал(-а) отдыхать — и именно это и делаешь. Никаких экскурсий в 6 утра, никаких «надо же посмотреть храмы». Храм — это шведский стол. Утренняя медитация — это дремать у бассейна. Вечерний ритуал — второй ужин.",
+    scales:{seal:95,adventure:15,culture:10,social:40,budget:30},
+    packing:["Три купальника","Крем SPF 50","Книга (не откроет)","Подушка из дома","Ничего лишнего"],
+    shadow:"Ты вернёшься домой и будешь отдыхать от отдыха. Потому что даже лежание утомляет, если делать это профессионально."},
+  backpack:{emoji:"🎒",name:"Рюкзак на 40 литров",aka:"он же «а давайте автостопом»",color:"#5ab87a",
+    tagline:"Ты не отдыхаешь — ты выживаешь в красивых локациях. Палатка, костёр, рассвет в горах, душ — раз в три дня. И ты абсолютно счастлив(-а).",
+    desc:"Отель? Зачем отель, если есть звёзды вместо потолка? Ресторан? Зачем ресторан, если есть горелка и доширак с видом на ущелье? Ты знаешь, что настоящий отдых — это когда чуть-чуть тяжело, но очень красиво.",
+    scales:{seal:5,adventure:95,culture:30,social:50,budget:90},
+    packing:["Палатка","Горелка","Нож","Пауэрбанк","Надежда"],
+    shadow:"Ты расскажешь друзьям про рассвет в горах. Они скажут «вау». Ты не расскажешь им про мокрую палатку и клещей."},
+  guide:{emoji:"🗺️",name:"Живой экскурсовод",aka:"он же «вставайте, храмы ждут»",color:"#e8a030",
+    tagline:"Ты составил(-а) план на каждый день. С таймингом. С резервными вариантами. С рейтингами на Google Maps. Отпуск — это проект, и ты его менеджеришь.",
+    desc:"Ты не просто едешь — ты исследуешь. Каждый город — квест. Каждый музей — достижение. У тебя есть список must-see, и ты пройдёшь его весь. Даже если ноги откажут на третий день.",
+    scales:{seal:10,adventure:60,culture:95,social:45,budget:50},
+    packing:["Power bank (два)","Путеводитель","Удобные кроссовки","Блокнот","Расписание на каждый день"],
+    shadow:"Ты вернёшься уставшим(-ей) больше, чем до отпуска. Но с 3000 фоток и ощущением, что «всё успел(-а)»."},
+  party:{emoji:"🎉",name:"Вечеринка на ножках",aka:"он же «сон для слабых»",color:"#ff6a8a",
+    tagline:"Ты едешь не к морю — ты едешь к барам, клубам, людям и рассветам, которые встречаешь на танцполе. Отдых — это когда весело, а не когда тихо.",
+    desc:"Пляж? Да, для фоток. Море? Окунулся(-ась) и обратно в бар. Тебе нужны люди, музыка, движение. Ты заведёшь друзей в каждом баре и забудешь их имена утром. И это часть плана.",
+    scales:{seal:20,adventure:50,culture:15,social:95,budget:20},
+    packing:["Очки для вайба","Портативная колонка","Аспирин","Три наряда на вечер","Ноль планов на утро"],
+    shadow:"Ты выложишь 40 сторис. Проспишь весь обратный рейс. И в понедельник скажешь «мне нужен отпуск от отпуска»."},
+  hermit:{emoji:"🏡",name:"Дом > Мальдивы",aka:"он же «мне и тут хорошо»",color:"#9b7abf",
+    tagline:"Зачем куда-то ехать, если дома — кровать, холодильник и ни одного человека? Твой отпуск — это не место. Это состояние «меня нет, я в отпуске» не выходя из квартиры.",
+    desc:"Ты берёшь отпуск, закрываешь дверь — и всё. Сериалы, пижама, заказ еды, тишина. Через неделю ты выходишь обновлённый(-ая), загорелый(-ая) от экрана, и с чувством, что это был лучший отдых в жизни.",
+    scales:{seal:80,adventure:5,culture:20,social:5,budget:95},
+    packing:["Пижама (чистая)","Подписки на стриминги","Еда на неделю","Заряженный телефон","Выключенный будильник"],
+    shadow:"Тебя спросят «куда ездил(-а)?». Ты соврёшь. Или скажешь правду — и все подумают, что ты грустишь. Нет. Ты кайфуешь."},
+  instagrammer:{emoji:"📸",name:"Фотоотпуск",aka:"он же «подожди, не ешь, я не сфоткал»",color:"#50b0d0",
+    tagline:"Отпуск не случился, если его нет в сторис. Каждый завтрак — контент. Каждый закат — 15 дублей. Каждый пляж — поиск идеального ракурса.",
+    desc:"Ты не ленишься — ты встаёшь в 5 утра ради золотого часа. Ты не ешь — ты фотографируешь еду, пока она остывает. Ты не плаваешь — ты снимаешь рилсы в воде. И это искусство. Серьёзно.",
+    scales:{seal:30,adventure:40,culture:50,social:70,budget:35},
+    packing:["Камера / телефон с хорошей камерой","Штатив","Три наряда для фоток","Повербанк","Список локаций для контента"],
+    shadow:"У тебя 500 фоток. На 490 — ты позируешь. На 10 — ты реально отдыхаешь. Но те 10 — не для инстаграма."},
+  budget:{emoji:"💰",name:"Бюджетный гений",aka:"он же «это можно бесплатно»",color:"#6a9a5a",
+    tagline:"Ты летишь за 2000₽ с пересадкой через Стамбул, ночуешь в хостеле за 300₽ и ешь уличную еду. И видишь в 10 раз больше тех, кто заплатил в 10 раз больше.",
+    desc:"Ты знаешь все лайфхаки. Авиасейлс — твоя библия. Каучсёрфинг — стиль жизни. Ты можешь объехать три страны за бюджет чужого уикенда. Это не жадность — это суперсила.",
+    scales:{seal:15,adventure:70,culture:60,social:55,budget:95},
+    packing:["Рюкзак (не чемодан!)","Мгновенная лапша","Карта скидок","Пакет из duty free","Хитрый взгляд"],
+    shadow:"Ты сэкономишь на всём. Но потратишь 40 часов на поиск дешёвых билетов. Время — тоже деньги. Но ты об этом не думаешь."}
+};
+
+const tKeys=Object.keys(types);
+const scaleLabels={seal:'🦭 Уровень тюленя',adventure:'🧗 Шило в одном месте',culture:'🏛️ Жажда культуры',social:'🎉 Тусовочность',budget:'💰 Экономность'};
+
+const questions=[
+  {text:"Будильник в отпуске:",
+   sub:"Честно.",
+   opts:[
+     {e:"😴",text:"Какой будильник? Я просыпаюсь когда проснусь",sc:{seal:3,hermit:1}},
+     {e:"⏰",text:"6:30. Рассвет сам себя не сфоткает",sc:{instagrammer:2,guide:2}},
+     {e:"🌅",text:"Рано. Надо успеть на трек до жары",sc:{backpack:3}},
+     {e:"🌙",text:"15:00. Потому что лёг в 7 утра",sc:{party:3}}
+   ]},
+  {text:"Ты на пляже. Главная задача:",
+   opts:[
+     {e:"🧴",text:"Лежать. Не двигаться. Фотосинтезировать",sc:{seal:3}},
+     {e:"📸",text:"Найти ракурс, где вода бирюзовая, а я — загорелая",sc:{instagrammer:3}},
+     {e:"🏐",text:"Найти компанию на волейбол",sc:{party:2,backpack:1}},
+     {e:"🗺️",text:"Я не на пляже. Я в музее",sc:{guide:3}}
+   ]},
+  {text:"Чемодан. Сколько?",
+   sub:"",
+   opts:[
+     {e:"🎒",text:"Рюкзак. Один. На всё",sc:{backpack:3,budget:1}},
+     {e:"🧳",text:"Чемодан + ручная кладь. Стандарт",sc:{guide:1,instagrammer:1}},
+     {e:"🧳🧳🧳",text:"Три. И ещё пакет из дьюти-фри",sc:{seal:1,instagrammer:2}},
+     {e:"🛋️",text:"Ноль. Я дома",sc:{hermit:3}}
+   ]},
+  {text:"Местная кухня. Подход:",
+   opts:[
+     {e:"🍽️",text:"Шведский стол в отеле. Зачем рисковать",sc:{seal:3}},
+     {e:"🥘",text:"Уличная еда! Где местные — там вкусно и дёшево",sc:{budget:3,backpack:1}},
+     {e:"📍",text:"Рестораны из путеводителя. Все с рейтингом 4.5+",sc:{guide:2,instagrammer:1}},
+     {e:"🍕",text:"Что-нибудь знакомое. Макдональдс есть везде",sc:{hermit:2,seal:1}}
+   ]},
+  {text:"Идеальный попутчик:",
+   opts:[
+     {e:"🙅",text:"Никто. Я еду один(-а) и это не грустно",sc:{hermit:2,backpack:1}},
+     {e:"😎",text:"Лучший друг. Который тоже хочет лежать",sc:{seal:2,party:1}},
+     {e:"🗣️",text:"Компания! Чем больше народу, тем веселее",sc:{party:3}},
+     {e:"📋",text:"Тот, кто не будет спорить с моим планом",sc:{guide:3}}
+   ]},
+  {text:"Дождь в отпуске. Реакция:",
+   opts:[
+     {e:"😭",text:"Катастрофа. Я за это не платил(-а)",sc:{instagrammer:2,seal:1}},
+     {e:"🤷",text:"Отличный повод лежать в номере",sc:{seal:2,hermit:2}},
+     {e:"☔",text:"Надеваю дождевик и иду гулять. Дождь — это атмосфера",sc:{backpack:3}},
+     {e:"🍸",text:"Отличный повод найти бар",sc:{party:3}}
+   ]},
+  {text:"Сувениры:",
+   opts:[
+     {e:"🧲",text:"Магнитик на холодильник. Традиция!",sc:{guide:2}},
+     {e:"📸",text:"Фотки — лучший сувенир",sc:{instagrammer:2,backpack:1}},
+     {e:"💸",text:"Сувениры — развод для туристов",sc:{budget:3}},
+     {e:"🛍️",text:"Везу подарки всем. Полчемодана — подарки",sc:{party:1,guide:1,seal:1}}
+   ]},
+  {text:"Wi-Fi в отеле не работает:",
+   opts:[
+     {e:"😱",text:"ПАНИКА. Как я выложу сторис??",sc:{instagrammer:3}},
+     {e:"😌",text:"Наконец-то настоящий отпуск",sc:{backpack:2,hermit:1}},
+     {e:"🤔",text:"Иду в кафе с вайфаем",sc:{budget:1,guide:1}},
+     {e:"😡",text:"Звоню на ресепшн каждые 10 минут",sc:{seal:2,guide:1}}
+   ]},
+  {text:"Последний день отпуска. Что делаешь?",
+   opts:[
+     {e:"😢",text:"Ничего. Лежу и грущу что завтра домой",sc:{seal:3}},
+     {e:"📸",text:"Бегаю доснимать всё что не успел(-а)",sc:{instagrammer:2,guide:1}},
+     {e:"🛍️",text:"Закупаю еду / алкоголь домой",sc:{budget:2}},
+     {e:"🎉",text:"Прощальная вечеринка. До утра. Самолёт подождёт",sc:{party:3}}
+   ]},
+  {text:"Ты опаздываешь на экскурсию. Реакция:",
+   opts:[
+     {e:"🏃",text:"Бегу!!! Я же забронировал(-а)!",sc:{guide:3}},
+     {e:"🤷",text:"Значит не судьба. Пойду на пляж",sc:{seal:3}},
+     {e:"📱",text:"Хм, я не записывался(-ась) ни на какую экскурсию",sc:{hermit:2,party:1}},
+     {e:"😎",text:"Сам(-а) проведу себе экскурсию. Гугл + ноги",sc:{backpack:2,budget:1}}
+   ]},
+  {text:"Что обязательно забудешь дома:",
+   opts:[
+     {e:"🧴",text:"Солнцезащитный крем. Каждый раз",sc:{seal:2,party:1}},
+     {e:"🔌",text:"Зарядку. Классика",sc:{instagrammer:1,backpack:1}},
+     {e:"🩴",text:"Ничего. У меня чек-лист",sc:{guide:3}},
+     {e:"✈️",text:"Я уже забыл(-а) дату вылета",sc:{hermit:2,seal:1}}
+   ]},
+  {text:"Главное в отпуске:",
+   sub:"Одно. Самое-самое.",
+   opts:[
+     {e:"🧘",text:"Ничего не делать и не чувствовать вины за это",sc:{seal:3,hermit:1}},
+     {e:"🌍",text:"Увидеть что-то новое",sc:{guide:2,backpack:2}},
+     {e:"📸",text:"Привезти воспоминания (и контент)",sc:{instagrammer:3}},
+     {e:"🫂",text:"Провести время с людьми",sc:{party:3}},
+     {e:"💸",text:"Уложиться в бюджет и увидеть максимум",sc:{budget:3}}
+   ]}
+];
+
+let curQ=0,selOpt=null;
+let scores={};
+tKeys.forEach(k=>scores[k]=0);
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      <div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><span class="opt-emoji">${o.e}</span><span>${o.text}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать свой отпуск ✈️':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const tKey=sorted[0][0],t=types[tKey],maxVal=Math.max(sorted[0][1],1);
+
+  const barsHTML=sorted.map(([key,val])=>{const pct=Math.round((val/maxVal)*100);return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${types[key].emoji} ${types[key].name}</span><span class="sc-val" style="color:${types[key].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${types[key].color}"></div></div></div>`;}).join('');
+
+  const funScalesHTML=Object.entries(t.scales).map(([key,val])=>{
+    const colors={seal:'#5aafe6',adventure:'#5ab87a',culture:'#e8a030',social:'#ff6a8a',budget:'#6a9a5a'};
+    return`<div class="fs-row"><div class="fs-label"><span class="fs-name">${scaleLabels[key]}</span><span class="fs-val">${val}%</span></div><div class="fs-bar"><div class="fs-fill" data-w="${val}" style="background:${colors[key]}"></div></div></div>`;
+  }).join('');
+
+  const packHTML=t.packing.map(p=>`<span class="pack-item">🧳 ${p}</span>`).join('');
+
+  const galleryHTML=tKeys.map(key=>{const tt=types[key],cur=key===tKey;return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${tt.emoji}</span><div class="gi-body"><div class="gi-name">${tt.name}</div><div class="gi-desc">${tt.aka}</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="vac-card">
+      <span class="vac-icon">${t.emoji}</span>
+      <div class="vac-label" style="color:${t.color}">Твой отпуск</div>
+      <div class="vac-name">${t.name}</div>
+      <div class="vac-aka">${t.aka}</div>
+      <div class="vac-tagline">${t.tagline}</div>
+    </div>
+
+    <div class="fun-scales"><h3>📊 Отпускные шкалы</h3>${funScalesHTML}</div>
+
+    <div class="r-card"><h3>🏖️ Описание вида</h3><p>${t.desc}</p></div>
+
+    <div class="r-card"><h3>🧳 Что в чемодане</h3><div class="pack-list">${packHTML}</div></div>
+
+    <div class="r-card"><h3>😅 Обратная сторона</h3><p>${t.shadow}</p></div>
+
+    <div class="r-card"><h3>🎯 Совпадение по типам</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Тоже похоже: ${types[sorted[1][0]].emoji} ${types[sorted[1][0]].name}</h3><p>${types[sorted[1][0]].tagline}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🏖️ Все 7 типов</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Другой отпуск</button>
+    </div>`;
+
+  setTimeout(()=>{
+    document.querySelectorAll('.sc-fill,.fs-fill').forEach(b=>b.style.width=b.dataset.w+'%');
+  },400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const t=types[sorted[0][0]];
+  const text=`${t.emoji} Мой отпуск — ${t.name} (${t.aka})\n\n${t.tagline}\n\n🏖️ А ты какой? https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Какой ты отпуск',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const t=types[sorted[0][0]],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${types[k].emoji} ${types[k].name}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const text=`🏖️ КАКОЙ ТЫ ОТПУСК\n\n${t.emoji} ${t.name}\n${t.aka}\n\n«${t.tagline}»\n\n🧳 В чемодане: ${t.packing.join(', ')}\n\n📊 Профиль:\n${bars}\n\n→ https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
