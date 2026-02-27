@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Твой динозавр-тотем 🦖</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0a06;--bg-rgb:12,10,6;
+  --surface:rgba(200,160,80,0.03);--surface2:rgba(200,160,80,0.06);--surface3:rgba(200,160,80,0.10);
+  --text:#8a7a60;--text-dim:#5a5040;--text-bright:#d8c8a0;
+  --border:rgba(200,160,80,0.07);
+  --amber:#d4a030;--bone:#c8b898;--fossil:#a08860;
+  --glow:rgba(212,160,48,0.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+.mono{font-family:'Space Mono',monospace}
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+
+#particleBg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.4}
+
+.header{text-align:center;padding:40px 0 24px;animation:fadeUp .8s ease}
+.header-badge{font-family:'Space Mono',monospace;display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:20px}
+.header-icon{font-size:56px;display:block;margin-bottom:16px}
+h1{font-size:clamp(2rem,6.5vw,2.8rem);font-weight:800;color:var(--text-bright);line-height:1.1;margin-bottom:14px;letter-spacing:-.5px}
+h1 span{background:linear-gradient(135deg,#d4a030,#e8c060);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.lead{font-size:15px;color:var(--text-dim);max-width:460px;margin:0 auto;line-height:1.7;font-weight:300}
+
+.era-intro{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 0;margin:24px 0 28px;animation:fadeUp .8s ease .15s both;text-align:center}
+.era-intro p{font-size:14px;color:var(--text-dim);line-height:1.75;font-weight:300;margin-bottom:16px}
+.era-bar{display:flex;height:6px;border-radius:6px;overflow:hidden;gap:2px}
+.era-seg{flex:1;border-radius:3px}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,#d4a030,#b08020);color:#fff;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .3s both;box-shadow:0 6px 30px var(--glow)}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(212,160,48,0.2)}
+
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(var(--bg-rgb),0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase}
+.progress-count{font-family:'Space Mono',monospace;font-size:12px;color:var(--amber);font-weight:700}
+.progress-bar{height:2px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),#e8c060);border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;animation:fadeUp .45s ease}
+.q-num{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--amber);font-weight:700;margin-bottom:4px}
+.q-era{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:600;padding:4px 10px;background:var(--surface2);border-radius:6px;margin-bottom:16px;letter-spacing:1px;text-transform:uppercase;color:var(--fossil)}
+.q-text{font-size:20px;font-weight:700;color:var(--text-bright);line-height:1.35;margin-bottom:8px;letter-spacing:-.3px}
+.q-sub{font-size:14px;font-style:italic;color:var(--text-dim);margin-bottom:24px;line-height:1.6;font-weight:300}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:15px 16px;background:var(--surface2);border:1.5px solid transparent;border-radius:14px;cursor:pointer;transition:all .3s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(212,160,48,0.15);background:var(--surface3)}
+.option.selected{border-color:var(--amber);background:rgba(212,160,48,0.06)}
+.opt-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.08);flex-shrink:0;margin-top:2px;transition:all .25s ease;position:relative}
+.option.selected .opt-dot{border-color:var(--amber);background:var(--amber)}
+.option.selected .opt-dot::after{content:'';position:absolute;inset:3px;background:#fff;border-radius:50%}
+
+.grid-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-opt{padding:20px 14px;background:var(--surface2);border:1.5px solid transparent;border-radius:16px;text-align:center;cursor:pointer;transition:all .3s ease;user-select:none}
+.grid-opt:hover{border-color:rgba(212,160,48,0.15);transform:translateY(-2px)}
+.grid-opt.selected{border-color:var(--amber);background:rgba(212,160,48,0.06)}
+.grid-opt .go-icon{font-size:30px;display:block;margin-bottom:8px}
+.grid-opt .go-title{font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+.grid-opt .go-desc{font-size:11px;color:var(--text-dim);line-height:1.4}
+
+.dino-fact{margin-top:16px;padding:10px 14px;background:rgba(212,160,48,0.04);border:1px solid rgba(212,160,48,0.1);border-radius:10px;font-size:12px;color:var(--amber);line-height:1.6;display:none;animation:fadeUp .3s ease}
+.dino-fact.show{display:block}
+.dino-fact-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;opacity:.7}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--surface2);color:var(--text-dim);opacity:0;pointer-events:none}
+.btn-next.active{opacity:1;pointer-events:all;background:linear-gradient(135deg,var(--amber),#b08020);color:#fff;box-shadow:0 0 16px var(--glow)}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+.r-hero{text-align:center;padding:36px 0 20px}
+.r-icon-big{font-size:72px;display:block;margin-bottom:12px}
+.r-label{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:8px}
+.r-name{font-size:clamp(1.8rem,6vw,2.4rem);font-weight:800;color:var(--text-bright);margin-bottom:4px}
+.r-latin{font-family:'Space Mono',monospace;font-size:12px;color:var(--fossil);font-style:italic;margin-bottom:16px}
+.r-tagline{font-size:16px;font-style:italic;color:var(--text);max-width:460px;margin:0 auto 24px;line-height:1.6}
+
+/* Dino stats */
+.dino-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.ds-item{padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;text-align:center}
+.ds-icon{font-size:18px;display:block;margin-bottom:4px}
+.ds-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:2px}
+.ds-val{font-size:12px;font-weight:600;color:var(--amber)}
+
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px 22px;margin-bottom:14px}
+.r-card h3{font-size:14px;font-weight:700;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.5px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:300}
+
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500;display:flex;align-items:center;gap:8px}
+.sc-val{font-family:'Space Mono',monospace;font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.pullquote{padding:16px 20px;border-left:3px solid var(--amber);margin:14px 0 6px;background:var(--surface2);border-radius:0 12px 12px 0}
+.pullquote p{font-size:14px;font-style:italic;color:var(--text-bright);line-height:1.6;margin:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--amber);color:var(--amber)}
+.gallery{display:none;flex-direction:column;gap:8px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.gallery-item.current{border-color:var(--amber);background:rgba(212,160,48,0.04)}
+.gi-emoji{font-size:24px;flex-shrink:0}
+.gi-body{flex:1}
+.gi-name{font-size:13px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.gi-badge{font-size:9px;padding:3px 8px;background:rgba(212,160,48,0.1);color:var(--amber);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--amber),#b08020);color:#fff;border:none;box-shadow:0 4px 16px var(--glow)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--amber);color:var(--amber)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--amber);color:var(--bg);padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:18px}.option{padding:12px 14px;font-size:13px}.grid-options{gap:8px}.grid-opt{padding:16px 10px}.dino-stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<canvas id="particleBg"></canvas>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">🦴 Палеонтологический тест</div>
+      <span class="header-icon">🦖</span>
+      <h1>Твой <span>динозавр</span>-тотем</h1>
+      <p class="lead">165 миллионов лет они правили планетой. У каждого — своя стратегия выживания. Какая из них — твоя?</p>
+    </div>
+    <div class="era-intro">
+      <p>Мезозой. Три периода. Тысячи видов. Хищники и травоядные, гиганты и малыши, одиночки и стайные. Не все были сильными — но все выжившие были умными. Как и ты.</p>
+      <div class="era-bar">
+        <div class="era-seg" style="background:#6a8a5a" title="Триас"></div>
+        <div class="era-seg" style="background:#4a7a6a" title="Юра"></div>
+        <div class="era-seg" style="background:#8a6a3a" title="Мел"></div>
+        <div class="era-seg" style="background:#c0392b;flex:.2" title="💥"></div>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startTest()">Раскопать себя 🦴</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Раскопки</span>
+      <span class="progress-count" id="progressCount">01 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* Canvas */
+(function(){
+  const c=document.getElementById('particleBg'),ctx=c.getContext('2d');
+  let W,H,ps=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;ps=[];for(let i=0;i<25;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,vy:.1+Math.random()*.3,vx:(Math.random()-.5)*.2,a:.1+Math.random()*.3,pulse:Math.random()*Math.PI*2})}
+  function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{p.x+=p.vx;p.y-=p.vy;p.pulse+=.015;if(p.y<-10)p.y=H+10;if(p.x<0||p.x>W)p.vx*=-1;const a=p.a*(.5+.5*Math.sin(p.pulse));ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(212,160,48,${a})`;ctx.fill()});requestAnimationFrame(draw)}
+  resize();draw();addEventListener('resize',resize);
+})();
+
+const dinos={
+  trex:{emoji:"🦖",name:"Тираннозавр",latin:"Tyrannosaurus rex",color:"#c0392b",
+    tagline:"Ты не просишь разрешения. Ты входишь — и всё меняется. Не потому что хочешь внимания. Потому что ты — вершина пищевой цепочки.",
+    desc:"Тираннозавр — 12 тонн чистой доминации. Но вот парадокс: последние исследования показывают, что T. rex был социальным хищником. Охотился группами. Заботился о потомстве. За фасадом абсолютной силы — сложная социальная жизнь. Ты так же: снаружи — давление и мощь, внутри — больше нюансов, чем кто-либо подозревает.",
+    stats:{size:"12 м / 9 тонн",era:"Мел · 68 млн лет",diet:"Хищник",iq:"Один из умнейших"},
+    shadow:"Сила без контроля — разрушение. Ты привык(-ла), что мир подстраивается. Но не все хотят быть добычей. Иногда нужно уменьшить челюсти.",
+    quote:"Вершина пищевой цепи — самое одинокое место. Но вид оттуда — лучший."},
+  bronto:{emoji:"🦕",name:"Бронтозавр",latin:"Brontosaurus excelsus",color:"#6a8a5a",
+    tagline:"Ты не торопишься. Ты не суетишься. Ты просто — есть. И этого достаточно, чтобы земля дрожала.",
+    desc:"Бронтозавр — 23 метра спокойствия. Самые большие существа на суше за всю историю. Их стратегия? Расти. Не нападать, не прятаться — просто стать настолько большим, чтобы никто не рискнул. Ты так же: твоё присутствие само по себе — защита. Ты не борешься за место — ты занимаешь его.",
+    stats:{size:"23 м / 15 тонн",era:"Юра · 150 млн лет",diet:"Травоядный",iq:"Спокойный гигант"},
+    shadow:"Размер защищает, но и замедляет. Ты так привык(-ла) к стабильности, что перемены — катастрофа. А метеориты случаются.",
+    quote:"Гиганту не нужно доказывать, что он гигант. Земля и так дрожит."},
+  raptor:{emoji:"🐆",name:"Велоцираптор",latin:"Velociraptor mongoliensis",color:"#d4a030",
+    tagline:"Ты быстрый. Ты умный. Ты работаешь в команде. И когда ты появляешься — уже поздно.",
+    desc:"Забудь фильмы — настоящий велоцираптор размером с индейку. Но с мозгом, непропорционально большим для своего тела. Стайный охотник, который побеждал добычу в 10 раз крупнее — координацией, скоростью и хитростью. Ты так же: твоя сила не в размере, а в скорости мышления и умении работать с людьми.",
+    stats:{size:"2 м / 15 кг",era:"Мел · 75 млн лет",diet:"Хищник",iq:"Гений среди динозавров"},
+    shadow:"Скорость — наркотик. Ты так привык(-ла) к быстрым решениям, что терпение кажется слабостью. Но не всё можно взять нахрапом.",
+    quote:"Не самый большой. Не самый сильный. Самый умный. Этого достаточно."},
+  ankylo:{emoji:"🛡️",name:"Анкилозавр",latin:"Ankylosaurus magniventris",color:"#7a8a6a",
+    tagline:"Тебя невозможно сломать. Невозможно пробить. Невозможно заставить сдвинуться. Ты — живая крепость. И ты решаешь, кого впустить.",
+    desc:"Анкилозавр — ходячий танк. Костяная броня, булава на хвосте, даже глазные веки — бронированные. Его стратегия: не бегать, не нападать, просто стать непробиваемым. Даже T. rex обходил его стороной. Ты так же: твоя защита — не стены, а внутренняя непоколебимость.",
+    stats:{size:"7 м / 6 тонн",era:"Мел · 68 млн лет",diet:"Травоядный",iq:"Несгибаемый"},
+    shadow:"Броня защищает. Но внутри брони — темно. Ты не пускаешь боль — но не пускаешь и радость. Не всё, что приближается — угроза.",
+    quote:"Танку не нужна скорость. Ему нужно знать, куда он едет."},
+  ptero:{emoji:"🦅",name:"Птеранодон",latin:"Pteranodon longiceps",color:"#5a7aaa",
+    tagline:"Пока все ходят — ты летишь. Пока все решают — ты уже видишь картину сверху. Ты не лучше. Ты просто выше.",
+    desc:"Птеранодон — размах крыльев 7 метров. Не динозавр технически, а птерозавр — но кого это волнует, когда ты летишь. Его стратегия: перспектива. С высоты видно и добычу, и опасность, и путь. Ты так же: твоя сила — в способности видеть шире, чем другие. Ты не увязаешь в деталях.",
+    stats:{size:"7 м размах",era:"Мел · 85 млн лет",diet:"Рыба",iq:"Стратег"},
+    shadow:"С высоты всё кажется маленьким. Включая чужую боль. Ты так привык(-ла) видеть «общую картину», что забываешь о деталях — а в деталях живут люди.",
+    quote:"Высота — лучшая стратегия. Пока не забываешь приземляться."},
+  stego:{emoji:"🔱",name:"Стегозавр",latin:"Stegosaurus stenops",color:"#8a7a5a",
+    tagline:"Ты тихий. Мирный. Никого не трогаешь. Но шипы на хвосте — не для красоты. Кто тронет — узнает.",
+    desc:"Стегозавр — парадокс: мозг размером с грецкий орех, но выживал 155 миллионов лет. Как? Простая, но гениальная стратегия: не нападай, но будь опасен для тех, кто нападёт. Пластины на спине — терморегуляция и устрашение. Шипы на хвосте — оружие. Ты так же: миролюбивый, но с границами, которые лучше не пересекать.",
+    stats:{size:"9 м / 5 тонн",era:"Юра · 155 млн лет",diet:"Травоядный",iq:"Простой, но мудрый"},
+    shadow:"Шипы работают. Но иногда ты выставляешь их слишком рано — и отпугиваешь тех, кто пришёл с миром.",
+    quote:"Мирный не значит безопасный. Это значит — ещё не спровоцированный."},
+  para:{emoji:"🎺",name:"Паразауролоф",latin:"Parasaurolophus walkeri",color:"#6a7a8a",
+    tagline:"Тебя слышно за километры. Не потому что ты громкий — потому что ты уникальный. Твой голос — это ты. И его невозможно спутать.",
+    desc:"Паразауролоф — динозавр с трубой на голове. Буквально. Полый гребень работал как резонатор — звук разносился на километры. Стадный, социальный, коммуникативный. Его стратегия: связь. Предупредить стадо, найти партнёра, заявить о себе. Ты так же: ты — голос. Люди слышат тебя и идут на звук.",
+    stats:{size:"10 м / 2.5 тонны",era:"Мел · 76 млн лет",diet:"Травоядный",iq:"Коммуникатор"},
+    shadow:"Голос — сила. Но если ты говоришь всегда — тебя перестают слышать. Иногда лучшая коммуникация — тишина.",
+    quote:"Того, чей голос уникален, невозможно заглушить. Только перекричать — бессмысленно."},
+  troodon:{emoji:"🧠",name:"Троодон",latin:"Troodon formosus",color:"#9a7aaa",
+    tagline:"Ты маленький. Незаметный. И умнее всех в комнате. Ты не побеждаешь — ты переживаешь. Это важнее.",
+    desc:"Троодон — самый умный динозавр, если мерить отношение мозга к телу. Ночной охотник с огромными глазами, стереоскопическим зрением, хватательными лапами. Если бы метеорит не упал — некоторые учёные считают, что троодон мог бы эволюционировать в разумное существо. Ты так же: твоя сила — в том, что ты видишь то, что другие пропускают.",
+    stats:{size:"2.5 м / 50 кг",era:"Мел · 77 млн лет",diet:"Всеядный",iq:"Самый умный"},
+    shadow:"Ум — это одиночество. Ты видишь больше — но и страдаешь от того, что другие не видят. Не все хотят, чтобы им объясняли, что они не замечают.",
+    quote:"Умнейшим не нужно быть сильнейшими. Им нужно быть последними, кто стоит."}
+};
+
+const dKeys=['trex','bronto','raptor','ankylo','ptero','stego','para','troodon'];
+const dNames={trex:'Тирекс',bronto:'Бронто',raptor:'Раптор',ankylo:'Анкило',ptero:'Птеро',stego:'Стего',para:'Пара',troodon:'Троодон'};
+
+const questions=[
+  {era:"🦴 Триас",text:"Территория. Как ты обозначаешь своё пространство?",sub:"Не комнату — жизненное пространство. Границы, правила, зону.",
+   fact:"Территориальное поведение появилось задолго до динозавров — ещё у рыб девонского периода, 400 млн лет назад.",
+   opts:[
+     {text:"Молча. Кто надо — чувствует. Кто не чувствует — узнаёт",sc:{trex:2,ankylo:2}},
+     {text:"Голосом. Я прямо говорю, что можно и что нельзя",sc:{para:3,trex:1}},
+     {text:"Никак. Я подстраиваюсь под чужое пространство",sc:{raptor:2,troodon:1}},
+     {text:"У меня нет территории. Я всегда в движении",sc:{ptero:3}}
+   ]},
+  {era:"🌿 Юра",text:"Еда закончилась. Что делаешь?",sub:"Метафора. Ресурсы кончились — деньги, время, терпение. Стратегия?",
+   fact:"Зауроподы глотали камни (гастролиты), чтобы перемалывать пищу в желудке. Адаптация > сила.",
+   opts:[
+     {text:"Отбираю у кого-то. Мне нужнее",sc:{trex:3}},
+     {text:"Ищу новый источник. Мир большой",sc:{ptero:2,raptor:2}},
+     {text:"Снижаю потребление. Переживу на минимуме",sc:{ankylo:2,stego:2}},
+     {text:"Объединяюсь с другими. Вместе — больше шансов",sc:{para:2,raptor:2}}
+   ]},
+  {era:"🌿 Юра",text:"Опасность. Землетрясение. Твоя первая реакция — не продуманная, а инстинктивная:",sub:"",
+   layout:"grid",
+   fact:"«Freeze, flight, fight, fawn» — 4F-реакция на стресс. Какая у тебя — определяет тотем.",
+   opts:[
+     {icon:"🏃",title:"Бежать",desc:"Скорость. Инстинкт. Прочь",sc:{raptor:3,ptero:1}},
+     {icon:"⚔️",title:"Встать и встретить",desc:"Лицом к угрозе",sc:{trex:3,ankylo:1}},
+     {icon:"🧊",title:"Замереть",desc:"Переждать. Не двигаться",sc:{stego:2,troodon:2}},
+     {icon:"📢",title:"Крикнуть остальным",desc:"Предупредить стаю",sc:{para:3}}
+   ]},
+  {era:"🔥 Мел",text:"Ночь. Лес. Звуки. Ты чувствуешь себя комфортнее...",sub:"",
+   layout:"grid",
+   fact:"Троодон — один из немногих динозавров, приспособленных к ночной охоте. Огромные глаза улавливали минимальный свет.",
+   opts:[
+     {icon:"☀️",title:"Днём",desc:"Когда всё видно и понятно",sc:{bronto:2,para:1}},
+     {icon:"🌅",title:"На закате",desc:"Мягкий свет, тишина",sc:{stego:2,ptero:1}},
+     {icon:"🌙",title:"Ночью",desc:"В темноте я лучше думаю",sc:{troodon:3}},
+     {icon:"⏰",title:"Не имеет значения",desc:"Я функционирую всегда",sc:{raptor:2,trex:1}}
+   ]},
+  {era:"🔥 Мел",text:"Конфликт в стае. Два сильных лидера — оба правы. Что делаешь?",sub:"Ты не можешь поддержать обоих.",
+   fact:"Стайные тероподы (дейнонихи) оставляли следы, указывающие на иерархию: альфа шёл первым, остальные — за ним.",
+   opts:[
+     {text:"Поддерживаю сильнейшего. Прагматизм",sc:{trex:2,raptor:1}},
+     {text:"Пытаюсь примирить. Стая важнее эго",sc:{para:3,bronto:1}},
+     {text:"Ухожу. Это не мой конфликт",sc:{ptero:2,stego:2}},
+     {text:"Наблюдаю. Тот, кто победит, покажет свою настоящую натуру",sc:{troodon:3}}
+   ]},
+  {era:"🔥 Мел",text:"Тебе предлагают возглавить группу. Реакция?",sub:"",
+   fact:"У цератопсов (трицератопс и родня) обнаружены массовые захоронения — они жили стадами с лидером во главе.",
+   opts:[
+     {text:"Естественно. Я для этого и создан(-а)",sc:{trex:3}},
+     {text:"Да, если вижу что другие не справятся",sc:{raptor:2,troodon:1}},
+     {text:"Нет. Я лучше работаю один(-а) или в связке",sc:{ptero:2,troodon:2}},
+     {text:"Только если группа сама попросит. Не навязываюсь",sc:{bronto:2,stego:1}}
+   ]},
+  {era:"🦴 Раскоп",text:"Что тебе важнее в дружбе?",sub:"Одно. Самое важное.",
+   layout:"grid",
+   fact:"Утконосые динозавры (гадрозавры) — одни из самых социальных. Гнездились колониями, растили детёнышей сообща.",
+   opts:[
+     {icon:"🛡️",title:"Надёжность",desc:"Чтобы можно было опереться",sc:{ankylo:3,bronto:1}},
+     {icon:"⚡",title:"Энергия",desc:"Чтобы было нескучно",sc:{raptor:3}},
+     {icon:"🧠",title:"Глубина",desc:"Чтобы было о чём говорить",sc:{troodon:3}},
+     {icon:"🎵",title:"Понимание",desc:"Чтобы не надо было объяснять",sc:{para:2,stego:2}}
+   ]},
+  {era:"🦴 Раскоп",text:"Тебя критикуют. Несправедливо. Что делаешь?",sub:"",
+   fact:"Бронированные динозавры развили броню не от хищников напрямую — а как ответ на внутривидовые конфликты. Критика страшнее врагов.",
+   opts:[
+     {text:"Отвечаю. Сразу. Громко. Справедливость важнее комфорта",sc:{trex:2,para:1}},
+     {text:"Молчу. Но запоминаю. Надолго",sc:{ankylo:2,troodon:1}},
+     {text:"Анализирую — может, есть зерно правды?",sc:{troodon:2,raptor:1}},
+     {text:"Ухожу. Мне не нужно доказывать кому-то, кто я",sc:{ptero:2,bronto:2}}
+   ]},
+  {era:"🌋 Вымирание",text:"Метеорит летит. У тебя сутки. Что делаешь последним?",sub:"Не что «правильно» — а что по-настоящему.",
+   fact:"Астероид Чиксулуб: 10 км в диаметре, удар мощностью 10 млрд атомных бомб. Зима на 10 лет. 76% видов исчезли.",
+   opts:[
+     {text:"Собираю всех, кого люблю. Последний вечер — вместе",sc:{para:3,bronto:1}},
+     {text:"Иду туда, где всегда хотел(-а) побывать. Один(-а)",sc:{ptero:3}},
+     {text:"Ничего особенного. Живу обычный день. Он и есть — последний",sc:{stego:2,bronto:2}},
+     {text:"Пытаюсь что-то придумать. До последней секунды",sc:{raptor:2,troodon:2}}
+   ]},
+  {era:"🌋 Вымирание",text:"Ты — последний(-яя) в своём виде. Что оставишь?",sub:"Метафора. Что после тебя?",
+   fact:"Птицы — живые динозавры. Буквально. Они не вымерли. Они адаптировались. И летают.",
+   opts:[
+     {text:"Систему, которая будет работать без меня",sc:{trex:2,raptor:1}},
+     {text:"Историю. Чтобы помнили",sc:{para:3}},
+     {text:"Знания. Чтобы следующие не повторили ошибок",sc:{troodon:3}},
+     {text:"Ничего специально. Если я жил(-а) правильно — след останется сам",sc:{bronto:2,stego:2}}
+   ]},
+  {era:"🔬 Палеонтология",text:"Какой динозавр тебе нравился в детстве?",sub:"Первый инстинкт. Какой тянул.",
+   fact:"Исследования показывают: любимый динозавр в детстве коррелирует с темпераментом. Дети-лидеры чаще выбирают тираннозавра, интроверты — стегозавра.",
+   opts:[
+     {text:"Тираннозавр — он самый сильный",sc:{trex:3}},
+     {text:"Длинношеий — огромный и спокойный",sc:{bronto:3}},
+     {text:"Раптор — быстрый и умный",sc:{raptor:2,troodon:1}},
+     {text:"Птеродактиль — он летает!",sc:{ptero:3}},
+     {text:"Бронированный — непробиваемый",sc:{ankylo:2,stego:1}},
+     {text:"Не помню / мне нравились все",sc:{para:1,troodon:1}}
+   ]},
+  {era:"🔬 Палеонтология",text:"Последний вопрос. Что тебе ближе — атака или адаптация?",sub:"",
+   layout:"grid",
+   fact:"Динозавры правили 165 млн лет. Homo sapiens — 300 тысяч. Кто на самом деле успешнее?",
+   opts:[
+     {icon:"⚔️",title:"Атака",desc:"Мир под себя. Менять правила",sc:{trex:2,raptor:1}},
+     {icon:"🌱",title:"Адаптация",desc:"Себя под мир. Менять стратегию",sc:{troodon:2,bronto:1}},
+     {icon:"🛡️",title:"Защита",desc:"Ни то ни другое. Выстоять",sc:{ankylo:2,stego:1}},
+     {icon:"🕊️",title:"Бегство",desc:"Уйти туда, где условия лучше",sc:{ptero:2,para:1}}
+   ]}
+];
+
+let curQ=0,selOpt=null;
+let scores={trex:0,bronto:0,raptor:0,ankylo:0,ptero:0,stego:0,para:0,troodon:0};
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  let optsHTML;
+  if(q.layout==='grid'){
+    optsHTML=`<div class="grid-options">${q.opts.map((o,j)=>`<div class="grid-opt" onclick="sel(this,${j})"><span class="go-icon">${o.icon}</span><div class="go-title">${o.title}</div><div class="go-desc">${o.desc}</div></div>`).join('')}</div>`;
+  } else {
+    optsHTML=`<div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><div class="opt-dot"></div><span>${o.text}</span></div>`).join('')}</div>`;
+  }
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-era">${q.era}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      ${optsHTML}
+      <div class="dino-fact" id="dFact"><div class="dino-fact-label">🦴 палео-факт</div>${q.fact}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Откопать тотем 🦖':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option,.grid-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+  const df=document.getElementById('dFact');
+  if(df)df.classList.add('show');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const dKey=sorted[0][0],d=dinos[dKey],maxVal=Math.max(sorted[0][1],1);
+
+  const barsHTML=sorted.map(([key,val])=>{const pct=Math.round((val/maxVal)*100);return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${dinos[key].emoji} ${dinos[key].name}</span><span class="sc-val" style="color:${dinos[key].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${dinos[key].color}"></div></div></div>`;}).join('');
+
+  const statsHTML=Object.entries(d.stats).map(([k,v])=>{const ic={size:'📏',era:'⏳',diet:'🍖',iq:'🧠'};const lb={size:'Размер',era:'Эпоха',diet:'Питание',iq:'Интеллект'};return`<div class="ds-item"><span class="ds-icon">${ic[k]}</span><div class="ds-label">${lb[k]}</div><div class="ds-val">${v}</div></div>`;}).join('');
+
+  const galleryHTML=dKeys.map(key=>{const dd=dinos[key],cur=key===dKey;return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${dd.emoji}</span><div class="gi-body"><div class="gi-name">${dd.name}</div><div class="gi-desc">${dd.tagline.slice(0,55)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="r-hero">
+      <span class="r-icon-big">${d.emoji}</span>
+      <div class="r-label" style="color:${d.color}">Твой тотем</div>
+      <div class="r-name">${d.name}</div>
+      <div class="r-latin">${d.latin}</div>
+    </div>
+    <p class="r-tagline">${d.tagline}</p>
+    <div class="dino-stats">${statsHTML}</div>
+    <div class="r-card"><h3>🦖 Кто ты в мезозое</h3><p>${d.desc}</p></div>
+    <div class="r-card"><h3>📊 ДНК-профиль</h3><div class="sc-bars">${barsHTML}</div></div>
+    <div class="r-card"><h3>🌋 Вымирание (теневая сторона)</h3><p>${d.shadow}</p><div class="pullquote"><p>${d.quote}</p></div></div>
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🧬 Второй тотем: ${dinos[sorted[1][0]].emoji} ${dinos[sorted[1][0]].name}</h3><p>${dinos[sorted[1][0]].tagline}</p></div>`:''}
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🦖 Все 8 динозавров</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const d=dinos[sorted[0][0]];
+  const text=`${d.emoji} Мой динозавр-тотем — ${d.name} (${d.latin})\n\n${d.tagline}\n\n🦴 Раскопай своего: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Динозавр-тотем',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const dKey=sorted[0][0],d=dinos[dKey],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${dinos[k].emoji} ${dinos[k].name}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const stats=Object.entries(d.stats).map(([k,v])=>`  ${k}: ${v}`).join('\n');
+  const text=`🦖 ДИНОЗАВР-ТОТЕМ\n\n${d.emoji} ${d.name}\n${d.latin}\n\n«${d.tagline}»\n\n📏 Характеристики:\n${stats}\n\n📊 ДНК-профиль:\n${bars}\n\n🦖 ${d.desc}\n\n🌋 Тень: ${d.shadow}\n💬 «${d.quote}»\n\n→ https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
