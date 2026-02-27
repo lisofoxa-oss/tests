@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кто ты в групповом чате 💬</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0e0e12;--bg-rgb:14,14,18;
+  --surface:rgba(120,130,255,0.03);--surface2:rgba(120,130,255,0.06);--surface3:rgba(120,130,255,0.10);
+  --text:#8088a8;--text-dim:#505868;--text-bright:#d0d4e8;
+  --border:rgba(120,130,255,0.07);
+  --blue:#5b6ee1;--green:#4eca6a;--purple:#9b6dff;
+  --glow:rgba(91,110,225,0.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+
+.header{text-align:center;padding:40px 0 24px;animation:fadeUp .8s ease}
+.header-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-weight:500;margin-bottom:20px}
+.header-icon{font-size:56px;display:block;margin-bottom:16px}
+h1{font-size:clamp(2rem,6.5vw,2.8rem);font-weight:900;color:var(--text-bright);line-height:1.1;margin-bottom:14px;letter-spacing:-.5px}
+h1 span{color:var(--blue)}
+.lead{font-size:15px;color:var(--text-dim);max-width:440px;margin:0 auto;line-height:1.7;font-weight:300}
+
+/* Chat preview */
+.chat-preview{margin:24px auto 28px;max-width:380px;animation:fadeUp .8s ease .15s both}
+.chat-msg{display:flex;gap:10px;margin-bottom:10px;animation:fadeUp .4s ease both}
+.chat-msg:nth-child(2){animation-delay:.15s}
+.chat-msg:nth-child(3){animation-delay:.3s}
+.chat-msg:nth-child(4){animation-delay:.45s}
+.chat-ava{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.chat-bubble{padding:10px 14px;border-radius:16px 16px 16px 4px;font-size:13px;line-height:1.5;max-width:260px}
+.chat-name{font-size:10px;font-weight:600;margin-bottom:2px}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:14px;background:var(--blue);color:#fff;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .5s both;box-shadow:0 6px 30px var(--glow)}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(91,110,225,0.25)}
+
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(var(--bg-rgb),0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.progress-count{font-size:12px;color:var(--blue);font-weight:700}
+.progress-bar{height:2px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;animation:fadeUp .45s ease}
+.q-num{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:600;margin-bottom:14px}
+.q-text{font-size:20px;font-weight:700;color:var(--text-bright);line-height:1.35;margin-bottom:20px;letter-spacing:-.3px}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:15px 16px;background:var(--surface2);border:1.5px solid transparent;border-radius:14px;cursor:pointer;transition:all .3s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(91,110,225,0.15);background:var(--surface3)}
+.option.selected{border-color:var(--blue);background:rgba(91,110,225,0.08)}
+.opt-emoji{font-size:20px;flex-shrink:0;margin-top:0px}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--surface2);color:var(--text-dim);opacity:0;pointer-events:none}
+.btn-next.active{opacity:1;pointer-events:all;background:var(--blue);color:#fff;box-shadow:0 0 16px var(--glow)}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+.r-hero{text-align:center;padding:36px 0 20px}
+.r-icon-big{font-size:72px;display:block;margin-bottom:12px}
+.r-label{font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:8px}
+.r-name{font-size:clamp(1.8rem,6vw,2.4rem);font-weight:900;color:var(--text-bright);margin-bottom:8px}
+.r-tagline{font-size:16px;font-style:italic;color:var(--text);max-width:440px;margin:0 auto 24px;line-height:1.6}
+
+/* Chat mockup result */
+.chat-result{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px}
+.cr-header{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.cr-ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.cr-name{font-size:14px;font-weight:700;color:var(--text-bright)}
+.cr-status{font-size:11px;color:var(--green)}
+.cr-msgs{display:flex;flex-direction:column;gap:8px}
+.cr-msg{padding:10px 14px;border-radius:16px 16px 16px 4px;font-size:13px;line-height:1.5;max-width:85%;animation:fadeUp .3s ease both}
+.cr-msg:nth-child(2){animation-delay:.2s}
+.cr-msg:nth-child(3){animation-delay:.4s}
+.cr-typing{font-size:12px;color:var(--text-dim);font-style:italic;animation:fadeUp .3s ease .6s both}
+
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px 22px;margin-bottom:14px}
+.r-card h3{font-size:14px;font-weight:700;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.5px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:300}
+
+/* Trait list */
+.trait-list{display:flex;flex-direction:column;gap:8px}
+.trait{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text)}
+.trait-icon{font-size:18px}
+
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500}
+.sc-val{font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--blue);color:var(--blue)}
+.gallery{display:none;flex-direction:column;gap:8px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.gallery-item.current{border-color:var(--blue);background:rgba(91,110,225,0.04)}
+.gi-emoji{font-size:24px;flex-shrink:0}
+.gi-body{flex:1}
+.gi-name{font-size:13px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.gi-badge{font-size:9px;padding:3px 8px;background:rgba(91,110,225,0.1);color:var(--blue);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:var(--blue);color:#fff;border:none;box-shadow:0 4px 16px var(--glow)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--blue);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:18px}.option{padding:12px 14px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">💬 шуточный тест</div>
+      <span class="header-icon">💬</span>
+      <h1>Кто ты в <span>групповом чате</span></h1>
+      <p class="lead">10 ситуаций из чата. Без науки, без глубины — чистая правда о том, как ты ведёшь себя в переписке.</p>
+    </div>
+    <div class="chat-preview">
+      <div class="chat-msg"><div class="chat-ava" style="background:rgba(91,110,225,0.15)">👑</div><div><div class="chat-name" style="color:var(--blue)">админ</div><div class="chat-bubble" style="background:rgba(91,110,225,0.08);color:var(--text)">кто в субботу свободен??</div></div></div>
+      <div class="chat-msg"><div class="chat-ava" style="background:rgba(78,202,106,0.15)">🤡</div><div><div class="chat-name" style="color:var(--green)">шут</div><div class="chat-bubble" style="background:rgba(78,202,106,0.08);color:var(--text)">я свободен каждый день 😭</div></div></div>
+      <div class="chat-msg"><div class="chat-ava" style="background:rgba(155,109,255,0.15)">👻</div><div><div class="chat-name" style="color:var(--purple)">призрак</div><div class="chat-bubble" style="background:rgba(155,109,255,0.08);color:var(--text)">прочитано ✓✓</div></div></div>
+      <div class="chat-msg"><div class="chat-ava" style="background:rgba(255,160,60,0.15)">📎</div><div><div class="chat-name" style="color:#ffa03c">мама чата</div><div class="chat-bubble" style="background:rgba(255,160,60,0.08);color:var(--text)">адрес кидайте, я такси закажу на всех</div></div></div>
+    </div>
+    <button class="btn-start" onclick="startTest()">Узнать свою роль 💬</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Чат</span>
+      <span class="progress-count" id="progressCount">01 / 10</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const types={
+  admin:{emoji:"👑",name:"Админ",color:"#5b6ee1",
+    tagline:"Ты создал(-а) этот чат. Ты его модерируешь. Ты решаешь, когда и где встречаемся. Без тебя все разбредутся через 3 дня.",
+    traits:["Закрепляет сообщения, которые все проигнорировали","Пишет «так, давайте определимся» минимум раз в неделю","Единственный, кто помнит дни рождения","Удаляет спам и обижается, что никто не оценил"],
+    msgs:["ребята, голосование ☝️","кто не ответил — я вижу 👀","встречаемся в 18:00 и это не обсуждается"],
+    typing:"составляет список тех, кто не ответил..."},
+  clown:{emoji:"🤡",name:"Шут",color:"#4eca6a",
+    tagline:"Ты отправляешь мемы в 3 ночи. Ты шутишь на похоронах. Ты превращаешь любой серьёзный разговор в стендап. И все тебя за это любят. Или терпят.",
+    traits:["Первый кидает мем на любую новость","Отвечает стикерами на серьёзные вопросы","Придумывает никнеймы всем участникам","Единственный, кто пишет в чат в 4 утра"],
+    msgs:["АХАХАХАХАХАХА","[стикер][стикер][стикер]","подождите у меня мем на эту тему"],
+    typing:"ищет идеальный мем..."},
+  ghost:{emoji:"👻",name:"Призрак",color:"#9b6dff",
+    tagline:"Ты в чате. Технически. Ты читаешь всё. Но отвечаешь раз в полнолуние. Зато когда отвечаешь — все замолкают и перечитывают.",
+    traits:["Онлайн, но не пишет","Появляется раз в месяц с сообщением, которое меняет тему","Никогда не ставит реакции","Все думают, что ты вышел — но ты читаешь каждое слово"],
+    msgs:["...","👀","а, это было вчера? сорри, только увидел(-а)"],
+    typing:"печатает... (исчезло)"},
+  mama:{emoji:"📎",name:"Мама чата",color:"#ffa03c",
+    tagline:"Ты закажешь такси. Напомнишь про зонт. Спросишь, все ли поели. Ты не просил(-а) эту роль — она сама тебя нашла.",
+    traits:["«Одевайтесь теплее» в общем чате","Скидывает полезные ссылки, которые никто не открывает","Помнит, у кого аллергия","Первый спрашивает «ты доехал(-а)?»"],
+    msgs:["ребят, не забудьте паспорта","я на всякий случай взяла аптечку","@все вы ели сегодня?"],
+    typing:"пересылает прогноз погоды..."},
+  voice:{emoji:"🎤",name:"Голосовушник",color:"#e05060",
+    tagline:"Зачем печатать, если можно наговорить? 47 секунд чистого потока сознания. Без пунктуации. Без пауз. Без жалости к тем, кто в метро.",
+    traits:["Отправляет голосовые по 2 минуты","Никогда не пишет текстом если можно наговорить","Начинает голосовое с «короче»","Присылает голосовое в ответ на голосовое"],
+    msgs:["🎤 0:47","🎤 1:23","🎤 0:03 (в этом просто смех)"],
+    typing:"записывает голосовое..."},
+  editor:{emoji:"✏️",name:"Редактор",color:"#50b0d0",
+    tagline:"Ты отправляешь. Удаляешь. Редактируешь. Снова удаляешь. Потом отправляешь то же самое, но с точкой. Перфекционизм — это диагноз.",
+    traits:["(отредактировано) под каждым сообщением","Удаляет сообщение через 2 секунды после отправки","Перечитывает свои сообщения через час","Пишет «*исправление» даже на опечатку в одну букву"],
+    msgs:["привет) [отредактировано]","Привет!) [отредактировано]","Привет! [отредактировано]"],
+    typing:"удалил(-а) сообщение..."},
+  link:{emoji:"🔗",name:"Кидатель ссылок",color:"#40a0a0",
+    tagline:"Ты не разговариваешь — ты пересылаешь. Статья, видео, тикток, рилс, подкаст. Твой чат — это агрегатор контента с одним редактором.",
+    traits:["Кидает ссылку без комментария","Обижается что никто не посмотрел","«Вы посмотрели то видео?» — каждый день","Находит контент, который потом все репостят"],
+    msgs:["[ссылка]","[ссылка]","нет ну вы серьёзно не смотрели???"],
+    typing:"копирует ссылку..."},
+  splitter:{emoji:"🧮",name:"Бухгалтер",color:"#8aaa60",
+    tagline:"«Скинь 347₽ за свою часть». Ты помнишь, кто сколько должен. У тебя таблица. У тебя расчёт. У тебя нет друзей, которые вовремя переводят.",
+    traits:["Присылает расчёт в чат после каждой встречи","Помнит долги трёхмесячной давности","Использует Splitwise как оружие","«Я заплатил за тебя в прошлый раз» — абсолютная память"],
+    msgs:["так, кидаю расчёт ☝️","@Маша тебе 520₽, @Петя 347₽","кто ещё не скинул — я вижу 🙂"],
+    typing:"считает, кто сколько должен..."}
+};
+
+const tKeys=Object.keys(types);
+
+const questions=[
+  {text:"В чат кинули вопрос. Ты:",
+   opts:[
+     {e:"📌",text:"Отвечаю первый и по делу",sc:{admin:3,mama:1}},
+     {e:"😂",text:"Шучу. Потом может отвечу",sc:{clown:3}},
+     {e:"👀",text:"Читаю. Молчу. Жду, что ответят другие",sc:{ghost:3}},
+     {e:"🔗",text:"Кидаю ссылку, где ответ",sc:{link:3}}
+   ]},
+  {text:"Тебе прислали голосовое на 2 минуты. Твоя реакция:",
+   opts:[
+     {e:"🎤",text:"Отвечаю голосовым на 3 минуты",sc:{voice:3}},
+     {e:"⏩",text:"Слушаю на 2x скорости",sc:{editor:1,admin:1}},
+     {e:"😤",text:"«Напиши текстом, я в метро»",sc:{admin:2,splitter:1}},
+     {e:"🫠",text:"Не открываю. Никогда. Принципиально",sc:{ghost:3}}
+   ]},
+  {text:"Кто-то написал с ошибкой. Ты:",
+   opts:[
+     {e:"✏️",text:"Поправляю. Вежливо. Но поправляю",sc:{editor:3}},
+     {e:"🤡",text:"Повторяю ошибку 10 раз как мем",sc:{clown:3}},
+     {e:"🤷",text:"Не замечаю / не волнует",sc:{voice:2,ghost:1}},
+     {e:"📸",text:"Скриншочу и кидаю в другой чат",sc:{clown:2,link:1}}
+   ]},
+  {text:"Планируете встречу. 8 человек. Что делаешь?",
+   opts:[
+     {e:"📋",text:"Создаю опрос с датами и временем",sc:{admin:3}},
+     {e:"🫡",text:"Говорю «я на всё согласен(-на)» и жду",sc:{ghost:2,mama:1}},
+     {e:"🏠",text:"Предлагаю у себя и начинаю готовить",sc:{mama:3}},
+     {e:"💸",text:"Сразу считаю бюджет",sc:{splitter:3}}
+   ]},
+  {text:"В чате тишина 3 дня. Ты:",
+   opts:[
+     {e:"😂",text:"Кидаю мем чтобы оживить",sc:{clown:3}},
+     {e:"🔗",text:"Пересылаю видео / статью / рилс",sc:{link:3}},
+     {e:"😌",text:"Наслаждаюсь тишиной. Наконец-то",sc:{ghost:3}},
+     {e:"📢",text:"«Эй, вы живы?»",sc:{admin:2,mama:1}}
+   ]},
+  {text:"Тебя добавили в новый чат с незнакомыми. Первое действие:",
+   opts:[
+     {e:"👋",text:"«Привет всем! Я такой-то»",sc:{admin:2,mama:1}},
+     {e:"👁️",text:"Читаю историю чата молча. Изучаю обстановку",sc:{ghost:3,editor:1}},
+     {e:"🤡",text:"Сразу шучу, чтобы разрядить",sc:{clown:3}},
+     {e:"🎤",text:"Отправляю голосовое-представление",sc:{voice:3}}
+   ]},
+  {text:"Кто-то переводит тебе 50₽ вместо 500₽. Ты:",
+   opts:[
+     {e:"🧮",text:"«Эмм, там 500 было, не 50 🙂»",sc:{splitter:3}},
+     {e:"😂",text:"«Ого, щедро 😂»",sc:{clown:2,splitter:1}},
+     {e:"🤐",text:"Промолчу. Потом как-нибудь",sc:{ghost:2,mama:1}},
+     {e:"📊",text:"Скину скриншот из Splitwise",sc:{splitter:2,admin:1}}
+   ]},
+  {text:"Друг скинул ссылку на статью. Ты:",
+   opts:[
+     {e:"👍",text:"Ставлю лайк, не открывая",sc:{ghost:3}},
+     {e:"📖",text:"Читаю, потом обсуждаю",sc:{editor:2,admin:1}},
+     {e:"🔗",text:"Кидаю в ответ три своих ссылки",sc:{link:3}},
+     {e:"🎤",text:"Отвечаю голосовым с пересказом",sc:{voice:3}}
+   ]},
+  {text:"Тебе написали «нам надо поговорить». Первая мысль:",
+   opts:[
+     {e:"😰",text:"Перечитываю все свои сообщения за неделю",sc:{editor:3}},
+     {e:"😂",text:"«Я не беременна» (даже если ты парень)",sc:{clown:3}},
+     {e:"📞",text:"Звоню сразу. Текстом не разберёшься",sc:{voice:2,admin:1}},
+     {e:"🧘",text:"«Ок, давай» — спокойно жду",sc:{ghost:2,mama:1}}
+   ]},
+  {text:"Последний вопрос. Честно: сколько чатов у тебя в архиве?",
+   opts:[
+     {e:"📂",text:"0-3. Я во всех активный(-ая)",sc:{admin:3}},
+     {e:"📁",text:"4-10. Некоторые надоели",sc:{mama:2,link:1}},
+     {e:"🗄️",text:"11-30. Чат — это обязательство, на которое я не подписывался(-ась)",sc:{ghost:3}},
+     {e:"💀",text:"30+. Я состою в чатах, о которых забыл(-а)",sc:{clown:2,ghost:1}}
+   ]}
+];
+
+let curQ=0,selOpt=null;
+let scores={};
+tKeys.forEach(k=>scores[k]=0);
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><span class="opt-emoji">${o.e}</span><span>${o.text}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать свою роль 💬':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const tKey=sorted[0][0],t=types[tKey],maxVal=Math.max(sorted[0][1],1);
+
+  const barsHTML=sorted.map(([key,val])=>{const pct=Math.round((val/maxVal)*100);return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${types[key].emoji} ${types[key].name}</span><span class="sc-val" style="color:${types[key].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${types[key].color}"></div></div></div>`;}).join('');
+
+  const traitsHTML=t.traits.map(tr=>`<div class="trait"><span class="trait-icon">💬</span>${tr}</div>`).join('');
+
+  const msgsHTML=t.msgs.map(m=>`<div class="cr-msg" style="background:${t.color}18;color:var(--text)">${m}</div>`).join('');
+
+  const galleryHTML=tKeys.map(key=>{const tt=types[key],cur=key===tKey;return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${tt.emoji}</span><div class="gi-body"><div class="gi-name">${tt.name}</div><div class="gi-desc">${tt.tagline.slice(0,50)}...</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="r-hero">
+      <span class="r-icon-big">${t.emoji}</span>
+      <div class="r-label" style="color:${t.color}">Твоя роль в чате</div>
+      <div class="r-name">${t.name}</div>
+    </div>
+    <p class="r-tagline">${t.tagline}</p>
+
+    <div class="chat-result">
+      <div class="cr-header"><div class="cr-ava" style="background:${t.color}18">${t.emoji}</div><div><div class="cr-name">${t.name}</div><div class="cr-status">● онлайн</div></div></div>
+      <div class="cr-msgs">${msgsHTML}</div>
+      <div class="cr-typing">${t.typing}</div>
+    </div>
+
+    <div class="r-card"><h3>💬 Тебя узнают по</h3><div class="trait-list">${traitsHTML}</div></div>
+
+    <div class="r-card"><h3>📊 Профиль чата</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Вторая роль: ${types[sorted[1][0]].emoji} ${types[sorted[1][0]].name}</h3><p>${types[sorted[1][0]].tagline}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">💬 Все 8 ролей</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Скинуть в чат</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Заново</button>
+    </div>`;
+
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const t=types[sorted[0][0]];
+  const text=`${t.emoji} Я в групповом чате — ${t.name}\n\n${t.tagline}\n\n💬 А ты кто? https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Кто ты в чате',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const t=types[sorted[0][0]],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${types[k].emoji} ${types[k].name}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const text=`💬 КТО ТЫ В ГРУППОВОМ ЧАТЕ\n\n${t.emoji} ${t.name}\n\n«${t.tagline}»\n\n📊 Профиль:\n${bars}\n\n→ https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
