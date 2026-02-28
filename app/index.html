@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какое ты приложение 📱</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;
+  --surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.06);--surface3:rgba(255,255,255,0.10);
+  --text:#8890a8;--text-dim:#585e70;--text-bright:#e0e4f0;
+  --border:rgba(255,255,255,0.06);
+  --blue:#3478f6;--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--purple:#bf5af2;--pink:#ff375f;--teal:#64d2ff;--indigo:#5e5ce6;
+  --glow:rgba(52,120,246,0.12);
+  --card-shadow:0 2px 20px rgba(0,0,0,0.3);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+
+.header{text-align:center;padding:40px 0 24px;animation:fadeUp .8s ease}
+.header-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:20px}
+
+/* Phone mockup header */
+.phone-mock{width:200px;height:380px;margin:0 auto 20px;background:var(--bg2);border-radius:30px;border:2px solid rgba(255,255,255,0.08);padding:12px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:fadeUp .8s ease .1s both}
+.phone-notch{width:80px;height:6px;background:rgba(255,255,255,0.1);border-radius:6px;margin:4px auto 12px}
+.phone-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:6px}
+.phone-icon{width:100%;aspect-ratio:1;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative}
+.phone-icon .pi-badge{position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:var(--red);border-radius:50%;font-size:7px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+h1{font-size:clamp(2rem,7vw,3rem);font-weight:900;color:var(--text-bright);line-height:1.1;margin-bottom:14px;letter-spacing:-.5px}
+h1 span{color:var(--blue)}
+.lead{font-size:15px;color:var(--text-dim);max-width:440px;margin:0 auto;line-height:1.7;font-weight:400}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:14px;background:var(--blue);color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .3s both;box-shadow:0 6px 30px var(--glow);margin-top:28px}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(52,120,246,0.25)}
+
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(10,10,15,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.progress-count{font-size:12px;color:var(--blue);font-weight:700}
+.progress-bar{height:3px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;box-shadow:var(--card-shadow);animation:fadeUp .45s ease}
+.q-num{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:700;margin-bottom:14px}
+.q-text{font-size:20px;font-weight:700;color:var(--text-bright);line-height:1.35;margin-bottom:8px;letter-spacing:-.3px}
+.q-sub{font-size:14px;font-style:italic;color:var(--text-dim);margin-bottom:22px;line-height:1.6}
+
+/* Notification-style hint */
+.notif-hint{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:12px;margin-bottom:18px}
+.notif-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.notif-text{font-size:12px;color:var(--text-dim);line-height:1.4}
+.notif-time{font-size:10px;color:var(--text-dim);margin-left:auto;flex-shrink:0;opacity:.6}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--surface2);border:2px solid transparent;border-radius:14px;cursor:pointer;transition:all .25s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(52,120,246,0.15);background:var(--surface3)}
+.option.selected{border-color:var(--blue);background:rgba(52,120,246,0.06)}
+.opt-emoji{font-size:20px;flex-shrink:0}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--surface2);color:var(--text-dim);opacity:0;pointer-events:none}
+.btn-next.active{opacity:1;pointer-events:all;background:var(--blue);color:#fff;box-shadow:0 4px 16px var(--glow)}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+/* App result card */
+.app-card{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:36px 24px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden}
+.app-icon-big{width:96px;height:96px;border-radius:22px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+.app-label{font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:8px}
+.app-name{font-size:clamp(1.8rem,6vw,2.6rem);font-weight:900;color:var(--text-bright);margin-bottom:4px}
+.app-aka{font-size:13px;font-style:italic;margin-bottom:16px}
+.app-tagline{font-size:15px;color:var(--text);max-width:440px;margin:0 auto;line-height:1.65}
+
+/* Notification result */
+.notif-result{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;animation:fadeUp .4s ease both}
+.nr-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.nr-body{flex:1;min-width:0}
+.nr-title{font-size:13px;font-weight:600;color:var(--text-bright)}
+.nr-text{font-size:12px;color:var(--text-dim);line-height:1.5;margin-top:2px}
+.nr-time{font-size:10px;color:var(--text-dim);opacity:.5;margin-top:4px}
+
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px 22px;margin-bottom:14px}
+.r-card h3{font-size:14px;font-weight:700;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8}
+
+.perm-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.perm{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border-radius:10px;font-size:12px;color:var(--text)}
+.perm-icon{font-size:16px;flex-shrink:0}
+.perm-toggle{width:34px;height:20px;border-radius:10px;margin-left:auto;position:relative;flex-shrink:0}
+.perm-toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:16px}
+
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500;display:flex;align-items:center;gap:6px}
+.sc-val{font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--blue);color:var(--blue)}
+.gallery{display:none;flex-direction:column;gap:6px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.gallery-item.current{border-color:var(--blue);background:rgba(52,120,246,0.04)}
+.gi-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.gi-body{flex:1;min-width:0}
+.gi-name{font-size:12px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:10px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi-badge{font-size:8px;padding:2px 7px;background:rgba(52,120,246,0.1);color:var(--blue);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:var(--blue);color:#fff;border:none;box-shadow:0 4px 16px var(--glow)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--blue);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:18px}.option{padding:12px 14px;font-size:13px}.phone-mock{width:170px;height:320px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">📱 тест-приложение</div>
+      <div class="phone-mock">
+        <div class="phone-notch"></div>
+        <div class="phone-grid">
+          <div class="phone-icon" style="background:var(--green)">💬<span class="pi-badge">3</span></div>
+          <div class="phone-icon" style="background:var(--blue)">📷</div>
+          <div class="phone-icon" style="background:var(--orange)">🎵</div>
+          <div class="phone-icon" style="background:var(--red)">📍</div>
+          <div class="phone-icon" style="background:var(--purple)">🧠</div>
+          <div class="phone-icon" style="background:var(--pink)">❤️</div>
+          <div class="phone-icon" style="background:var(--teal)">📊</div>
+          <div class="phone-icon" style="background:var(--indigo)">⚙️<span class="pi-badge">!</span></div>
+          <div class="phone-icon" style="background:#ff6b35">📅</div>
+          <div class="phone-icon" style="background:#5856d6">🔒</div>
+          <div class="phone-icon" style="background:#34c759">💰</div>
+          <div class="phone-icon" style="background:#af52de">🎮</div>
+        </div>
+      </div>
+      <h1>Какое ты <span>приложение</span></h1>
+      <p class="lead">У тебя на телефоне 80+ приложений. Но одно из них — это ты. Не какое ты используешь — а какое ты есть.</p>
+    </div>
+    <button class="btn-start" onclick="startTest()">Разблокировать 📱</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Сканирование</span>
+      <span class="progress-count" id="progressCount">01 / 16</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const A={
+  calc:{icon:"🧮",name:"Калькулятор",aka:"«всё посчитано»",color:"#636366",bg:"linear-gradient(135deg,#3a3a3c,#636366)",
+    tag:"Ты — логика. Чистая, холодная, безошибочная. Ты не чувствуешь — ты считаешь. И обычно ты прав(-а).",
+    desc:"Калькулятор не ошибается. Не сомневается. Не переживает. Ты вводишь данные — он даёт ответ. Ты так же: спокойный, рациональный, точный. Люди приходят к тебе, когда нужен совет без эмоций. Ты не самый весёлый — но самый полезный.",
+    notifs:[{title:"Логика",text:"Ты принимаешь решения головой, а не сердцем. Это экономит нервы"},{title:"Точность",text:"Ты помнишь цифры, даты и кто сколько должен"},{title:"Хладнокровие",text:"Пока все паникуют — ты считаешь варианты"}],
+    perms:["📊 Доступ к фактам","🧊 Холодный анализ","📐 Точность","❄️ Отсутствие паники"],
+    shadow:"У калькулятора нет эмоций. Это его суперсила. И его проклятие."},
+  notes:{icon:"📝",name:"Заметки",aka:"«потом прочитаю»",color:"#ffcc02",bg:"linear-gradient(135deg,#ffcc02,#f0a030)",
+    tag:"Ты — хаос, записанный на салфетке. Мысли, списки, идеи, цитаты, пароли — всё в одной куче. Но ты знаешь где что лежит. Примерно.",
+    desc:"Заметки — свалка гениальности. Тут и список покупок, и идея стартапа, и черновик признания в любви, и рецепт борща. Ты так же: в тебе много всего, и не всё структурировано. Но когда нужно — ты достаёшь именно то, что нужно. Иногда.",
+    notifs:[{title:"Идеи",text:"У тебя их 200. Реализованных — 3. Но какие!"},{title:"Память",text:"Ты записываешь всё. Потому что забудешь через 5 минут"},{title:"Глубина",text:"Между списком покупок и философией жизни — одна строка"}],
+    perms:["💡 Генерация идей","📋 Списки на всё","🧠 Хранилище мыслей","😵‍💫 Хаотичная организация"],
+    shadow:"У тебя 847 заметок. 840 ты не откроешь никогда. Но удалить — страшно."},
+  maps:{icon:"📍",name:"Карты",aka:"«я знаю короткий путь»",color:"#34c759",bg:"linear-gradient(135deg,#30d158,#248a3d)",
+    tag:"Ты — направление. Ты всегда знаешь куда идёшь. Или делаешь вид. Но люди за тобой идут.",
+    desc:"Карты — приложение, которое говорит «через 300 метров поверните направо», и ты веришь. Ты так же: люди доверяют тебе направление — в поездке, в проекте, в жизни. Ты не всегда знаешь лучший путь, но ты ВСЕГДА уверен(-а) в нём. И это работает.",
+    notifs:[{title:"Навигация",text:"Ты ориентируешься в хаосе лучше большинства"},{title:"Уверенность",text:"Даже если не знаешь куда — выглядишь так, будто знаешь"},{title:"Пунктуальность",text:"Ты знаешь сколько минут до любой точки"}],
+    perms:["🧭 Чувство направления","⏱️ Расчёт времени","🛣️ Поиск пути","📌 Ориентация в хаосе"],
+    shadow:"Иногда ты ведёшь людей не туда. Но с такой уверенностью, что они благодарят."},
+  camera:{icon:"📷",name:"Камера",aka:"«подожди, не двигайся»",color:"#3478f6",bg:"linear-gradient(135deg,#3478f6,#5856d6)",
+    tag:"Ты — момент. Ты ловишь то, что другие пропускают. Свет, взгляд, секунду между смехом и слезами.",
+    desc:"Камера не создаёт — она замечает. Ты так же: ты видишь красоту там, где другие видят обычный вторник. Ты замечаешь, как свет падает на лицо, как чашка стоит на столе, как человек улыбается, думая что его не видят. Ты — внимание.",
+    notifs:[{title:"Наблюдательность",text:"Ты замечаешь детали, которые другие пропускают"},{title:"Эстетика",text:"У тебя есть вкус. И ты не стесняешься его"},{title:"Память",text:"Ты хранишь моменты — в фото и в голове"}],
+    perms:["👁️ Внимание к деталям","🎨 Чувство эстетики","📸 Фиксация моментов","✨ Видение красоты"],
+    shadow:"Ты так занят(-а) фиксацией момента, что иногда забываешь в нём жить."},
+  spotify:{icon:"🎵",name:"Музыка",aka:"«у меня плейлист на это»",color:"#1db954",bg:"linear-gradient(135deg,#1db954,#148a3e)",
+    tag:"Ты — настроение. Всегда. На каждую секунду жизни у тебя есть саундтрек. Ты чувствуешь мир через звук.",
+    desc:"Музыкальное приложение знает тебя лучше психолога. По плейлистам можно восстановить каждый период жизни — влюблённости, депрессии, дорогу на работу. Ты так же: ты не просто слушаешь музыку — ты ей живёшь. Каждая эмоция — это трек.",
+    notifs:[{title:"Эмпатия",text:"Ты чувствуешь чужое настроение с первых нот"},{title:"Глубина",text:"Твои плейлисты — дневник эмоций"},{title:"Атмосфера",text:"Ты создаёшь вайб в любой комнате"}],
+    perms:["🎧 Постоянный саундтрек","💫 Создание атмосферы","😢 Глубокие эмоции","🎶 Музыка на каждый случай"],
+    shadow:"Ты включаешь грустную музыку, когда тебе хорошо. Просто чтобы почувствовать. Это красиво и немного тревожно."},
+  settings:{icon:"⚙️",name:"Настройки",aka:"«дай я сам(-а) настрою»",color:"#8e8e93",bg:"linear-gradient(135deg,#636366,#8e8e93)",
+    tag:"Ты — контроль. Каждая деталь, каждый параметр, каждый переключатель — ты знаешь где он и зачем.",
+    desc:"В Настройки заходят, когда что-то не работает. К тебе — тоже. Ты — человек, который знает, как всё устроено, и не стесняется это крутить. Wi-Fi не подключается? Ты починишь. Жизнь не работает? Ты найдёшь тумблер.",
+    notifs:[{title:"Контроль",text:"Ты знаешь каждую настройку — в телефоне и в жизни"},{title:"Решения",text:"Когда что-то ломается — зовут тебя"},{title:"Системность",text:"У тебя всё по полочкам. Буквально"}],
+    perms:["🔧 Починка всего","🎛️ Тонкая настройка","📱 Знание систем","🧩 Решение проблем"],
+    shadow:"Ты настраиваешь всё. Включая людей. А людям это не всегда нравится."},
+  tinder:{icon:"🔥",name:"Тиндер",aka:"«свайпаю жизнь»",color:"#ff375f",bg:"linear-gradient(135deg,#ff375f,#ff6b6b)",
+    tag:"Ты — выбор. Вечный, быстрый, интуитивный. Ты решаешь за секунду — да или нет. Влево или вправо. Следующий.",
+    desc:"Тиндер — это не про свидания. Это про скорость выбора. Ты так же: ты быстро решаешь, нравится тебе что-то или нет. Человек, ресторан, фильм, идея — свайп. Ты не мучаешься сомнениями. Ты доверяешь первому впечатлению.",
+    notifs:[{title:"Интуиция",text:"Ты принимаешь решения за 2 секунды. И обычно правильно"},{title:"Обаяние",text:"Ты умеешь произвести впечатление. Быстро"},{title:"Непостоянство",text:"Ты свайпаешь быстрее, чем привязываешься"}],
+    perms:["⚡ Мгновенные решения","💫 Первое впечатление","🔄 Постоянный поиск","💋 Обаяние"],
+    shadow:"Ты свайпаешь так быстро, что иногда пропускаешь тех, кто стоил остановки."},
+  calendar:{icon:"📅",name:"Календарь",aka:"«у меня через 15 минут созвон»",color:"#ff9500",bg:"linear-gradient(135deg,#ff9500,#ff6b00)",
+    tag:"Ты — расписание. Каждая минута распланирована. Встреча, обед, спорт, сон — у всего есть слот.",
+    desc:"Календарь — единственное приложение, в котором будущее уже расписано. Ты так же: ты знаешь, что будешь делать в четверг в 15:30. У тебя нет «свободного времени» — есть «незапланированные слоты». И тебя это устраивает.",
+    notifs:[{title:"Планирование",text:"Ты знаешь расписание на 3 недели вперёд"},{title:"Пунктуальность",text:"Опоздание — личное оскорбление"},{title:"Эффективность",text:"Ты выжимаешь из дня максимум"}],
+    perms:["📋 Планирование всего","⏰ Пунктуальность","🎯 Чёткие цели","📌 Дедлайны"],
+    shadow:"Ты настолько запланировал(-а) жизнь, что на спонтанность нет слота. А она стучится."},
+  vpn:{icon:"🔒",name:"VPN",aka:"«я тут инкогнито»",color:"#5856d6",bg:"linear-gradient(135deg,#5856d6,#7a5af5)",
+    tag:"Ты — загадка. Никто не знает, где ты на самом деле, что делаешь и зачем. И тебе так нравится.",
+    desc:"VPN делает одну вещь: прячет. Ты так же: ты не врёшь — ты просто не показываешь всё. У тебя несколько слоёв, несколько IP-адресов жизни. Ты можешь быть в Москве, а казаться в Амстердаме. Метафорически.",
+    notifs:[{title:"Приватность",text:"Ты делишься информацией строго по необходимости"},{title:"Загадочность",text:"Люди хотят узнать тебя ближе. Ты это знаешь"},{title:"Безопасность",text:"Ты защищаешь себя и своих"}],
+    perms:["🔐 Приватность","🌐 Много личностей","🫥 Невидимость","🛡️ Защита границ"],
+    shadow:"Ты так хорошо прячешься, что иногда теряешь себя. VPN не должен работать 24/7."},
+  alarm:{icon:"⏰",name:"Будильник",aka:"«ВСТАВАЙ»",color:"#ff453a",bg:"linear-gradient(135deg,#ff453a,#d42020)",
+    tag:"Ты — напоминание. Громкое, неизбежное, необходимое. Тебя не любят — но без тебя все проспят.",
+    desc:"Будильник — самое ненавидимое и самое нужное приложение. Ты так же: ты говоришь правду, когда никто не хочет её слышать. Ты пинаешь, когда все лежат. Ты будишь — буквально и метафорически. За это тебя сначала ненавидят, потом благодарят.",
+    notifs:[{title:"Честность",text:"Ты говоришь то, что другие боятся сказать"},{title:"Дисциплина",text:"Ты не даёшь людям расслабиться. Это дар"},{title:"Надёжность",text:"Ты ВСЕГДА срабатываешь. Без исключений"}],
+    perms:["📢 Прямолинейность","⚡ Пробуждение","🔔 Напоминания","💪 Мотивация"],
+    shadow:"Тебя нажимают «отложить». Каждый день. Но ты звонишь снова. Потому что кто-то должен."},
+  weather:{icon:"🌤️",name:"Погода",aka:"«завтра дождь, возьми зонт»",color:"#64d2ff",bg:"linear-gradient(135deg,#64d2ff,#40a0cc)",
+    tag:"Ты — тревога, замаскированная под заботу. Ты проверяешь прогноз 5 раз в день. И не только погоды.",
+    desc:"Приложение погоды открывают тревожные люди. «А вдруг дождь?» «А если похолодает?» «А на выходных что?» Ты так же: ты всегда готов(-а) к худшему. Зонт в сумке, аптечка в рюкзаке, план Б в голове. Это утомляет. Но ты ни разу не промок(-ла).",
+    notifs:[{title:"Тревожность",text:"Ты готов(-а) к 15 сценариям. 14 не случатся"},{title:"Забота",text:"Ты напоминаешь другим взять зонт/шапку/крем"},{title:"Предусмотрительность",text:"У тебя план на каждый случай"}],
+    perms:["☂️ Вечный зонт","🔮 Предвидение","💊 Аптечка","📋 План Б и В"],
+    shadow:"Ты готов(-а) ко всему. Кроме того, чтобы расслабиться."},
+  tiktok:{icon:"🎬",name:"TikTok",aka:"«ещё один, и спать»",color:"#ff004f",bg:"linear-gradient(135deg,#ff004f,#00f2ea)",
+    tag:"Ты — дофамин в чистом виде. Быстрый, яркий, бесконечный. С тобой невозможно соскучиться. И невозможно остановиться.",
+    desc:"TikTok знает одно: внимание — валюта. Ты так же: ты умеешь захватить, удержать, развлечь. Ты — вечный контент. С тобой весело, ярко, быстро. Проблема? Когда ты уходишь — люди не помнят, о чём вы говорили. Но помнят, что было весело.",
+    notifs:[{title:"Харизма",text:"Ты захватываешь внимание за 3 секунды"},{title:"Энергия",text:"С тобой никогда не скучно"},{title:"Тренды",text:"Ты всегда в курсе. Всегда первый(-ая)"}],
+    perms:["⚡ Энергия","🎭 Развлечение","📈 Тренды","🧲 Притяжение внимания"],
+    shadow:"Ты даёшь людям дофамин. Но дофамин — не глубина. Иногда нужно быть не видео, а книгой."},
+  excel:{icon:"📊",name:"Таблица",aka:"«я сделал(-а) табличку»",color:"#217346",bg:"linear-gradient(135deg,#217346,#185a36)",
+    tag:"Ты — структура. Строки, столбцы, формулы. Мир — хаотичен. Ты — нет.",
+    desc:"Excel — приложение, в которое можно засунуть весь мир и разложить по ячейкам. Ты так же: у тебя есть таблица на всё — бюджет, планы, списки фильмов, рейтинг ресторанов. Ты не хаотичный(-ая) — ты систематизирующий(-ая). Это не занудство. Это суперсила.",
+    notifs:[{title:"Организация",text:"У тебя таблица на каждую сферу жизни"},{title:"Аналитика",text:"Ты видишь паттерны там, где другие видят хаос"},{title:"Контроль",text:"Ты знаешь точно, сколько потратил(-а) в марте"}],
+    perms:["📋 Систематизация","📈 Анализ данных","🧮 Формулы жизни","🗂️ Порядок во всём"],
+    shadow:"Не всё помещается в ячейку. Любовь, счастье, грусть — у них нет формулы. Но ты пытаешься."},
+  games:{icon:"🎮",name:"Игры",aka:"«ещё один уровень»",color:"#af52de",bg:"linear-gradient(135deg,#af52de,#8944b8)",
+    tag:"Ты — побег. Красивый, яркий, захватывающий. Ты не убегаешь от реальности — ты создаёшь лучшую.",
+    desc:"Игры — единственное приложение, где ты можешь быть кем угодно. Магом, гонщиком, фермером, богом. Ты так же: ты живёшь в мирах — выдуманных, созданных, нарисованных. Не потому что реальность плохая — а потому что твоё воображение лучше.",
+    notifs:[{title:"Креативность",text:"Ты видишь мир как игру с правилами, которые можно менять"},{title:"Эскапизм",text:"Ты умеешь красиво сбежать от рутины"},{title:"Стратегия",text:"Ты думаешь на 5 ходов вперёд"}],
+    perms:["🌍 Другие миры","🏆 Достижения","🧩 Стратегия","🎭 Перевоплощение"],
+    shadow:"Из игры можно выйти. Из реальности — нет. Иногда нужно нажать паузу и посмотреть на настоящий экран."}
+};
+
+const K=Object.keys(A);
+let scores={};K.forEach(k=>scores[k]=0);
+
+const questions=[
+  {text:"Утро. Что открываешь первым?",
+   sub:"Честно. До кофе.",
+   opts:[
+     {e:"💬",text:"Мессенджеры. Кто что написал?",sc:{tinder:1,weather:1,alarm:1}},
+     {e:"📰",text:"Новости / соцсети",sc:{tiktok:2,weather:1}},
+     {e:"📅",text:"Календарь. Что сегодня по плану?",sc:{calendar:3}},
+     {e:"🎵",text:"Музыку. Нужен саундтрек",sc:{spotify:3}},
+     {e:"⏰",text:"Ничего. Я ещё сплю. Будильник только что орал",sc:{alarm:1,notes:1,games:1}}
+   ]},
+  {text:"Телефон разрядился на 1%. Какое приложение спасаешь последним?",
+   opts:[
+     {e:"💬",text:"Мессенджер — нужна связь с людьми",sc:{weather:1,maps:1,tinder:1}},
+     {e:"📷",text:"Камеру — вдруг момент",sc:{camera:3}},
+     {e:"📍",text:"Карты — я заблужусь",sc:{maps:3}},
+     {e:"🎵",text:"Музыку — без неё невозможно",sc:{spotify:3}},
+     {e:"📊",text:"Таблицу с данными — там вся жизнь",sc:{excel:2,notes:1}}
+   ]},
+  {text:"У тебя есть час свободного времени. Куда уйдёт?",
+   opts:[
+     {e:"📱",text:"Залипну в контент. Час пролетит за 5 минут",sc:{tiktok:3}},
+     {e:"🎮",text:"В игру. Там интереснее",sc:{games:3}},
+     {e:"📝",text:"Запишу мысли / идеи / планы",sc:{notes:2,calendar:1}},
+     {e:"📷",text:"Пофоткаю что-нибудь",sc:{camera:2,spotify:1}},
+     {e:"🛠️",text:"Наведу порядок — в телефоне, доме, жизни",sc:{settings:2,excel:2}}
+   ]},
+  {text:"Друг просит совет. Твой стиль:",
+   opts:[
+     {e:"📊",text:"Анализирую ситуацию. Факты, логика, решение",sc:{calc:3,excel:1}},
+     {e:"🫂",text:"Слушаю. Поддерживаю. Обнимаю",sc:{weather:1,spotify:1,camera:1}},
+     {e:"📢",text:"Говорю правду. Прямо. Может, больно — но честно",sc:{alarm:3}},
+     {e:"🗺️",text:"Помогаю составить план действий",sc:{maps:2,calendar:2}},
+     {e:"😂",text:"Шучу. Юмор лечит лучше советов",sc:{tiktok:2,games:1}}
+   ]},
+  {text:"Как ты ведёшь себя на вечеринке?",
+   opts:[
+     {e:"🎤",text:"Я — центр. Истории, танцы, движ",sc:{tiktok:3,tinder:1}},
+     {e:"📸",text:"Фоткаю. Кто-то же должен",sc:{camera:3}},
+     {e:"🤫",text:"Наблюдаю из угла. Мне и тут хорошо",sc:{vpn:2,notes:1,settings:1}},
+     {e:"📋",text:"Организую. Кто-то же должен заказать пиццу",sc:{calendar:2,maps:1}},
+     {e:"🚪",text:"Ушёл(-а) через 30 минут. Дома лучше",sc:{games:2,notes:1}}
+   ]},
+  {text:"Тебе нужно принять важное решение. Метод:",
+   opts:[
+     {e:"📊",text:"Таблица за / против. Всё взвесить",sc:{excel:3,calc:1}},
+     {e:"💭",text:"Подумаю. Долго. Несколько дней",sc:{notes:2,weather:1}},
+     {e:"⚡",text:"Интуиция. Секунда — и решение готово",sc:{tinder:3}},
+     {e:"📞",text:"Спрошу 5 человек. Потом решу",sc:{maps:1,weather:2}},
+     {e:"🔮",text:"Отложу. Может, само решится",sc:{games:2,vpn:1}}
+   ]},
+  {text:"Какая из этих раздражалок — самая раздражающая?",
+   opts:[
+     {e:"📶",text:"Медленный интернет",sc:{tiktok:2,settings:2}},
+     {e:"⏰",text:"Опоздания. Чужие",sc:{calendar:3,alarm:1}},
+     {e:"🤥",text:"Враньё. Даже мелкое",sc:{alarm:2,calc:1}},
+     {e:"🔊",text:"Шум когда я сосредоточен(-а)",sc:{notes:2,vpn:1,spotify:1}},
+     {e:"📱",text:"Когда не перезванивают",sc:{tinder:1,weather:2}}
+   ]},
+  {text:"Ты в незнакомом городе. Первое действие:",
+   opts:[
+     {e:"📍",text:"Открываю карты. Ориентируюсь",sc:{maps:3}},
+     {e:"📷",text:"Фоткаю первое красивое",sc:{camera:3}},
+     {e:"🍽️",text:"Ищу где поесть",sc:{tinder:1,notes:1,tiktok:1}},
+     {e:"📞",text:"Звоню кому-нибудь: «я на месте!»",sc:{weather:1,alarm:1}},
+     {e:"🎧",text:"Наушники и гуляю без плана",sc:{spotify:3,vpn:1}}
+   ]},
+  {text:"Твои вкладки в браузере прямо сейчас:",
+   opts:[
+     {e:"3️⃣",text:"3 максимум. Порядок",sc:{calc:2,settings:2}},
+     {e:"🔟",text:"10-20. Рабочие, полезные",sc:{excel:2,calendar:1}},
+     {e:"💯",text:"47 вкладок и растёт. Не могу закрыть",sc:{notes:3,games:1}},
+     {e:"🫣",text:"Не знаю. Не считал(-а)",sc:{tiktok:2,tinder:1}},
+     {e:"🕵️",text:"Инкогнито. Не ваше дело",sc:{vpn:3}}
+   ]},
+  {text:"Лучший комплимент для тебя:",
+   opts:[
+     {e:"🧠",text:"«Ты умный(-ая)»",sc:{calc:2,excel:1,settings:1}},
+     {e:"😂",text:"«С тобой весело»",sc:{tiktok:3,games:1}},
+     {e:"💎",text:"«Ты надёжный(-ая)»",sc:{alarm:2,maps:1,calendar:1}},
+     {e:"🌙",text:"«Ты интересный(-ая). Необычный(-ая)»",sc:{vpn:2,notes:2}},
+     {e:"✨",text:"«Ты красивый(-ая)»",sc:{camera:2,tinder:2}}
+   ]},
+  {text:"Как ты реагируешь на перемены?",
+   opts:[
+     {e:"😰",text:"Тревога. Мне нужно время привыкнуть",sc:{weather:3,calendar:1}},
+     {e:"🤩",text:"Ура! Обожаю новое",sc:{tiktok:2,tinder:2}},
+     {e:"📋",text:"Составляю новый план",sc:{calendar:2,excel:2}},
+     {e:"🤷",text:"Адаптируюсь. Жизнь такая",sc:{maps:2,spotify:1}},
+     {e:"🫥",text:"Ухожу в себя и перевариваю",sc:{vpn:2,games:2}}
+   ]},
+  {text:"Твой стиль работы:",
+   opts:[
+     {e:"📊",text:"Системно. Таблицы, дедлайны, трекеры",sc:{excel:3,calendar:1}},
+     {e:"🎨",text:"Хаотично, но эффективно",sc:{notes:3}},
+     {e:"⏱️",text:"Прокрастинация → паника → гений за ночь",sc:{games:2,tiktok:2}},
+     {e:"🤝",text:"В команде. Мне нужны люди рядом",sc:{maps:1,alarm:1,tinder:1}},
+     {e:"🔇",text:"В тишине. Наушники. Не трогать",sc:{spotify:2,vpn:2}}
+   ]},
+  {text:"Что ты делаешь с уведомлениями?",
+   opts:[
+     {e:"🔔",text:"Читаю всё сразу. Не могу с красным кружком",sc:{alarm:2,calendar:2}},
+     {e:"🔕",text:"Всё на беззвуке. Вечно",sc:{vpn:2,games:1,spotify:1}},
+     {e:"📬",text:"327 непрочитанных. И растёт",sc:{notes:2,tiktok:1}},
+     {e:"⚙️",text:"Настроил(-а) точечно — важное пропускаю, остальное нет",sc:{settings:3}},
+     {e:"😤",text:"Бешусь от каждого уведомления",sc:{weather:2,calc:1}}
+   ]},
+  {text:"Если бы ты был(-а) функцией телефона:",
+   opts:[
+     {e:"🔋",text:"Батарейка. Без меня всё умирает",sc:{alarm:2,maps:1,calendar:1}},
+     {e:"📶",text:"Связь. Я соединяю людей",sc:{tinder:2,tiktok:1}},
+     {e:"🔒",text:"Пароль. Я защищаю",sc:{vpn:3}},
+     {e:"📷",text:"Камера. Я фиксирую мир",sc:{camera:3}},
+     {e:"💾",text:"Память. Я храню всё",sc:{notes:2,excel:1}}
+   ]},
+  {text:"Друзья описали бы тебя как:",
+   opts:[
+     {e:"🧠",text:"Умный(-ая) и полезный(-ая)",sc:{calc:2,settings:1,excel:1}},
+     {e:"🎭",text:"Весёлый(-ая) и непредсказуемый(-ая)",sc:{tiktok:2,tinder:1,games:1}},
+     {e:"🫂",text:"Тёплый(-ая) и заботливый(-ая)",sc:{weather:2,spotify:1}},
+     {e:"🗿",text:"Спокойный(-ая) и загадочный(-ая)",sc:{vpn:2,camera:1}},
+     {e:"📢",text:"Честный(-ая) и прямой(-ая)",sc:{alarm:3}}
+   ]},
+  {text:"Последний вопрос. Что для тебя телефон?",
+   sub:"Одно. Самое главное.",
+   opts:[
+     {e:"🧠",text:"Инструмент. Он делает жизнь удобнее",sc:{calc:2,settings:1,maps:1}},
+     {e:"🫂",text:"Связь с людьми. Без него — изоляция",sc:{tinder:1,weather:2,alarm:1}},
+     {e:"🎨",text:"Способ самовыражения",sc:{camera:2,spotify:1,tiktok:1}},
+     {e:"🎮",text:"Развлечение. Чтобы не скучать",sc:{games:2,tiktok:2}},
+     {e:"📝",text:"Второй мозг. Там всё важное",sc:{notes:2,excel:1,calendar:1}}
+   ]}
+];
+
+let curQ=0,selOpt=null;
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      <div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><span class="opt-emoji">${o.e}</span><span>${o.text}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Установить приложение 📱':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const topK=sorted[0][0],a=A[topK],maxVal=Math.max(sorted[0][1],1);
+
+  const top8=sorted.slice(0,8);
+  const barsHTML=top8.map(([k,v])=>{const pct=Math.round((v/maxVal)*100);return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name"><span style="display:inline-flex;width:20px;height:20px;border-radius:5px;align-items:center;justify-content:center;font-size:11px;background:${A[k].bg}">${A[k].icon}</span> ${A[k].name}</span><span class="sc-val" style="color:${A[k].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${A[k].bg}"></div></div></div>`;}).join('');
+
+  const notifsHTML=a.notifs.map((n,i)=>`<div class="notif-result" style="animation-delay:${i*.15}s"><div class="nr-icon" style="background:${a.bg}">${a.icon}</div><div class="nr-body"><div class="nr-title">${n.title}</div><div class="nr-text">${n.text}</div></div></div>`).join('');
+
+  const permsHTML=a.perms.map(p=>`<div class="perm"><span class="perm-icon">${p.split(' ')[0]}</span><span>${p.split(' ').slice(1).join(' ')}</span><div class="perm-toggle" style="background:${a.color}"></div></div>`).join('');
+
+  const galleryHTML=K.map(k=>{const aa=A[k],cur=k===topK;return`<div class="gallery-item ${cur?'current':''}"><div class="gi-icon" style="background:${aa.bg}">${aa.icon}</div><div class="gi-body"><div class="gi-name">${aa.name}</div><div class="gi-desc">${aa.aka}</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="app-card">
+      <div class="app-icon-big" style="background:${a.bg}">${a.icon}</div>
+      <div class="app-label" style="color:${a.color}">Ты — приложение</div>
+      <div class="app-name">${a.name}</div>
+      <div class="app-aka" style="color:${a.color}">${a.aka}</div>
+      <div class="app-tagline">${a.tag}</div>
+    </div>
+
+    ${notifsHTML}
+
+    <div class="r-card"><h3>📱 Описание</h3><p>${a.desc}</p></div>
+
+    <div class="r-card"><h3>🔐 Разрешения</h3><div class="perm-list">${permsHTML}</div></div>
+
+    <div class="r-card"><h3>📊 Экран приложений (топ-8)</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🐛 Баг</h3><p>${a.shadow}</p></div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Второе приложение: ${A[sorted[1][0]].icon} ${A[sorted[1][0]].name}</h3><p>${A[sorted[1][0]].tag}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">📱 Все 14 приложений</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Переустановить</button>
+    </div>`;
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const a=A[sorted[0][0]];
+  const text=`${a.icon} Я — ${a.name} ${a.aka}\n\n${a.tag}\n\n📱 А ты? https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Какое ты приложение',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const a=A[sorted[0][0]],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.slice(0,8).map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${A[k].icon} ${A[k].name}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const text=`📱 КАКОЕ ТЫ ПРИЛОЖЕНИЕ\n\n${a.icon} ${a.name}\n${a.aka}\n\n«${a.tag}»\n\n📊 Экран:\n${bars}\n\n${a.desc}\n\n🐛 Баг: ${a.shadow}\n\n→ https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
