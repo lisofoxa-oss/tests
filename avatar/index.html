@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какой ты персонаж Аватара 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#030810;--bg2:#061018;
+  --surface:rgba(80,200,255,0.03);--surface2:rgba(80,200,255,0.06);--surface3:rgba(80,200,255,0.10);
+  --text:#5090b0;--text-dim:#305870;--text-bright:#c0e8ff;
+  --border:rgba(80,200,255,0.07);
+  --cyan:#40d8f0;--teal:#20b8a8;--bio:#60f0b0;--violet:#9080e0;--amber:#f0a040;--ash:#e86040;
+  --glow:rgba(64,216,240,0.10);
+  --card-shadow:0 2px 24px rgba(0,120,180,0.06);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+.cin{font-family:'Cinzel',serif}
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+
+canvas#bio{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+.header{text-align:center;padding:44px 0 24px;animation:fadeUp .8s ease;position:relative}
+.header-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-weight:600;margin-bottom:20px}
+.header-scene{font-size:28px;display:flex;justify-content:center;gap:10px;margin-bottom:16px;opacity:.8}
+h1{font-family:'Cinzel',serif;font-size:clamp(2rem,7vw,3rem);font-weight:800;color:var(--text-bright);line-height:1.1;margin-bottom:6px;letter-spacing:1px}
+h1 span{background:linear-gradient(135deg,var(--cyan),var(--bio));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h1-sub{font-family:'Cinzel',serif;font-size:clamp(.9rem,3vw,1.2rem);color:var(--teal);font-weight:400;letter-spacing:3px;margin-bottom:16px}
+.lead{font-size:14px;color:var(--text-dim);max-width:460px;margin:0 auto;line-height:1.8}
+
+.intro-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;margin:24px 0 28px;box-shadow:var(--card-shadow);animation:fadeUp .8s ease .15s both}
+.intro-box p{font-size:13px;color:var(--text-dim);line-height:1.7;text-align:center}
+.char-preview{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px}
+.cp-tag{padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-dim);font-weight:500}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,rgba(64,216,240,0.15),rgba(96,240,176,0.15));border:1px solid rgba(64,216,240,0.2);color:var(--cyan);font-family:'Cinzel',serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .3s both;letter-spacing:2px}
+.btn-start:hover{transform:translateY(-3px);background:linear-gradient(135deg,rgba(64,216,240,0.2),rgba(96,240,176,0.2));box-shadow:0 10px 40px var(--glow)}
+
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(3,8,16,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-family:'Cinzel',serif;font-size:10px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase}
+.progress-count{font-size:12px;color:var(--cyan);font-weight:700}
+.progress-bar{height:2px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--bio),var(--violet));border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;box-shadow:var(--card-shadow);animation:fadeUp .45s ease}
+.q-num{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--cyan);font-weight:600;margin-bottom:14px}
+.q-text{font-size:19px;font-weight:700;color:var(--text-bright);line-height:1.35;margin-bottom:8px;letter-spacing:-.2px}
+.q-sub{font-size:13px;font-style:italic;color:var(--text-dim);margin-bottom:22px;line-height:1.6}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--surface2);border:1.5px solid transparent;border-radius:14px;cursor:pointer;transition:all .25s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(64,216,240,0.12);background:var(--surface3)}
+.option.selected{border-color:var(--cyan);background:rgba(64,216,240,0.06)}
+.opt-emoji{font-size:20px;flex-shrink:0}
+
+.fact-box{margin-top:16px;padding:12px 14px;background:rgba(96,240,176,0.04);border:1px solid rgba(96,240,176,0.1);border-radius:12px;font-size:12px;color:var(--bio);line-height:1.6;display:none;animation:fadeUp .3s ease}
+.fact-box.show{display:block}
+.fact-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;opacity:.7}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Cinzel',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--surface2);color:var(--text-dim);opacity:0;pointer-events:none;letter-spacing:1px}
+.btn-next.active{opacity:1;pointer-events:all;background:linear-gradient(135deg,rgba(64,216,240,0.15),rgba(96,240,176,0.15));border:1px solid rgba(64,216,240,0.2);color:var(--cyan)}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+.res-hero{text-align:center;padding:36px 0 20px;position:relative}
+.res-film{font-family:'Cinzel',serif;font-size:9px;text-transform:uppercase;letter-spacing:4px;margin-bottom:12px}
+.res-icon{font-size:64px;display:block;margin-bottom:12px}
+.res-name{font-family:'Cinzel',serif;font-size:clamp(1.8rem,6vw,2.6rem);font-weight:800;color:var(--text-bright);margin-bottom:4px;letter-spacing:1px}
+.res-clan{font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.res-tagline{font-size:15px;color:var(--text);max-width:460px;margin:0 auto;line-height:1.7}
+
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px 22px;margin-bottom:14px;box-shadow:var(--card-shadow)}
+.r-card h3{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px;letter-spacing:1px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8}
+
+.trait-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.trait-tag{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:500}
+
+/* Quote style */
+.pandora-quote{padding:16px 20px;border-left:2px solid var(--cyan);margin:14px 0 6px;background:var(--surface2);border-radius:0 12px 12px 0}
+.pandora-quote p{font-family:'Cinzel',serif;font-size:13px;font-style:italic;color:var(--text-bright);line-height:1.6;margin:0}
+
+/* Character stats */
+.char-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.cs-item{padding:14px 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;text-align:center}
+.cs-icon{font-size:18px;display:block;margin-bottom:4px}
+.cs-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:2px}
+.cs-val{font-size:11px;font-weight:600}
+
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500}
+.sc-val{font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Cinzel',serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:14px;letter-spacing:1px}
+.gallery-toggle:hover{border-color:var(--cyan);color:var(--cyan)}
+.gallery{display:none;flex-direction:column;gap:6px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.gallery-item.current{border-color:var(--cyan);background:rgba(64,216,240,0.03)}
+.gi-emoji{font-size:20px;flex-shrink:0}
+.gi-body{flex:1;min-width:0}
+.gi-name{font-size:12px;font-weight:600;color:var(--text-bright)}
+.gi-desc{font-size:10px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi-badge{font-size:8px;padding:2px 7px;background:rgba(64,216,240,0.1);color:var(--cyan);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Cinzel',serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none;letter-spacing:1px}
+.btn-primary{background:linear-gradient(135deg,rgba(64,216,240,0.15),rgba(96,240,176,0.15));color:var(--cyan);border:1px solid rgba(64,216,240,0.2)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px var(--glow)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--cyan);color:var(--bg);padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:17px}.option{padding:12px 14px;font-size:13px}.char-stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<canvas id="bio"></canvas>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">🌿 Тест по вселенной Аватара</div>
+      <div class="header-scene">🌿🌊🔥💨🏭</div>
+      <h1>Какой ты <span>персонаж</span></h1>
+      <div class="h1-sub">Avatar · 2009 — 2025</div>
+      <p class="lead">Три фильма. Три мира. Джунгли, океан, вулканы, небо. 14 персонажей — воины, дети, учёные, лидеры, изгои. Кто из них — ты?</p>
+    </div>
+    <div class="intro-box">
+      <p>16 вопросов. Не фан-викторина — тест на характер. Мы ищем не кого ты любишь, а кто ты есть. С фактами о Пандоре после каждого ответа.</p>
+      <div class="char-preview">
+        <span class="cp-tag">🏹 Джейк</span><span class="cp-tag">🐆 Нейтири</span><span class="cp-tag">🔬 Грейс</span>
+        <span class="cp-tag">⚔️ Куоритч</span><span class="cp-tag">🌊 Ло'ак</span><span class="cp-tag">🌿 Кири</span>
+        <span class="cp-tag">🕸️ Спайдер</span><span class="cp-tag">🦋 Тук</span><span class="cp-tag">⭐ Нетеям</span>
+        <span class="cp-tag">💧 Цирейя</span><span class="cp-tag">🛡️ Тоноварь</span><span class="cp-tag">🐚 Ронал</span>
+        <span class="cp-tag">🔥 Варанг</span><span class="cp-tag">🌙 Мо'ат</span>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startTest()">I SEE YOU ✦</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top"><span class="progress-label">Tsaheylu</span><span class="progress-count" id="progressCount">01 / 16</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ BIOLUMINESCENT CANVAS ═══ */
+(function(){
+  const c=document.getElementById('bio'),ctx=c.getContext('2d');
+  let W,H,ps=[];
+  const cols=['rgba(64,216,240,','rgba(96,240,176,','rgba(144,128,224,','rgba(40,180,200,','rgba(80,255,160,'];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;ps=[];for(let i=0;i<40;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*3,vy:-.05-.15*Math.random(),vx:(Math.random()-.5)*.3,a:.05+Math.random()*.2,pulse:Math.random()*Math.PI*2,col:cols[Math.floor(Math.random()*cols.length)]})}
+  function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.pulse+=.02;if(p.y<-10){p.y=H+10;p.x=Math.random()*W}if(p.x<0||p.x>W)p.vx*=-1;const a=p.a*(.4+.6*Math.sin(p.pulse));ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col+a+')';ctx.fill();if(p.r>2){ctx.beginPath();ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);ctx.fillStyle=p.col+(a*.15)+')';ctx.fill()}});requestAnimationFrame(draw)}
+  resize();draw();addEventListener('resize',resize);
+})();
+
+/* ═══ CHARACTERS ═══ */
+const C={
+  jake:{icon:"🏹",name:"Джейк Салли",clan:"Оматикайя → Меткайина",film:"Avatar · 1, 2, 3",color:"#40d8f0",
+    tag:"Ты — человек, который сжигает мосты. Не от злости — а потому что впереди лучший мир. Ты выбираешь заново каждый день — и каждый раз выбираешь сердцем.",
+    desc:"Джейк — бывший морпех, который предал свой вид ради того, во что поверил. Не потому что На'ви лучше людей — а потому что он впервые почувствовал себя собой. Ты так же: ты можешь бросить всё, если найдёшь то, что считаешь настоящим. Это пугает окружающих. И вдохновляет.",
+    stats:{role:"Торук Макто",element:"Лес → Океан",strength:"Адаптация"},
+    traits:["Решительность","Жертвенность","Лидерство","Верность"],shadow:"Ты защищаешь тех, кого любишь. Но иногда защита выглядит как бегство. Ты бежал от Оматикайя к Меткайина, чтобы спасти семью — но убежал и от ответственности вождя."},
+  neytiri:{icon:"🐆",name:"Нейтири",clan:"Оматикайя",film:"Avatar · 1, 2, 3",color:"#60f0b0",
+    tag:"Ты — огонь в форме стрелы. Точная, быстрая, смертельная — и невероятно нежная с теми, кого любишь. Мир видит воина. Близкие знают — ты чувствуешь глубже всех.",
+    desc:"Нейтири — лучший воин клана, но её сила не в луке. Она в том, как яростно она любит. Она убивает за семью не задумываясь. Грейс, Нетеям — каждая потеря делает её жёстче снаружи и больнее внутри. Ты так же: за твоей бронёй — чистая, раскалённая нежность.",
+    stats:{role:"Цахик (в будущем)",element:"Лес",strength:"Ярость и любовь"},
+    traits:["Страсть","Верность","Инстинкт","Яростная защита"],shadow:"Ты чувствуешь так сильно, что это разрушает. Горе Нейтири по Нетеяму превращается в слепую ярость. Эмоции — сила. Но неконтролируемые — оружие против себя."},
+  grace:{icon:"🔬",name:"Грейс Огустин",clan:"Люди (душой — На'ви)",film:"Avatar · 1",color:"#80c0ff",
+    tag:"Ты — учёный, влюблённый в мир, который изучает. Ты хочешь понять — не завоевать. И готов(-а) умереть за знание, которое другие считают бесполезным.",
+    desc:"Грейс приехала на Пандору изучать. Осталась — потому что полюбила. Она научила На'ви английскому, а они научили её видеть. Ты так же: ты подходишь к миру с любопытством, не с требованием. Ты не берёшь — ты просишь показать.",
+    stats:{role:"Учёный-ксенобиолог",element:"Знание",strength:"Понимание"},
+    traits:["Любопытство","Эмпатия","Упрямство","Научная честность"],shadow:"Ты так увлечён(-а) пониманием, что забываешь действовать. Грейс изучала Пандору годами — но не смогла её защитить. Знание без действия — музейный экспонат."},
+  quaritch:{icon:"⚔️",name:"Полковник Куоритч",clan:"RDA / Рекомбинант",film:"Avatar · 1, 2, 3",color:"#e86040",
+    tag:"Ты не сдаёшься. Никогда. Тебя убили — ты вернулся. Тебя предали — ты стал сильнее. Упрямство — не черта характера. Это весь характер.",
+    desc:"Куоритч — антагонист, который не считает себя злодеем. Он солдат. Он выполняет задачу. Его убили — он вернулся в теле На'ви и продолжил. Ты так же: тебя невозможно остановить. Вопрос только — в какую сторону ты идёшь. Потому что ту же энергию можно направить и на созидание.",
+    stats:{role:"Полковник / Рекомбинант",element:"Сталь",strength:"Несгибаемость"},
+    traits:["Воля","Тактика","Упрямство","Бесстрашие"],shadow:"Ты настолько одержим(-а) целью, что не замечаешь, когда цель перестаёт иметь смысл. Куоритч гонится за Джейком через два фильма — но зачем?"},
+  loak:{icon:"🌊",name:"Ло'ак",clan:"Оматикайя / Меткайина",film:"Avatar · 2, 3",color:"#40a8e0",
+    tag:"Ты — второй ребёнок, который всю жизнь доказывает, что он не хуже первого. Ты чувствуешь себя не таким. Не тем. Не достаточным. И именно поэтому ты — самый настоящий.",
+    desc:"Ло'ак — полукровка, средний ребёнок, вечный источник проблем. Пять пальцев вместо четырёх. Отец сравнивает с Нетеямом. Но именно Ло'ак подружился с Пайаканом, именно он чувствует океан как свой. Ты так же: твоя «неправильность» — это твоя суперсила. Просто мир ещё не понял.",
+    stats:{role:"Средний сын",element:"Океан",strength:"Сердце"},
+    traits:["Бунтарство","Эмпатия","Смелость","Непринятость"],shadow:"Ты так хочешь доказать, что ты достоин, что лезешь в опасность. Ло'ак рисковал собой ради одобрения отца. Ты рисковал(-а) ради чьего одобрения?"},
+  kiri:{icon:"🌿",name:"Кири",clan:"Оматикайя / Дочь Эйвы",film:"Avatar · 2, 3",color:"#60f0b0",
+    tag:"Ты чувствуешь мир иначе. Буквально. То, что для других — трава и деревья, для тебя — живая сеть. Ты не странная. Ты — следующий уровень.",
+    desc:"Кири — дочь аватара Грейс, рождённая без отца. Она подключается к Эйве напрямую — без Цахейлу, без посредников. Она управляет природой. Ты так же: у тебя есть связь с чем-то, что другие не видят. Интуиция, чувство момента, понимание без слов. Это не мистика — это ты.",
+    stats:{role:"Дочь Эйвы",element:"Жизнь",strength:"Связь с миром"},
+    traits:["Интуиция","Уникальность","Чуткость","Инаковость"],shadow:"Быть особенной — одиноко. Кири падает в припадках, когда подключается слишком глубоко. Дар и проклятие — одно и то же."},
+  spider:{icon:"🕸️",name:"Спайдер",clan:"Между мирами",film:"Avatar · 2, 3",color:"#c8b060",
+    tag:"Ты — ничей. Не человек, не На'ви. Не свой нигде — и свой везде. Ты сам себе клан. И это больно. И это свобода.",
+    desc:"Спайдер — сын Куоритча, выросший среди На'ви. Человеческое тело, душа леса. Он предаёт отца ради тех, кого считает семьёй — но отец тоже его любит. Ты так же: ты разрываешься. Между семьёй и свободой, долгом и чувством, прошлым и выбором.",
+    stats:{role:"Сирота между мирами",element:"Выбор",strength:"Адаптация"},
+    traits:["Идентичность","Разрыв","Верность","Мужество"],shadow:"Ты так стараешься быть частью мира, который не совсем твой, что забываешь — может, твой мир ещё не создан. И создашь его ты."},
+  tuk:{icon:"🦋",name:"Тук (Туктирей)",clan:"Оматикайя",film:"Avatar · 2, 3",color:"#f0c0e0",
+    tag:"Ты — маленькая, но храбрая. Тебя недооценивают. А ты просто ещё не показала, на что способна. Подожди.",
+    desc:"Тук — младшая дочь Джейка и Нейтири. Её хватают враги, она видит ужас — но не ломается. В ней больше стойкости, чем в некоторых воинах. Ты так же: мир считает тебя маленьким(-ой), хрупким(-ой), незначимым(-ой). Но ты тащишь на себе больше, чем показываешь.",
+    stats:{role:"Младшая дочь",element:"Невинность",strength:"Стойкость"},
+    traits:["Храбрость","Невинность","Стойкость","Свет"],shadow:"Ты сильнее, чем думаешь. Но мир заставляет тебя взрослеть слишком быстро. Тук видела смерть брата. Никакой ребёнок не должен это видеть."},
+  neteyam:{icon:"⭐",name:"Нетеям",clan:"Оматикайя",film:"Avatar · 2",color:"#ffd070",
+    tag:"Ты — идеальный старший. Ответственный, сильный, всегда на стороне семьи. Ты тащишь — и никто не спрашивает, тяжело ли тебе.",
+    desc:"Нетеям — первенец, который делал всё правильно. Защищал брата, слушал отца, сражался как мужчина в теле подростка. Он погиб, спасая Ло'ака. Ты так же: ты берёшь ответственность, которую тебе не давали. Потому что кто-то должен. И этот кто-то — всегда ты.",
+    stats:{role:"Старший сын",element:"Долг",strength:"Самопожертвование"},
+    traits:["Ответственность","Защита","Скромность","Жертвенность"],shadow:"Ты настолько привык(-ла) быть сильным(-ой) для других, что некому быть сильным для тебя. Нетеям погиб. Идеальный сын. Вечно идеальный."},
+  tsireya:{icon:"💧",name:"Цирейя",clan:"Меткайина",film:"Avatar · 2, 3",color:"#60d0e8",
+    tag:"Ты — терпение, мягкость и вода. Ты учишь не словами — примером. Ты не давишь — ты показываешь. И люди за тобой идут.",
+    desc:"Цирейя учила детей Салли плавать, нырять, дышать под водой. Не смеялась, не торопила, не злилась. Просто показывала — снова и снова. Ты так же: ты лучший учитель из тех, кого люди не замечают. Ты не гуру — ты тот, кто просто рядом, когда трудно.",
+    stats:{role:"Дочь вождя",element:"Океан",strength:"Терпение"},
+    traits:["Мягкость","Терпение","Мудрость не по годам","Доброта"],shadow:"Ты даёшь так много, что забываешь брать. Цирейя учила всех — а кто учил её? Мягкость — не значит быть бесконечно доступной."},
+  tonowari:{icon:"🛡️",name:"Тоноварь",clan:"Меткайина",film:"Avatar · 2, 3",color:"#3098b0",
+    tag:"Ты — лидер, который думает прежде чем бить. Ты защищаешь не мечом — а мудростью. Твоя сила — в том, что ты не используешь её без нужды.",
+    desc:"Тоноварь принял семью Джейка, хотя это привело войну к его порогу. Он мог отказать — но выбрал милосердие. Ты так же: ты принимаешь сложные решения, которые другие считают слабостью. Но пустить к себе чужого — сильнее, чем прогнать.",
+    stats:{role:"Олоэйктан (вождь)",element:"Океан",strength:"Мудрость"},
+    traits:["Мудрость","Спокойствие","Справедливость","Сила"],shadow:"Ты так стараешься быть справедливым(-ой), что иногда слишком долго решаешь. Мир не всегда ждёт."},
+  ronal:{icon:"🐚",name:"Ронал",clan:"Меткайина",film:"Avatar · 2, 3",color:"#2888a0",
+    tag:"Ты — традиция, сила и «нет» как полное предложение. Ты защищаешь свой мир не потому что ненавидишь чужой — а потому что знаешь цену своему.",
+    desc:"Ронал была против того, чтобы принять Салли. Не от злости — от мудрости. Она знала: чужаки принесут проблемы. И оказалась права. Ты так же: ты видишь последствия раньше других. Тебя называют жёсткой(-им) — но ты просто дальновиднее.",
+    stats:{role:"Цахик",element:"Традиция",strength:"Прозорливость"},
+    traits:["Жёсткость","Традиция","Защита","Материнство"],shadow:"Ты права чаще, чем хочешь. И это одиноко. Ронал предупреждала — но её не послушали."},
+  varang:{icon:"🔥",name:"Варанг",clan:"Народ Пепла",film:"Avatar · 3",color:"#e86040",
+    tag:"Ты — огонь, который не просит разрешения гореть. Ты не злая. Ты — выживший(-ая). И готова сжечь мир, чтобы твои были в безопасности.",
+    desc:"Варанг — лидер Народа Пепла, агрессивного вулканического клана На'ви. Она заключила союз с людьми — не потому что предатель, а потому что прагматик. Выживание важнее гордости. Ты так же: ты делаешь непопулярные выборы, если они спасают тех, кого ты любишь.",
+    stats:{role:"Лидер Мангкван",element:"Огонь и пепел",strength:"Прагматизм"},
+    traits:["Агрессия","Прагматизм","Харизма","Тьма"],shadow:"Ты заключаешь сделки с теми, кого презираешь. Варанг сотрудничает с RDA. Цель оправдывает средства? Или средства становятся целью?"},
+  moat:{icon:"🌙",name:"Мо'ат",clan:"Оматикайя",film:"Avatar · 1, 2, 3",color:"#9080e0",
+    tag:"Ты — связь между мирами. Видимым и невидимым. Ты чувствуешь то, что другие только пытаются понять. Ты — мост.",
+    desc:"Мо'ат — Цахик, духовный лидер Оматикайя. Она видит глубже, чем воины, дальше, чем вожди. Она увидела в Джейке то, чего не видел никто. Ты так же: ты понимаешь людей до того, как они заговорят. Ты чувствуешь — и доверяешь этому чувству.",
+    stats:{role:"Цахик",element:"Дух / Эйва",strength:"Видение"},
+    traits:["Мудрость","Духовность","Интуиция","Спокойная сила"],shadow:"Ты видишь всё — но не можешь вмешаться. Мо'ат видела, как её мир горит. Дважды. Мудрость без власти — наблюдение за катастрофой."}
+};
+
+const K=Object.keys(C);
+let scores={};K.forEach(k=>scores[k]=0);
+
+const facts=[
+  "Пандора — не планета, а спутник газового гиганта Полифема в системе Альфа Центавра. Год Пандоры длится 290 земных суток.",
+  "Нейронная сеть Эйвы насчитывает ~10¹⁴ связей — больше, чем нейронов в мозге любого вида на Земле. Деревья Пандоры буквально думают.",
+  "На'ви ростом ~3 метра, но весят как средний человек — из-за углеродного волокна в костях и низкой гравитации (0.8g).",
+  "Язык На'ви создал лингвист Пол Фроммер — в нём ~2500 слов, работающая грамматика и три падежа.",
+  "Цахейлу (нейросвязь через косу) — не метафора. На'ви буквально чувствуют то же, что их партнёр, животное или дерево.",
+  "Меткайина — единственный клан На'ви, который модифицировал своё тело: их хвосты стали плоскими как вёсла для плавания. Эволюция за тысячи лет.",
+  "Горы Аллилуйя летают благодаря сверхпроводящему минералу анобтаниуму в магнитном поле Пандоры. Это реальная физика.",
+  "Бюджет трёх фильмов Аватара — более $1.3 миллиарда. Суммарные сборы — более $7 миллиардов. Самая прибыльная кинофраншиза в истории.",
+  "Сигурни Уивер сыграла подростка Кири в 73 года через motion capture. Кэмерон сказал, что она единственная, кто мог передать эту странность.",
+  "Народ Пепла (Мангкван) — первые антагонисты-На'ви в саге. Кэмерон хотел показать, что На'ви тоже способны на агрессию.",
+  "Тулкун (разумные киты Пандоры) имеют самый развитый мозг на планете — и пацифистскую философию. Один Пайакан нарушил правило.",
+  "Для создания подводных сцен «Пути воды» каст тренировался задерживать дыхание. Кейт Уинслет — рекорд: 7 минут 15 секунд.",
+  "Торговцы Ветра — кочевой клан, живущий на летающих кораблях. Первый клан На'ви, не привязанный к территории.",
+  "В третьем фильме впервые показана тёмная сторона На'ви: циклы насилия, месть, союзы с врагами. Кэмерон назвал это «обратной стороной Пандоры».",
+  "Оригинальный Аватар вышел в декабре 2009 года и стал самым кассовым фильмом всех времён — $2.92 миллиарда. Рекорд держится до сих пор.",
+  "Кэмерон написал сценарии всех пяти фильмов одновременно. Третий, четвёртый и пятый снимались параллельно, чтобы дети-актёры не выросли."
+];
+
+const questions=[
+  {text:"Тебе предлагают навсегда уехать в место, где ты никого не знаешь. Но там — настоящая жизнь.",
+   sub:"Как Джейк выбрал Пандору.",
+   opts:[
+     {e:"🚀",text:"Еду. Без раздумий. Здесь мне нечего терять",sc:{jake:3,spider:1}},
+     {e:"🤔",text:"Еду, но буду скучать по своим",sc:{loak:2,tsireya:1}},
+     {e:"❌",text:"Нет. Мой дом — здесь. Я его не брошу",sc:{ronal:3,neytiri:1}},
+     {e:"🔬",text:"Еду изучать. Не жить — понять",sc:{grace:3}},
+     {e:"🌙",text:"Спрошу у интуиции. Она знает лучше",sc:{moat:2,kiri:2}}
+   ]},
+  {text:"Кто-то слабее тебя — в опасности. Но помощь = риск для тебя.",
+   opts:[
+     {e:"🏃",text:"Бросаюсь спасать. Не думая",sc:{neteyam:3,jake:1}},
+     {e:"🐆",text:"Спасаю — и уничтожаю того, кто угрожал",sc:{neytiri:3}},
+     {e:"🧠",text:"Оцениваю ситуацию. Героизм без плана — глупость",sc:{quaritch:2,tonowari:1}},
+     {e:"📢",text:"Зову помощь. Один(-а) я не справлюсь",sc:{tuk:1,tsireya:2}},
+     {e:"🔥",text:"Помогаю, но на своих условиях",sc:{varang:3}}
+   ]},
+  {text:"Ты в новой компании. Все друг друга знают, кроме тебя.",
+   opts:[
+     {e:"👋",text:"Сам(-а) подхожу, знакомлюсь, шучу",sc:{jake:2,loak:1}},
+     {e:"👀",text:"Наблюдаю. Изучаю. Потом решу",sc:{quaritch:2,moat:1}},
+     {e:"💧",text:"Нахожу одного тихого человека и общаюсь с ним",sc:{tsireya:2,kiri:1}},
+     {e:"🫥",text:"Чувствую себя чужим(-ой). Всегда так",sc:{spider:3}},
+     {e:"😤",text:"Не люблю новые компании. Мне не нужны чужие люди",sc:{ronal:2,neytiri:1}}
+   ]},
+  {text:"Тебя несправедливо обвинили. Ты знаешь, что не виноват(-а).",
+   opts:[
+     {e:"🗣️",text:"Доказываю свою правоту. Громко. Яростно",sc:{neytiri:3,varang:1}},
+     {e:"🤐",text:"Молчу. Правда выйдет сама",sc:{tonowari:2,moat:1}},
+     {e:"😢",text:"Обижаюсь. Глубоко. Надолго",sc:{loak:2,tuk:1}},
+     {e:"📊",text:"Собираю доказательства и разбираюсь системно",sc:{grace:2,quaritch:1}},
+     {e:"🚶",text:"Ухожу. Мне не нужно оправдываться",sc:{spider:2,kiri:1}}
+   ]},
+  {text:"Что для тебя семья?",
+   sub:"Не «что должно быть» — а что есть.",
+   opts:[
+     {e:"🛡️",text:"Те, ради кого я готов(-а) на всё",sc:{jake:2,neytiri:2}},
+     {e:"🌊",text:"Те, кто принимают меня таким(-ой), какой я есть",sc:{loak:3}},
+     {e:"🔬",text:"Те, кого я выбрал(-а). Не кровь — а связь",sc:{grace:2,spider:2}},
+     {e:"🏔️",text:"Традиция. Корни. Место, откуда я",sc:{ronal:2,tonowari:2}},
+     {e:"🌿",text:"Всё живое. Мир — моя семья",sc:{kiri:3,moat:1}}
+   ]},
+  {text:"Тебе дали власть. Как ты ей распорядишься?",
+   opts:[
+     {e:"🛡️",text:"Буду защищать. Лидер — это щит, а не корона",sc:{tonowari:3}},
+     {e:"⚔️",text:"Буду побеждать. Власть = возможности",sc:{quaritch:3}},
+     {e:"🌙",text:"Буду направлять. Тихо, без приказов",sc:{moat:3}},
+     {e:"🔥",text:"Буду менять правила. Старые не работают",sc:{varang:2,jake:1}},
+     {e:"😰",text:"Откажусь. Я не хочу за всех отвечать",sc:{tuk:2,tsireya:1}}
+   ]},
+  {text:"Ты потерял(-а) кого-то важного. Как переживаешь?",
+   sub:"",
+   opts:[
+     {e:"🔥",text:"Ярость. Кто-то за это заплатит",sc:{neytiri:3,varang:1}},
+     {e:"🌊",text:"Тону в горе. Тихо. Один(-а)",sc:{loak:2,kiri:1}},
+     {e:"💪",text:"Стискиваю зубы и иду дальше. У меня есть обязанности",sc:{jake:2,neteyam:1}},
+     {e:"🌙",text:"Молюсь / медитирую / отпускаю",sc:{moat:3}},
+     {e:"🫂",text:"Ищу поддержку у близких",sc:{tsireya:2,tuk:1}}
+   ]},
+  {text:"Ты чувствуешь, что отличаешься от окружающих.",
+   opts:[
+     {e:"✨",text:"Это мой дар. Я не такой(-ая) — и это моя сила",sc:{kiri:3}},
+     {e:"😔",text:"Это больно. Я хочу быть своим(-ей)",sc:{spider:2,loak:2}},
+     {e:"🤷",text:"Мне всё равно. Я — это я",sc:{varang:2,quaritch:1}},
+     {e:"🫂",text:"Я ищу тех, кто такие же",sc:{tsireya:1,grace:2}},
+     {e:"👑",text:"Конечно отличаюсь. Я лучше",sc:{neytiri:1,ronal:2}}
+   ]},
+  {text:"Два друга ссорятся. Оба правы. Ты:",
+   opts:[
+     {e:"⚖️",text:"Мирю. Нахожу компромисс",sc:{tonowari:3,tsireya:1}},
+     {e:"🔥",text:"Встаю на сторону того, кто прав больше",sc:{neytiri:2,ronal:1}},
+     {e:"🤐",text:"Не лезу. Это их дело",sc:{kiri:2,spider:1}},
+     {e:"🧠",text:"Анализирую обе стороны. Объясняю каждому позицию другого",sc:{grace:3}},
+     {e:"😤",text:"Ору на обоих. Хватит",sc:{quaritch:2,varang:1}}
+   ]},
+  {text:"Что пугает больше всего?",
+   opts:[
+     {e:"💔",text:"Потерять тех, кого люблю",sc:{jake:2,neytiri:2}},
+     {e:"🫥",text:"Прожить жизнь не своей(-им)",sc:{spider:2,loak:2}},
+     {e:"🧠",text:"Не понять. Уйти, так и не разобравшись",sc:{grace:3}},
+     {e:"⛓️",text:"Потерять контроль. Стать слабым(-ой)",sc:{quaritch:2,varang:1}},
+     {e:"🌑",text:"Потерять связь с миром. Перестать чувствовать",sc:{kiri:2,moat:2}}
+   ]},
+  {text:"Тебя просят сделать что-то против твоих принципов «ради общего блага».",
+   opts:[
+     {e:"❌",text:"Нет. Никогда. Принципы — это я",sc:{ronal:3,neteyam:1}},
+     {e:"🤔",text:"Зависит от цены. Иногда нужно пожертвовать",sc:{varang:2,jake:1}},
+     {e:"💪",text:"Сделаю и не буду жалеть. Победа важнее чистых рук",sc:{quaritch:3}},
+     {e:"😰",text:"Буду мучиться, но, возможно, сделаю",sc:{spider:2,loak:1}},
+     {e:"🌿",text:"Найду третий путь. Всегда есть другой вариант",sc:{kiri:2,moat:1}}
+   ]},
+  {text:"В бою (метафорическом или реальном) ты:",
+   opts:[
+     {e:"⚔️",text:"Впереди. Я веду за собой",sc:{jake:2,quaritch:1}},
+     {e:"🏹",text:"Стреляю точно. Каждый выстрел на счету",sc:{neytiri:3}},
+     {e:"🛡️",text:"Прикрываю других. Мой щит — для них",sc:{neteyam:3}},
+     {e:"🧠",text:"Планирую. Стратегия побеждает грубую силу",sc:{tonowari:2,grace:1}},
+     {e:"🌿",text:"Я не воюю. Я исцеляю после боя",sc:{tsireya:2,moat:1,kiri:1}}
+   ]},
+  {text:"Мир разрушается. Ты можешь спасти только что-то одно:",
+   opts:[
+     {e:"👨‍👩‍👧‍👦",text:"Свою семью",sc:{jake:2,neytiri:2}},
+     {e:"📚",text:"Знания",sc:{grace:3}},
+     {e:"🌍",text:"Саму природу",sc:{kiri:3}},
+     {e:"🏛️",text:"Свой народ / традиции",sc:{ronal:2,tonowari:1}},
+     {e:"🔥",text:"Себя. Чтобы потом восстановить остальное",sc:{quaritch:2,varang:2}}
+   ]},
+  {text:"Ребёнок спрашивает: «Я плохой?» Что скажешь?",
+   sub:"",
+   opts:[
+     {e:"🫂",text:"Обниму. Ничего не скажу. Обнимаю",sc:{tsireya:2,tuk:2}},
+     {e:"🗣️",text:"Нет. И расскажу почему — подробно, конкретно",sc:{grace:2,tonowari:1}},
+     {e:"💔",text:"«Я тоже так думал(-а) о себе. Ты — не плохой(-ая)»",sc:{loak:3}},
+     {e:"🌿",text:"«Послушай мир вокруг. Он скажет тебе, кто ты»",sc:{moat:2,kiri:1}},
+     {e:"😐",text:"«Неважно. Важно — что ты делаешь дальше»",sc:{jake:1,quaritch:1,neteyam:1}}
+   ]},
+  {text:"Если бы Эйва дала тебе одну способность:",
+   opts:[
+     {e:"🌿",text:"Чувствовать всё живое. Деревья, животных, людей",sc:{kiri:3,moat:1}},
+     {e:"🦅",text:"Летать. Свобода. Небо",sc:{jake:2,spider:1}},
+     {e:"💧",text:"Дышать под водой. Океан — второй дом",sc:{tsireya:2,loak:1}},
+     {e:"🛡️",text:"Быть неуязвимым(-ой). Защитить всех",sc:{neteyam:2,quaritch:1}},
+     {e:"🔥",text:"Управлять огнём. Никто не посмеет приблизиться",sc:{varang:3}}
+   ]},
+  {text:"Последний вопрос. Закрой глаза. Кто ты на Пандоре?",
+   sub:"Не думай. Чувствуй.",
+   opts:[
+     {e:"🏹",text:"Воин. Я защищаю",sc:{jake:1,neytiri:2,neteyam:1}},
+     {e:"🌊",text:"Странник. Я ищу себя",sc:{loak:2,spider:2}},
+     {e:"🌿",text:"Связной(-ая). Я слышу мир",sc:{kiri:2,moat:2}},
+     {e:"🛡️",text:"Лидер. Я веду за собой",sc:{tonowari:2,ronal:1,varang:1}},
+     {e:"🔬",text:"Исследователь. Я хочу понять",sc:{grace:3}},
+     {e:"🦋",text:"Ребёнок. Я ещё расту",sc:{tuk:2,tsireya:2}}
+   ]}
+];
+
+let curQ=0,selOpt=null;
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      <div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><span class="opt-emoji">${o.e}</span><span>${o.text}</span></div>`).join('')}</div>
+      <div class="fact-box" id="factBox"><div class="fact-label">🌿 Пандора · факт</div>${facts[i]}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'I See You ✦':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+  document.getElementById('factBox').classList.add('show');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const topK=sorted[0][0],ch=C[topK],maxVal=Math.max(sorted[0][1],1);
+
+  const top8=sorted.slice(0,8);
+  const barsHTML=top8.map(([k,v])=>{const pct=Math.round((v/maxVal)*100);return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${C[k].icon} ${C[k].name}</span><span class="sc-val" style="color:${C[k].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${C[k].color}"></div></div></div>`;}).join('');
+
+  const traitsHTML=ch.traits.map(t=>`<span class="trait-tag" style="background:${ch.color}12;color:${ch.color}">✦ ${t}</span>`).join('');
+
+  const statsHTML=Object.entries(ch.stats).map(([k,v])=>{const icons={role:'🎭',element:'✦',strength:'💎'};const labels={role:'Роль',element:'Стихия',strength:'Сила'};return`<div class="cs-item"><span class="cs-icon">${icons[k]}</span><div class="cs-label">${labels[k]}</div><div class="cs-val" style="color:${ch.color}">${v}</div></div>`;}).join('');
+
+  const galleryHTML=K.map(k=>{const cc=C[k],cur=k===topK;return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${cc.icon}</span><div class="gi-body"><div class="gi-name">${cc.name}</div><div class="gi-desc">${cc.clan}</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="res-hero">
+      <div class="res-film" style="color:${ch.color}">${ch.film}</div>
+      <span class="res-icon">${ch.icon}</span>
+      <div class="res-name">${ch.name}</div>
+      <div class="res-clan" style="color:${ch.color}">${ch.clan}</div>
+    </div>
+    <p class="res-tagline">${ch.tag}</p>
+
+    <div class="char-stats">${statsHTML}</div>
+
+    <div class="r-card"><h3>✦ Черты</h3><div class="trait-grid">${traitsHTML}</div></div>
+
+    <div class="r-card"><h3>${ch.icon} Кто ты на Пандоре</h3><p>${ch.desc}</p></div>
+
+    <div class="r-card"><h3>📊 Совпадение (топ-8)</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🌑 Тень</h3><p>${ch.shadow}</p></div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Тоже ты: ${C[sorted[1][0]].icon} ${C[sorted[1][0]].name}</h3><p>${C[sorted[1][0]].tag}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">🌿 Все 14 персонажей</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> I See You ✦</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Пройти заново</button>
+    </div>`;
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const ch=C[sorted[0][0]];
+  const text=`${ch.icon} Мой персонаж Аватара — ${ch.name} (${ch.clan})\n\n${ch.tag}\n\n🌿 I See You: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Какой ты персонаж Аватара',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const ch=C[sorted[0][0]],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.slice(0,8).map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${C[k].icon} ${C[k].name}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const text=`🌿 КАКОЙ ТЫ ПЕРСОНАЖ АВАТАРА\n\n${ch.icon} ${ch.name}\n${ch.clan} · ${ch.film}\n\n«${ch.tag}»\n\n📊 Совпадения:\n${bars}\n\n${ch.desc}\n\n🌑 Тень: ${ch.shadow}\n\n→ https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
