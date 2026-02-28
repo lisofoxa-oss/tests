@@ -125,6 +125,7 @@ body {
   border-radius: var(--card-radius);
   position: relative;
   cursor: pointer;
+  overflow: hidden;
   animation: cardIn 0.5s ease-out both;
   transform-origin: center;
 }
@@ -291,6 +292,7 @@ body {
   border-radius: var(--card-radius);
   position: relative;
   cursor: pointer;
+  overflow: hidden;
 }
 .bonus-card-wrap .card-content {
   background: linear-gradient(135deg, #1f1630, #2a1a3a);
@@ -299,7 +301,7 @@ body {
 }
 .bonus-card-wrap .card-content .emoji { font-size: 2.4rem; }
 .bonus-card-wrap .card-content .msg { font-size: 0.85rem; }
-.bonus-card-wrap canvas { z-index: 2; }
+.bonus-card-wrap canvas { z-index: 2; position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .bonus-title {
   font-family: 'Cormorant Garamond', serif;
@@ -507,16 +509,20 @@ function setupScratch(canvas, onReveal, isBonus) {
   }
 
   function resize() {
-    const rect = canvas.parentElement.getBoundingClientRect();
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    if (w === 0 || h === 0) {
+      // Layout not ready, retry
+      requestAnimationFrame(resize);
+      return;
+    }
     const dpr = window.devicePixelRatio || 1;
-    cardW = rect.width;
-    cardH = rect.height;
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    canvas.style.width = rect.width + 'px';
-    canvas.style.height = rect.height + 'px';
+    cardW = w;
+    cardH = h;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    drawCover(rect.width, rect.height);
+    drawCover(w, h);
   }
 
   function roundedRectPath(ctx, w, h, r) {
@@ -617,7 +623,8 @@ function setupScratch(canvas, onReveal, isBonus) {
   canvas.addEventListener('touchmove', e => { e.preventDefault(); if (isDrawing) scratch(getPos(e)); }, { passive: false });
   canvas.addEventListener('touchend', () => { isDrawing = false; tryReveal(); });
 
-  requestAnimationFrame(() => { resize(); });
+  // Double rAF to ensure layout is fully computed
+  requestAnimationFrame(() => { requestAnimationFrame(() => { resize(); }); });
   window.addEventListener('resize', () => { if (!revealed) resize(); });
 }
 
@@ -703,39 +710,42 @@ document.getElementById('modal').addEventListener('click', e => {
 function showBonus() {
   const section = document.getElementById('bonusSection');
   section.classList.add('active');
-  section.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  const bonusWrap = document.getElementById('bonusCard');
-  const canvas = bonusWrap.querySelector('canvas');
+  // Wait for layout to be fully computed before setting up scratch
+  setTimeout(() => {
+    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  bonusWrap.addEventListener('click', () => {
-    if (bonusWrap.classList.contains('revealed')) {
-      openModal({
-        emoji: '👑',
-        type: 'gift',
-        label: 'Королева',
-        msg: 'Ты открыла все карточки — а значит ты официально Королева этой игры 👑\n\nНо у каждой королевы есть коронный подарок для своего короля...\n\nФоточка в маечке — и я официально самый счастливый человек на земле 🥺'
-      });
-    }
-  });
+    const bonusWrap = document.getElementById('bonusCard');
+    const canvas = bonusWrap.querySelector('canvas');
 
-  setupScratch(canvas, () => {
-    bonusWrap.classList.add('revealed');
-    const rect = bonusWrap.getBoundingClientRect();
-    emitSparkles(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    // Extra sparkles for bonus
-    setTimeout(() => emitSparkles(rect.left + rect.width * 0.3, rect.top + rect.height * 0.4), 200);
-    setTimeout(() => emitSparkles(rect.left + rect.width * 0.7, rect.top + rect.height * 0.6), 400);
+    bonusWrap.addEventListener('click', () => {
+      if (bonusWrap.classList.contains('revealed')) {
+        openModal({
+          emoji: '👑',
+          type: 'gift',
+          label: 'Королева',
+          msg: 'Ты открыла все карточки — а значит ты официально Королева этой игры 👑\n\nНо у каждой королевы есть коронный подарок для своего короля...\n\nФоточка в маечке — и я официально самый счастливый человек на земле 🥺'
+        });
+      }
+    });
 
-    setTimeout(() => {
-      openModal({
-        emoji: '👑',
-        type: 'gift',
-        label: 'Королева',
-        msg: 'Ты открыла все карточки — а значит ты официально Королева этой игры 👑\n\nНо у каждой королевы есть коронный подарок для своего короля...\n\nФоточка в маечке — и я официально самый счастливый человек на земле 🥺'
-      });
-    }, 500);
-  }, true);
+    setupScratch(canvas, () => {
+      bonusWrap.classList.add('revealed');
+      const rect = bonusWrap.getBoundingClientRect();
+      emitSparkles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      setTimeout(() => emitSparkles(rect.left + rect.width * 0.3, rect.top + rect.height * 0.4), 200);
+      setTimeout(() => emitSparkles(rect.left + rect.width * 0.7, rect.top + rect.height * 0.6), 400);
+
+      setTimeout(() => {
+        openModal({
+          emoji: '👑',
+          type: 'gift',
+          label: 'Королева',
+          msg: 'Ты открыла все карточки — а значит ты официально Королева этой игры 👑\n\nНо у каждой королевы есть коронный подарок для своего короля...\n\nФоточка в маечке — и я официально самый счастливый человек на земле 🥺'
+        });
+      }, 500);
+    }, true);
+  }, 300);
 }
 </script>
 
