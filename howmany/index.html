@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Личный профиль ✦</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf8f6;--bg2:#f4f0ec;
+  --surface:#fff;--surface2:#fdfaf8;--surface3:#f8f4f0;
+  --text:#7a6a62;--text-dim:#a09088;--text-bright:#2a2018;
+  --border:rgba(120,90,70,0.06);
+  --accent:#c4927a;--accent2:#a07868;
+  --glow:rgba(196,146,122,0.08);
+  --card-shadow:0 1px 16px rgba(100,60,40,0.04);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+.cg{font-family:'Cormorant Garamond',serif}
+.container{max-width:600px;margin:0 auto;padding:20px 16px 60px}
+
+.header{text-align:center;padding:50px 0 24px;animation:fadeUp .8s ease}
+.header-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(196,146,122,0.06);border:1px solid rgba(196,146,122,0.1);border-radius:100px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+.header-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin:0 4px;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,8vw,3.4rem);font-weight:600;color:var(--text-bright);line-height:1.05;margin-bottom:10px;letter-spacing:-1px}
+.lead{font-size:15px;color:var(--text-dim);max-width:420px;margin:0 auto;line-height:1.8;font-weight:300}
+
+.trust-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:24px 0;box-shadow:var(--card-shadow);animation:fadeUp .8s ease .15s both}
+.trust-box p{font-size:13px;color:var(--text-dim);line-height:1.7;text-align:center}
+.trust-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
+.tt{padding:4px 12px;background:var(--bg2);border-radius:8px;font-size:10px;color:var(--text-dim);font-weight:500;letter-spacing:.5px}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:14px;background:var(--accent);color:#fff;font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .3s both;letter-spacing:1px}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 8px 30px var(--glow)}
+
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(250,248,246,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.progress-count{font-size:12px;color:var(--accent);font-weight:700}
+.progress-bar{height:2px;background:rgba(196,146,122,0.08);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;box-shadow:var(--card-shadow);animation:fadeUp .45s ease}
+.q-num{font-size:10px;letter-spacing:2px;color:var(--accent);font-weight:600;margin-bottom:14px}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text-bright);line-height:1.3;margin-bottom:8px}
+.q-sub{font-size:13px;font-style:italic;color:var(--text-dim);margin-bottom:22px;line-height:1.6}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--surface2);border:2px solid transparent;border-radius:14px;cursor:pointer;transition:all .25s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(196,146,122,0.12)}
+.option.selected{border-color:var(--accent);background:rgba(196,146,122,0.04)}
+.opt-letter{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(196,146,122,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent);flex-shrink:0;transition:all .25s}
+.option.selected .opt-letter{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--bg2);color:var(--text-dim);opacity:0;pointer-events:none;letter-spacing:.5px}
+.btn-next.active{opacity:1;pointer-events:all;background:var(--accent);color:#fff}
+
+/* ═══ REVEAL ═══ */
+.results-section{display:none}
+.results-section.active{display:block}
+
+.reveal-overlay{position:fixed;inset:0;background:rgba(42,32,24,0.6);z-index:100;display:flex;align-items:center;justify-content:center;animation:revealFade .6s ease;backdrop-filter:blur(4px)}
+.reveal-card{background:#fff;border-radius:24px;padding:40px 28px;max-width:400px;width:90%;text-align:center;animation:revealPop .5s ease .3s both;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.reveal-pre{font-size:12px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.reveal-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--text-bright);margin-bottom:12px;line-height:1.2}
+.reveal-desc{font-size:14px;color:var(--text-dim);line-height:1.6;margin-bottom:20px}
+.reveal-btn{padding:14px 40px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;letter-spacing:1px}
+.reveal-btn:hover{transform:translateY(-2px)}
+
+@keyframes revealFade{from{opacity:0}to{opacity:1}}
+@keyframes revealPop{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.res-main{animation:fadeUp .6s ease}
+.res-number{font-family:'Cormorant Garamond',serif;font-size:clamp(5rem,20vw,8rem);font-weight:700;text-align:center;line-height:1;margin:20px 0 0}
+.res-unit{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,4vw,1.6rem);text-align:center;color:var(--text-dim);font-weight:400;margin-bottom:24px}
+
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin-bottom:14px;box-shadow:var(--card-shadow)}
+.r-card h3{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:12px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8}
+
+.scale-section{margin:16px 0}
+.scale-row{margin-bottom:14px}
+.scale-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.scale-name{font-size:12px;color:var(--text);font-weight:500}
+.scale-val{font-size:11px;font-weight:700;color:var(--accent)}
+.scale-bg{height:4px;background:var(--bg2);border-radius:10px;overflow:hidden}
+.scale-fill{height:100%;background:var(--accent);border-radius:10px;transition:width 1.2s ease;width:0}
+
+.science-box{padding:14px 16px;background:rgba(196,146,122,0.04);border:1px solid rgba(196,146,122,0.08);border-radius:14px;margin-top:12px}
+.science-box p{font-size:12px;color:var(--text-dim);line-height:1.7}
+.sci-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;font-weight:600}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s ease;text-decoration:none;letter-spacing:.5px}
+.btn-primary{background:var(--accent);color:#fff;border:none}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:19px}.option{padding:12px 14px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge"><span class="header-dot"></span> Личный профиль</div>
+      <h1>Узнай себя честно</h1>
+      <p class="lead">12 вопросов о том, как ты живёшь, чувствуешь и принимаешь решения. Результат может удивить.</p>
+    </div>
+    <div class="trust-box">
+      <p>Тест основан на теории привязанности (Bowlby & Ainsworth), шкале автономии (Deci & Ryan) и исследованиях эмоциональной самодостаточности.</p>
+      <div class="trust-tags">
+        <span class="tt">Attachment Theory</span>
+        <span class="tt">Self-Determination</span>
+        <span class="tt">Autonomy Scale</span>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startTest()">Начать ✦</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top"><span class="progress-label">Профиль</span><span class="progress-count" id="progressCount">01 / 12</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/*
+  Scales:
+  A = autonomy (self-sufficiency)         → higher = fewer men needed
+  D = dependency (need for external support)→ higher = more needed
+  V = variety (need for novelty/stimulation)→ higher = more needed
+  S = security (need for stable attachment) → moderate = 1
+  E = emotional regulation (self-soothing)  → higher = fewer needed
+*/
+let sc={A:0,D:0,V:0,S:0,E:0};
+
+const letters=['а','б','в','г','д'];
+
+const questions=[
+  {text:"Вечер пятницы. Планов нет. Что ты чувствуешь?",
+   sub:"Первая реакция, не обдуманная.",
+   opts:[
+     {t:"Кайф. Наконец-то ничего не надо",sc:{A:3,E:1}},
+     {t:"Тревогу. Надо кому-нибудь написать",sc:{D:3}},
+     {t:"Скуку. Хочу движения, людей, приключений",sc:{V:3}},
+     {t:"Спокойствие. Позвоню кому-то близкому, поболтаем",sc:{S:3}}
+   ]},
+  {text:"Ты принимаешь важное решение. К кому обращаешься?",
+   opts:[
+     {t:"К себе. Я знаю лучше",sc:{A:3}},
+     {t:"К подруге. Мне нужно выговориться",sc:{D:2,S:1}},
+     {t:"К маме / человеку, которому доверяю больше всех",sc:{S:3}},
+     {t:"Спрашиваю нескольких людей — хочу разные мнения",sc:{V:2,D:1}},
+     {t:"Откладываю решение. Может, само решится",sc:{D:2}}
+   ]},
+  {text:"Как долго ты можешь быть одна — реально одна — без тревоги?",
+   sub:"Без звонков, переписок, соцсетей.",
+   opts:[
+     {t:"Дни. Мне хорошо наедине с собой",sc:{A:3,E:2}},
+     {t:"Несколько часов. Потом нужен контакт",sc:{S:2,D:1}},
+     {t:"Час-два максимум. Потом мне плохо",sc:{D:3}},
+     {t:"Зависит от настроения. Иногда неделю, иногда — ни минуты",sc:{V:2,E:1}}
+   ]},
+  {text:"Когда тебе грустно, что помогает?",
+   opts:[
+     {t:"Побыть одной. Переварить. Я справляюсь сама",sc:{A:2,E:3}},
+     {t:"Разговор. Мне нужно, чтобы кто-то выслушал",sc:{D:2,S:1}},
+     {t:"Объятия. Физический контакт. Присутствие рядом",sc:{D:3}},
+     {t:"Переключение: новые люди, движение, музыка",sc:{V:3}},
+     {t:"Плакать под одеялом. Потом как новенькая",sc:{E:2,A:1}}
+   ]},
+  {text:"Идеальный отпуск:",
+   opts:[
+     {t:"Одна. Книга, тишина, свобода",sc:{A:3}},
+     {t:"С одним близким человеком. Тихо и тепло",sc:{S:3}},
+     {t:"Большой компанией. Приключения, истории, вечеринки",sc:{V:3}},
+     {t:"С разными людьми в разных местах",sc:{V:2,D:1}},
+     {t:"С тем, кто всё организует за меня",sc:{D:3}}
+   ]},
+  {text:"Ты получила плохие новости. Что делаешь в первые 5 минут?",
+   opts:[
+     {t:"Замираю. Анализирую. Составляю план",sc:{A:2,E:2}},
+     {t:"Звоню первому человеку в контактах",sc:{D:3}},
+     {t:"Плачу. Потом — действую",sc:{E:2,S:1}},
+     {t:"Отвлекаюсь. Мне нужно не думать об этом прямо сейчас",sc:{V:2,D:1}},
+     {t:"Иду гулять. Мне нужно движение",sc:{A:1,V:1,E:1}}
+   ]},
+  {text:"В твоей жизни прямо сейчас — сколько людей, которым ты можешь позвонить в 3 ночи?",
+   opts:[
+     {t:"Ноль. И меня это устраивает",sc:{A:3}},
+     {t:"Один. И мне этого достаточно",sc:{S:3}},
+     {t:"2–3. На разные случаи",sc:{V:1,S:1,D:1}},
+     {t:"Много. Я не хочу зависеть от одного человека",sc:{V:3}},
+     {t:"Ноль. И это проблема",sc:{D:3}}
+   ]},
+  {text:"Когда ты чувствуешь себя сильнее всего?",
+   opts:[
+     {t:"Когда справилась сама. Без чьей-либо помощи",sc:{A:3}},
+     {t:"Когда рядом тот, кто верит в меня",sc:{S:3}},
+     {t:"Когда вокруг много людей, которые меня ценят",sc:{D:2,V:1}},
+     {t:"Когда новый вызов — и я его приняла",sc:{V:2,A:1}},
+     {t:"Когда меня обнимают",sc:{D:3}}
+   ]},
+  {text:"Закончи фразу: «Мне не хватает...»",
+   sub:"Первое, что пришло.",
+   opts:[
+     {t:"...тишины",sc:{A:3}},
+     {t:"...стабильности",sc:{S:3}},
+     {t:"...эмоций",sc:{V:3}},
+     {t:"...того, кто будет рядом",sc:{D:3}},
+     {t:"...ничего. У меня всё есть",sc:{A:2,E:2}}
+   ]},
+  {text:"Конфликт с близким человеком. Как ведёшь себя?",
+   opts:[
+     {t:"Дистанцируюсь. Мне нужно время остыть",sc:{A:2,E:1}},
+     {t:"Разговариваю. Сразу. Не могу с нерешёнными вещами",sc:{S:2,D:1}},
+     {t:"Ищу поддержку у третьего человека",sc:{D:2,V:1}},
+     {t:"Замалчиваю. Боюсь потерять",sc:{D:3}},
+     {t:"Ставлю границы. Чётко говорю, что не ок",sc:{A:3,E:1}}
+   ]},
+  {text:"Что для тебя «успех» в личной жизни?",
+   opts:[
+     {t:"Полная самодостаточность. Я сама себе всё",sc:{A:3}},
+     {t:"Один человек, который по-настоящему знает меня",sc:{S:3}},
+     {t:"Свобода. Хочу — рядом, не хочу — одна",sc:{V:2,A:1}},
+     {t:"Чтобы меня любили. Сильно. Всегда",sc:{D:3}},
+     {t:"Баланс. Рядом, но не зависимость",sc:{S:2,E:2}}
+   ]},
+  {text:"Последний вопрос. Если бы тебе сказали, что ты проведёшь следующий год совершенно одна — без отношений, без романтики, без «кого-то». Что ты почувствуешь?",
+   sub:"Честно.",
+   opts:[
+     {t:"Облегчение. Наконец-то никаких драм",sc:{A:3,E:1}},
+     {t:"Спокойствие. Справлюсь. Может, это даже полезно",sc:{E:3}},
+     {t:"Тревогу. Год — это очень долго",sc:{D:2,S:1}},
+     {t:"Панику. Мне нельзя без этого",sc:{D:3}},
+     {t:"Интерес. Как это — целый год? Попробую",sc:{V:2,A:1}}
+   ]}
+];
+
+/* Results */
+const results=[
+  {min:-99,max:1,num:"0",unit:"мужчин",title:"Ноль. Абсолютный ноль.",
+    tag:"Тебе не нужен мужчина. Вообще. Ни один. Ты — замкнутая экосистема: сама себе поддержка, сама себе стабильность, сама себе праздник.",
+    desc:"Это не про «сильная независимая». Это глубже: твоя автономия — не реакция на плохой опыт, а базовая настройка. Психология привязанности описывает это как «earned secure autonomy» — приобретённую безопасность без привязки к внешнему объекту. Ты не отвергаешь близость — тебе просто не нужен кто-то, чтобы чувствовать себя целой.",
+    science:"По шкале автономии Deci & Ryan — ты в верхнем дециле. Исследования показывают: люди с высокой автономией не менее счастливы в отношениях — но они заходят в них из «хочу», а не из «нужно». Это фундаментально меняет динамику."},
+  {min:2,max:5,num:"0.5",unit:"мужчины",title:"Половинка. Не в смысле «вторая половинка».",
+    tag:"Тебе нужен не целый мужчина — а функция. Кто-то, кто будет рядом иногда. Не всегда. Не каждый день. Но тогда, когда тебе нужно тепло.",
+    desc:"Ты самодостаточна на 80%. Оставшиеся 20% — не слабость, а здоровая потребность в контакте. Боулби называл это «secure base» — безопасная база: тебе не нужен кто-то постоянно, но нужна точка, к которой можно вернуться. Это может быть мужчина. А может — кошка, подруга или хороший плейлист.",
+    science:"Теория самодетерминации выделяет три базовые потребности: автономию, компетентность и связанность. У тебя первые две закрыты. Третья закрыта наполовину — и это нормально. «Половина мужчины» = потребность в периодическом, а не постоянном контакте."},
+  {min:6,max:9,num:"1",unit:"мужчина",title:"Один. Классика, проверенная тысячелетиями.",
+    tag:"Тебе нужен один человек. Не потому что «так принято» — а потому что ты функционируешь лучше в паре. Ты не зависишь — ты выбираешь партнёрство.",
+    desc:"Теория привязанности говорит: человек с безопасной привязанностью ищет одного стабильного партнёра — не из страха, а из предпочтения. Ты — классический «secure attachment». Тебе нужен кто-то, кому ты доверяешь, с кем безопасно, с кем можно молчать. Один. Но настоящий.",
+    science:"Исследования Hazan & Shaver (1987) показали: люди с безопасным типом привязанности формируют более длительные и удовлетворяющие отношения. Они не боятся близости, но и не растворяются в ней. Один человек — но правильный — покрывает все потребности: безопасность, стимуляцию и поддержку."},
+  {min:10,max:13,num:"1.5",unit:"мужчины",title:"Полтора. Один основной + запасной контакт.",
+    tag:"Тебе нужен один главный — и кто-то на фоне. Не любовник, нет. А человек, который даёт то, чего не даёт основной: другой взгляд, другую энергию, другой тип внимания.",
+    desc:"Это звучит странно, но психология подтверждает: потребность в разных типах привязанности — нормальна. Один человек не может закрыть ВСЕ потребности. Тебе нужен «anchor partner» (якорный партнёр) + «satellite contact» (орбитальный контакт). Второй может быть другом, коллегой, кем угодно.",
+    science:"Данбар (антрополог, «число Данбара») описал «слоистую структуру» близости: 1.5 человека в ядре — это один суперблизкий + один «ближний круг». Такая структура снижает эмоциональную перегрузку основного партнёра и делает отношения устойчивее."},
+  {min:14,max:18,num:"2",unit:"мужчины",title:"Два. Для разных задач.",
+    tag:"Тебе нужны два разных человека. Не потому что ты ненасытна — а потому что ты сложная. Один тип мужчины не вмещает всё, что тебе нужно.",
+    desc:"Один — для стабильности, другой — для огня. Один — для ума, другой — для тела. Один — для будней, другой — для выходных. Ты не предательница — ты реалистка. Психология полиаморных исследований показывает: потребность в нескольких источниках близости коррелирует с высокой нейропластичностью и потребностью в стимуляции.",
+    science:"Perel (2006) в книге «Mating in Captivity» описывает парадокс: мы хотим одновременно безопасности (стабильный партнёр) и новизны (возбуждение). Одному человеку это совместить почти невозможно. Два — математически логичнее."},
+  {min:19,max:999,num:"3+",unit:"мужчин",title:"Три и больше. Ты — не один человек.",
+    tag:"Тебе нужна команда. Не гарем — а разные люди для разных граней тебя. Ты настолько многослойная, что один человек просто не уместит всю тебя.",
+    desc:"Это не про «ветреность». Это про потребность во множественных привязанностях — разной глубины, разного типа, разной функции. Ты берёшь от мира всё: внимание, заботу, интеллект, страсть, юмор. И если один человек покрывает только часть — ты находишь остальное. Это здоровый инстинкт. Просто масштабный.",
+    science:"Исследования Fisher (2004) показали, что влюблённость, привязанность и сексуальное влечение — три отдельные нейрохимические системы (дофамин, окситоцин, тестостерон). Они МОГУТ быть направлены на одного человека, но чаще активируются разными стимулами. Три — не каприз. Три — нейрохимия."}
+];
+
+let curQ=0,selOpt=null;
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      <div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><span class="opt-letter">${letters[j]}</span><span>${o.t}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Узнать результат':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const s=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(s))sc[k]+=v;
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showReveal();
+}
+
+function showReveal(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  const overlay=document.createElement('div');
+  overlay.className='reveal-overlay';
+  overlay.innerHTML=`
+    <div class="reveal-card">
+      <div class="reveal-pre">Тест завершён. Тема была скрытой.</div>
+      <div class="reveal-title">На самом деле мы считали, сколько мужчин тебе нужно по жизни</div>
+      <div class="reveal-desc">Опираясь на теорию привязанности, шкалу автономии и твои ответы — мы вычислили число. Готова?</div>
+      <button class="reveal-btn" onclick="this.closest('.reveal-overlay').remove();showFinalResult()">Показать ✦</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function showFinalResult(){
+  const composite=sc.D+sc.V-sc.A-sc.E+Math.round(sc.S*.3);
+  const r=results.find(r=>composite>=r.min&&composite<=r.max)||results[2];
+
+  const scaleMax=Math.max(sc.A,sc.D,sc.V,sc.S,sc.E,1);
+  const scales=[
+    {name:"Автономия",key:"A",desc:"способность быть одной без тревоги"},
+    {name:"Потребность в опоре",key:"D",desc:"нужда во внешней поддержке"},
+    {name:"Жажда новизны",key:"V",desc:"потребность в разных стимулах"},
+    {name:"Безопасность",key:"S",desc:"привязанность к стабильному"},
+    {name:"Саморегуляция",key:"E",desc:"способность справляться с эмоциями самой"}
+  ];
+  const scalesHTML=scales.map(s=>{const pct=Math.round((sc[s.key]/scaleMax)*100);return`<div class="scale-row"><div class="scale-top"><span class="scale-name">${s.name}</span><span class="scale-val">${pct}%</span></div><div class="scale-bg"><div class="scale-fill" data-w="${pct}"></div></div></div>`;}).join('');
+
+  document.getElementById('resultsSection').innerHTML=`
+    <div class="res-main">
+      <div class="res-number" style="color:var(--accent)">${r.num}</div>
+      <div class="res-unit">${r.unit}</div>
+
+      <div class="r-card"><h3>${r.title}</h3><p>${r.tag}</p></div>
+
+      <div class="r-card"><h3>📖 Почему столько?</h3><p>${r.desc}</p></div>
+
+      <div class="r-card"><h3>📊 Твой профиль</h3><div class="scale-section">${scalesHTML}</div></div>
+
+      <div class="r-card"><h3>🔬 Наука за числом</h3>
+        <div class="science-box"><div class="sci-label">Research basis</div><p>${r.science}</p></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Отправить подруге</button>
+        <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+        <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+        <button class="btn-act btn-ghost" onclick="location.reload()">↻ Пересчитать</button>
+      </div>
+    </div>`;
+  setTimeout(()=>document.querySelectorAll('.scale-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const composite=sc.D+sc.V-sc.A-sc.E+Math.round(sc.S*.3);
+  const r=results.find(r=>composite>=r.min&&composite<=r.max)||results[2];
+  const text=`Мне нужно ${r.num} ${r.unit} по жизни 😂\n\n${r.tag}\n\n✦ Узнай своё число: https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Сколько мужчин тебе нужно',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const composite=sc.D+sc.V-sc.A-sc.E+Math.round(sc.S*.3);
+  const r=results.find(r=>composite>=r.min&&composite<=r.max)||results[2];
+  const scales=['A','D','V','S','E'];
+  const names={A:'Автономия',D:'Опора',V:'Новизна',S:'Безопасность',E:'Саморегуляция'};
+  const mx=Math.max(...scales.map(k=>sc[k]),1);
+  const bars=scales.map(k=>{const p=Math.round((sc[k]/mx)*100);return`  ${names[k]}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const text=`✦ СКОЛЬКО МУЖЧИН ТЕБЕ НУЖНО\n\nОтвет: ${r.num} ${r.unit}\n\n${r.title}\n\n«${r.tag}»\n\n📊 Профиль:\n${bars}\n\n${r.desc}\n\n→ https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
