@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какая ты одежда 👗</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf6f2;--bg2:#f4ede6;
+  --surface:#fff;--surface2:#fdf9f6;--surface3:#f8f0e8;
+  --text:#6a5a52;--text-dim:#9a8a80;--text-bright:#2a2220;
+  --border:rgba(120,90,70,0.08);
+  --rose:#d4728a;--mauve:#b07898;--gold:#c8a060;--sage:#7a9a78;--navy:#5a6888;
+  --glow:rgba(212,114,138,0.10);
+  --card-shadow:0 2px 20px rgba(100,60,40,0.04);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6}
+.serif{font-family:'Playfair Display',serif}
+.container{max-width:640px;margin:0 auto;padding:20px 16px 60px;position:relative;z-index:1}
+
+.header{text-align:center;padding:44px 0 24px;animation:fadeUp .8s ease}
+.header-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(212,114,138,0.08);border:1px solid rgba(212,114,138,0.12);border-radius:100px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:20px}
+.header-rack{font-size:36px;display:flex;justify-content:center;gap:6px;margin-bottom:16px;line-height:1}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,7.5vw,3.2rem);font-weight:800;color:var(--text-bright);line-height:1.05;margin-bottom:14px;letter-spacing:-1px}
+h1 em{font-style:italic;color:var(--rose)}
+.lead{font-size:15px;color:var(--text-dim);max-width:460px;margin:0 auto;line-height:1.7;font-weight:400}
+
+.intro-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;margin:24px 0 28px;box-shadow:var(--card-shadow);animation:fadeUp .8s ease .15s both;text-align:center}
+.intro-box p{font-size:14px;color:var(--text-dim);line-height:1.7}
+.intro-items{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px}
+.intro-tag{padding:4px 10px;background:var(--bg2);border-radius:8px;font-size:11px;color:var(--text-dim);font-weight:500}
+
+.btn-start{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;border:none;border-radius:16px;background:linear-gradient(135deg,var(--rose),var(--mauve));color:#fff;font-family:'Playfair Display',serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s ease;animation:fadeUp .8s ease .3s both;box-shadow:0 6px 30px var(--glow);letter-spacing:.5px}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(212,114,138,0.2)}
+
+.progress-container{position:sticky;top:0;z-index:99;background:rgba(250,246,242,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 0 10px;margin-bottom:20px;border-bottom:1px solid var(--border);display:none}
+.progress-container.active{display:block}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.progress-count{font-size:12px;color:var(--rose);font-weight:700}
+.progress-bar{height:3px;background:rgba(212,114,138,0.08);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--mauve),var(--gold));border-radius:10px;transition:width .5s ease;width:0}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;box-shadow:var(--card-shadow);animation:fadeUp .45s ease}
+.q-num{font-size:11px;letter-spacing:2px;color:var(--rose);font-weight:700;margin-bottom:14px;text-transform:uppercase}
+.q-text{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--text-bright);line-height:1.3;margin-bottom:8px}
+.q-sub{font-size:14px;font-style:italic;color:var(--text-dim);margin-bottom:22px;line-height:1.6}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--surface2);border:2px solid transparent;border-radius:14px;cursor:pointer;transition:all .25s ease;font-size:14px;color:var(--text);line-height:1.5;user-select:none}
+.option:hover{border-color:rgba(212,114,138,0.15);background:var(--surface3)}
+.option.selected{border-color:var(--rose);background:rgba(212,114,138,0.04)}
+.opt-emoji{font-size:20px;flex-shrink:0}
+
+.btn-next{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Playfair Display',serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-top:14px;background:var(--bg2);color:var(--text-dim);opacity:0;pointer-events:none}
+.btn-next.active{opacity:1;pointer-events:all;background:linear-gradient(135deg,var(--rose),var(--mauve));color:#fff;box-shadow:0 4px 16px var(--glow)}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+.results-section.active{display:block;animation:fadeUp .8s ease}
+
+.res-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:36px 24px;text-align:center;margin-bottom:16px;box-shadow:var(--card-shadow);position:relative;overflow:hidden}
+.res-card::before{content:'';position:absolute;top:-50%;right:-30%;width:300px;height:300px;border-radius:50%;pointer-events:none;opacity:.06}
+.res-icon{font-size:80px;display:block;margin-bottom:14px;position:relative;z-index:1}
+.res-label{font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:8px}
+.res-name{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,6vw,2.6rem);font-weight:800;color:var(--text-bright);margin-bottom:4px}
+.res-aka{font-size:13px;font-style:italic;margin-bottom:16px}
+.res-tagline{font-size:16px;color:var(--text);max-width:440px;margin:0 auto;line-height:1.6;font-weight:400}
+
+.r-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px 22px;margin-bottom:14px;box-shadow:var(--card-shadow)}
+.r-card h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text-bright);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.r-card p{font-size:14px;color:var(--text-dim);line-height:1.8;font-weight:400}
+
+.style-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.style-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:500}
+
+.sc-bars{margin:14px 0 4px}
+.sc-row{margin-bottom:12px}
+.sc-row-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.sc-name{font-size:12px;color:var(--text);font-weight:500;display:flex;align-items:center;gap:6px}
+.sc-val{font-size:11px;font-weight:700}
+.sc-bg{height:5px;background:rgba(212,114,138,0.06);border-radius:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0}
+
+.gallery-toggle{width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text-dim);font-family:'Playfair Display',serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .3s ease;margin-bottom:14px}
+.gallery-toggle:hover{border-color:var(--rose);color:var(--rose)}
+.gallery{display:none;flex-direction:column;gap:6px;margin-bottom:14px}
+.gallery.open{display:flex;animation:fadeUp .4s ease}
+.gallery-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:12px}
+.gallery-item.current{border-color:var(--rose);background:rgba(212,114,138,0.03)}
+.gi-emoji{font-size:20px;flex-shrink:0}
+.gi-body{flex:1;min-width:0}
+.gi-name{font-weight:600;color:var(--text-bright);font-size:12px}
+.gi-desc{color:var(--text-dim);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi-badge{font-size:8px;padding:2px 7px;background:rgba(212,114,138,0.08);color:var(--rose);border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+
+.actions{display:flex;flex-direction:column;gap:10px;padding-top:28px;border-top:1px solid var(--border)}
+.btn-act{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s ease;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--rose),var(--mauve));color:#fff;border:none;box-shadow:0 4px 16px var(--glow)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--rose);color:var(--rose)}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-weight:500}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--rose);color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.container{padding:12px 14px 50px}.q-card,.r-card{padding:24px 16px}.q-text{font-size:18px}.option{padding:12px 14px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="headerSection">
+    <div class="header">
+      <div class="header-badge">👗 Гардероб-тест</div>
+      <div class="header-rack">🧦👙🧥👟🎩🧤👗🩳</div>
+      <h1>Какая ты <em>одежда</em></h1>
+      <p class="lead">От носков до шубы. От нижнего белья до цилиндра. 20 вопросов — и мы найдём предмет гардероба, который и есть ты.</p>
+    </div>
+    <div class="intro-box">
+      <p>Огромный тест. 16 возможных результатов. Тебя ждут ситуации из жизни, дилеммы из примерочной и вопросы, на которые нет правильного ответа.</p>
+      <div class="intro-items">
+        <span class="intro-tag">🧦 Носки</span><span class="intro-tag">👙 Бикини</span><span class="intro-tag">🧥 Шуба</span>
+        <span class="intro-tag">👟 Кроссовки</span><span class="intro-tag">🎩 Цилиндр</span><span class="intro-tag">👗 Платье</span>
+        <span class="intro-tag">🩳 Шорты</span><span class="intro-tag">🧸 Худи</span><span class="intro-tag">👔 Галстук</span>
+        <span class="intro-tag">🩴 Шлёпки</span><span class="intro-tag">🧣 Шарф</span><span class="intro-tag">🕶️ Очки</span>
+        <span class="intro-tag">🥾 Берцы</span><span class="intro-tag">👘 Халат</span><span class="intro-tag">🧢 Кепка</span>
+        <span class="intro-tag">🩲 Трусы</span>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startTest()">Открыть гардероб 👗</button>
+  </div>
+  <div class="progress-container" id="progressBar">
+    <div class="progress-top">
+      <span class="progress-label">Примерка</span>
+      <span class="progress-count" id="progressCount">01 / 20</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="qContainer"></div>
+  <div class="results-section" id="resultsSection"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const C={
+  sock:{e:"🧦",name:"Тёплые носки",aka:"«мне и тут хорошо»",color:"#c8a060",
+    tag:"Ты — уют в чистом виде. Тебя не видно, но без тебя — холодно, грустно и как-то не так.",
+    desc:"Носки не выпендриваются. Они не на показ. Но попробуй без них в феврале — сразу поймёшь цену. Ты так же: незаметный(-ая), но абсолютно незаменимый(-ая). Ты — тепло, которое люди замечают только когда его нет.",
+    traits:["Уют","Надёжность","Скромность","Домашность"],shadow:"Тебя иногда забывают оценить. Потому что ты всегда на месте. Это несправедливо — но такова судьба носков."},
+  bikini:{e:"👙",name:"Бикини",aka:"«нечего скрывать»",color:"#ff7aaa",
+    tag:"Ты — открытость. Максимальная. Ты не прячешь ни тело, ни мысли, ни эмоции. Ты — какой(-ая) есть. Принимать или мимо.",
+    desc:"Бикини — это заявление. «Я не стесняюсь. Я не извиняюсь. Я — вот». Для этого нужно мужество, которого у тебя больше, чем ткани. Ты живёшь открыто, любишь громко и не понимаешь, зачем люди прячутся.",
+    traits:["Уверенность","Открытость","Смелость","Лёгкость"],shadow:"Не все готовы к такой открытости. Иногда мир просит чуть больше ткани — не для тебя, а для их нервов."},
+  fur:{e:"🧥",name:"Шуба",aka:"«мне можно»",color:"#8a6070",
+    tag:"Ты — драма, роскошь и абсолютная уверенность в том, что заслуживаешь лучшего. Скромность? Не слышала.",
+    desc:"Шуба входит в комнату — и все оборачиваются. Не потому что шуба этого хочет (хотя хочет). А потому что шубу невозможно не заметить. Ты так же: ты не просишь внимания — ты его требуешь самим фактом существования.",
+    traits:["Роскошь","Драматичность","Харизма","Максимализм"],shadow:"Шуба не для каждого дня. И не для каждой погоды. Иногда нужно снизить градус — но ты не знаешь как, и это красиво."},
+  sneaker:{e:"👟",name:"Кроссовки",aka:"«погнали»",color:"#5a8a6a",
+    tag:"Ты — движение. Всегда куда-то, всегда с кем-то, всегда готов(-а). Сидеть на месте — наказание.",
+    desc:"Кроссовки — универсальный солдат гардероба. На работу, на свидание, на пробежку, на вечеринку. Ты так же: адаптивный, энергичный, «давай сделаем это». У тебя всегда есть план — или ты придумаешь его на ходу.",
+    traits:["Энергия","Адаптивность","Практичность","Движение"],shadow:"Иногда нужно остановиться. Снять кроссовки. Сесть. Подышать. Но ты это прочитаешь — и побежишь дальше."},
+  tophat:{e:"🎩",name:"Цилиндр",aka:"«я не как все и мне норм»",color:"#5a5a7a",
+    tag:"Ты — эксцентричность. Тебя невозможно засунуть в рамку. Ты — не тренд, ты — категория.",
+    desc:"Кто в 2025 году носит цилиндр? Ты. Не буквально, но по духу. Ты делаешь странное — и делаешь это с таким лицом, что остальные начинают думать, может это они странные. Это суперсила.",
+    traits:["Уникальность","Артистизм","Эксцентричность","Смелость"],shadow:"Есть грань между «уникальный» и «странный, которого избегают». Ты обычно на правильной стороне. Обычно."},
+  dress:{e:"👗",name:"Маленькое чёрное платье",aka:"«классика не стареет»",color:"#3a3a3a",
+    tag:"Ты — на любой случай. Свадьба, похороны, свидание, собеседование — ты подходишь везде. И везде — идеально.",
+    desc:"Маленькое чёрное платье придумала Шанель — для женщин, которым некогда думать, что надеть. Ты так же: ты не выделяешься намеренно, но тебя запоминают. Потому что элегантность — это не про громкость.",
+    traits:["Элегантность","Универсальность","Вкус","Тактичность"],shadow:"Ты настолько хорош(-а) «для всего», что иногда непонятно, кто ты «для себя». Классика — это красиво. Но не забывай быть собой."},
+  shorts:{e:"🩳",name:"Шорты",aka:"«и так сойдёт»",color:"#70a0b0",
+    tag:"Ты — лёгкость. Максимальная. Минимум усилий, максимум кайфа. Зачем усложнять?",
+    desc:"Шорты — это философия. «Мне не надо впечатлять. Мне и так хорошо.» Ты не тратишь энергию на то, как выглядишь — и тратишь её на то, как живёшь. Просто, расслабленно, с лёгкой улыбкой.",
+    traits:["Лёгкость","Простота","Расслабленность","Оптимизм"],shadow:"«Сойдёт» — хорошая философия. До момента, когда нужно «не сойдёт, а идеально». Шорты не пускают в ресторан."},
+  hoodie:{e:"🧸",name:"Оверсайз худи",aka:"«не трогайте меня»",color:"#7a7a8a",
+    tag:"Ты — кокон. Тёплый, мягкий, на три размера больше. Мир снаружи опасен — а внутри худи безопасно.",
+    desc:"Худи — это не одежда. Это объятие, которое ты носишь на себе. Капюшон вместо стен. Карман-кенгуру для рук и всего, что ты не хочешь показывать миру. Ты интроверт с большим сердцем и ещё большим худи.",
+    traits:["Интроверсия","Уют","Мягкость","Глубина"],shadow:"Из худи нужно иногда выходить. Там, снаружи, тоже бывает тепло. Правда. Проверь."},
+  tie:{e:"👔",name:"Галстук",aka:"«у меня деловое предложение»",color:"#4a5a78",
+    tag:"Ты — серьёзность, статус и ощущение, что в комнате стало чуть более официально. Ты не шутишь. Ну, почти.",
+    desc:"Галстук — единственный предмет гардероба, который ничего не греет, не закрывает и не защищает. Он существует только для того, чтобы сказать: «я серьёзен(-на)». Ты так же: ты про дело, про результат, про «давайте по повестке».",
+    traits:["Серьёзность","Амбиции","Дисциплина","Статус"],shadow:"Ты забыл(-а), когда последний раз дурачился(-ась). Галстук нужно иногда развязывать. Буквально и метафорически."},
+  flipflop:{e:"🩴",name:"Шлёпки",aka:"«мне всё равно и это прекрасно»",color:"#e0a050",
+    tag:"Ты — абсолютный пофигизм в хорошем смысле. Тебя невозможно вывести из себя. Потому что ты уже вышел(-а) — в шлёпках.",
+    desc:"Шлёпки — декларация свободы. «Мне не нужны каблуки, статус, производить впечатление.» Ты живёшь как хочешь, ходишь как удобно, и в магазин за хлебом идёшь в том, в чём спал(-а).",
+    traits:["Свобода","Беспечность","Мир с собой","Пофигизм"],shadow:"Пофигизм прекрасен. Но иногда шлёпки — не ответ. Иногда нужно надеть хотя бы кеды и выглядеть так, будто тебе не всё равно."},
+  scarf:{e:"🧣",name:"Шарф",aka:"«тебе не холодно?»",color:"#c07068",
+    tag:"Ты — забота. Тёплая, мягкая, немного навязчивая. Ты обматываешь людей своим теплом — даже когда они не просят.",
+    desc:"Шарф — вещь, которую мама заставляет надеть, даже когда +15. А ты — человек, который спрашивает «ты поел(-а)?» даже у взрослых. Ты заботишься, переживаешь, кутаешь. Мир без тебя — холоднее.",
+    traits:["Забота","Теплота","Эмпатия","Нежность"],shadow:"Ты так заматываешь других заботой, что они иногда задыхаются. Шарф должен греть, а не душить. Ослабь чуть-чуть."},
+  shades:{e:"🕶️",name:"Солнечные очки",aka:"«cool — это не температура»",color:"#2a2a3a",
+    tag:"Ты — загадка, стиль и ощущение, что ты знаешь что-то, чего не знают другие. Возможно, ты просто не выспался(-ась). Но выглядит круто.",
+    desc:"Очки скрывают глаза — а глаза скрывают мысли. Ты не показываешь свои карты. Ты наблюдаешь, анализируешь, выглядишь стильно. Люди хотят узнать тебя ближе — и это часть плана.",
+    traits:["Загадочность","Стиль","Наблюдательность","Coolness"],shadow:"За очками можно прятать усталость. Или пустоту. Иногда нужно снять их и показать глаза — хотя бы одному человеку."},
+  boot:{e:"🥾",name:"Берцы",aka:"«не указывай мне»",color:"#5a4a40",
+    tag:"Ты — бунт, тяжёлый шаг и абсолютная готовность пройти по грязи — в прямом и переносном смысле.",
+    desc:"Берцы не для красоты. Они для того, чтобы идти туда, куда не пройти в каблуках. Ты — человек-протест. Не потому что модно — а потому что ты реально не согласен(-на) с тем, как устроен мир.",
+    traits:["Бунт","Стойкость","Независимость","Грубая честность"],shadow:"Бунтовать — красиво. Но берцы тяжёлые. Иногда можно снять их и просто побыть мягким(-ой). Это не предательство."},
+  robe:{e:"👘",name:"Халат",aka:"«я дома, и это лучшее место на Земле»",color:"#8a7a9a",
+    tag:"Ты — домашний комфорт уровня «бог». Зачем куда-то идти, если дома — ты в халате?",
+    desc:"Халат — не одежда. Это состояние души. «Я закрыл(-а) дверь, надел(-а) халат — и мир может подождать.» Ты знаешь цену покою, тишине и горячему чаю. Ты не ленивый(-ая) — ты мудрый(-ая).",
+    traits:["Домашность","Покой","Мудрость","Самодостаточность"],shadow:"Из халата нужно иногда выходить. Там есть люди, солнце и жизнь. Она не такая уютная — но она настоящая."},
+  cap:{e:"🧢",name:"Кепка задом наперёд",aka:"«свой парень»",color:"#6a8a5a",
+    tag:"Ты — вечная молодость, casual вайб и ощущение, что с тобой можно просто. Без понтов. Без фильтров.",
+    desc:"Кепка задом наперёд — универсальный знак: «я свой». С тобой можно пиво, можно поговорить, можно помолчать. Ты не пытаешься впечатлить — и именно этим впечатляешь.",
+    traits:["Простота","Дружелюбие","Вечная молодость","Честность"],shadow:"«Свой парень» — приятная роль. Но иногда хочется быть «особенным». Кепку можно развернуть — или снять."},
+  undies:{e:"🩲",name:"Семейные трусы",aka:"«какой есть — такой есть»",color:"#a08060",
+    tag:"Ты — абсолютная честность. Нулевой уровень притворства. Ты — то, что под всеми слоями. Настоящее.",
+    desc:"Семейные трусы не для инстаграма. Они не sexy, не стильные, не модные. Но они — самый честный предмет гардероба. Их не видит никто, кроме самых близких. Ты так же: настоящий(-ая), без фильтров, без масок. Что видишь — то и есть.",
+    traits:["Честность","Аутентичность","Юмор","Приземлённость"],shadow:"Честность — суперсила. Но мир иногда просит обёртку. Не для того, чтобы ты врал(-а) — а чтобы не шокировал(-а)."}
+};
+
+const K=Object.keys(C);
+let scores={};K.forEach(k=>scores[k]=0);
+
+const questions=[
+  {text:"Утро понедельника. Ты выбираешь, в чём пойти в мир. Подход?",
+   sub:"Не что наденешь — а как выбираешь.",
+   opts:[
+     {e:"⏰",text:"Первое, что под руку попало. 30 секунд — и из дома",sc:{shorts:3,flipflop:2,cap:1}},
+     {e:"👁️",text:"Продумываю образ. Детали важны",sc:{dress:2,shades:2,fur:1}},
+     {e:"🔁",text:"Надеваю то же, что вчера. Работает — не трогай",sc:{hoodie:3,robe:1}},
+     {e:"💪",text:"Главное — удобство. Красота подождёт",sc:{sneaker:3,cap:1}},
+     {e:"✨",text:"Одеваюсь так, чтобы настроение поднять",sc:{bikini:2,fur:2,tophat:1}}
+   ]},
+  {text:"Тебя позвали на вечеринку, где ты никого не знаешь.",
+   opts:[
+     {e:"🎉",text:"Отлично! Новые люди — новые истории",sc:{bikini:2,sneaker:2,cap:1}},
+     {e:"🫣",text:"Пойду, но буду у стены с телефоном",sc:{hoodie:3,sock:1}},
+     {e:"👑",text:"Пойду и стану центром внимания",sc:{fur:3,tophat:1}},
+     {e:"🫤",text:"Не пойду. Зачем?",sc:{robe:3,flipflop:1}},
+     {e:"🤔",text:"Пойду, но сначала узнаю кто будет",sc:{tie:2,shades:2}}
+   ]},
+  {text:"Конфликт. Кто-то на тебя наехал. Реакция?",
+   opts:[
+     {e:"🔥",text:"Наезжаю в ответ. Громче. Конкретнее",sc:{boot:3,fur:1}},
+     {e:"🧊",text:"Холодный взгляд. Молчу. Пусть сам(-а) поймёт",sc:{shades:3,dress:1}},
+     {e:"🤝",text:"Пытаюсь разрулить. Не люблю конфликты",sc:{scarf:2,sock:2}},
+     {e:"🤷",text:"Мне всё равно. Серьёзно",sc:{flipflop:3,shorts:1}},
+     {e:"😢",text:"Расстраиваюсь, но не показываю",sc:{hoodie:2,sock:2}}
+   ]},
+  {text:"Идеальное воскресенье:",
+   opts:[
+     {e:"🛋️",text:"Диван, сериал, никуда не выходить",sc:{robe:3,hoodie:2}},
+     {e:"🏃",text:"Пробежка, спортзал, активный день",sc:{sneaker:3}},
+     {e:"☕",text:"Кофейня, книга, спокойный вайб",sc:{scarf:2,dress:2}},
+     {e:"🎭",text:"Галерея, спектакль, что-то интересное",sc:{tophat:2,tie:1,shades:1}},
+     {e:"🫂",text:"С близкими. Где — неважно",sc:{sock:2,scarf:2}}
+   ]},
+  {text:"Тебе нужно произвести впечатление. Стратегия:",
+   opts:[
+     {e:"🗣️",text:"Говорю много, ярко, с жестами",sc:{fur:3,bikini:1}},
+     {e:"🤫",text:"Говорю мало, но по делу",sc:{shades:2,tie:2}},
+     {e:"😊",text:"Просто улыбаюсь и слушаю",sc:{scarf:2,sock:2}},
+     {e:"🤪",text:"Шучу. Юмор — мой козырь",sc:{undies:2,shorts:2,cap:1}},
+     {e:"👔",text:"Одеваюсь соответствующе и веду себя серьёзно",sc:{tie:3,dress:1}}
+   ]},
+  {text:"Тебе подарили 100К на шмотки. Куда?",
+   sub:"",
+   opts:[
+     {e:"🏬",text:"Бренды. Качество. Классика навсегда",sc:{dress:3,tie:1}},
+     {e:"🛍️",text:"Весь масс-маркет — много и разного",sc:{shorts:2,cap:2}},
+     {e:"🧤",text:"Один дорогой предмет — заявление",sc:{fur:3}},
+     {e:"🛒",text:"Удобное: кроссы, худи, базу",sc:{sneaker:2,hoodie:2}},
+     {e:"💸",text:"Потрачу на еду / путешествия. Одежда — не приоритет",sc:{flipflop:2,robe:2,undies:1}}
+   ]},
+  {text:"Друг зовёт тебя на спонтанную поездку. Завтра. Твой ответ:",
+   opts:[
+     {e:"🚀",text:"ДА! Вообще не думая",sc:{bikini:2,sneaker:2,shorts:1}},
+     {e:"📋",text:"Подожди, мне нужно проверить расписание",sc:{tie:2,dress:1}},
+     {e:"🤔",text:"Куда? С кем? Какой бюджет?",sc:{shades:2,tie:1}},
+     {e:"🫠",text:"Не, я дома хочу остаться",sc:{robe:3,hoodie:1}},
+     {e:"🫣",text:"Хочу, но скажу «нет». Мне страшно",sc:{sock:2,hoodie:2}}
+   ]},
+  {text:"Какой суперсилой ты бы хотел(-а) обладать?",
+   sub:"",
+   opts:[
+     {e:"👁️",text:"Невидимость",sc:{shades:3,hoodie:1}},
+     {e:"💪",text:"Суперсила",sc:{boot:2,sneaker:2}},
+     {e:"❤️",text:"Чтение мыслей",sc:{scarf:2,sock:1,shades:1}},
+     {e:"🕐",text:"Остановка времени",sc:{robe:2,flipflop:2}},
+     {e:"✨",text:"Телепортация",sc:{bikini:2,tophat:2}},
+     {e:"🗣️",text:"Убеждение любого",sc:{fur:2,tie:2}}
+   ]},
+  {text:"Ты опоздал(-а) на важную встречу. Как входишь?",
+   opts:[
+     {e:"👑",text:"Как будто так и надо. Я — событие",sc:{fur:3,tophat:1}},
+     {e:"😰",text:"Извиняюсь 15 раз и краснею",sc:{sock:3,scarf:1}},
+     {e:"🤷",text:"Опоздал — и опоздал. Не смертельно",sc:{flipflop:2,shorts:2}},
+     {e:"🏃",text:"Вбегаю запыхавшийся(-аяся)",sc:{sneaker:3}},
+     {e:"🫥",text:"Стараюсь войти незаметно",sc:{hoodie:2,shades:2}}
+   ]},
+  {text:"В компании ты обычно:",
+   opts:[
+     {e:"🎤",text:"Рассказываю истории. Все слушают",sc:{fur:2,tophat:2}},
+     {e:"👂",text:"Слушаю. Мне интереснее чужие истории",sc:{scarf:2,sock:1,shades:1}},
+     {e:"🤡",text:"Шучу. Я отвечаю за настроение",sc:{undies:2,cap:2,shorts:1}},
+     {e:"📱",text:"Сижу в телефоне и киваю",sc:{hoodie:3}},
+     {e:"🔧",text:"Организую. Кто-то же должен",sc:{tie:2,dress:1,sneaker:1}}
+   ]},
+  {text:"Твоё отношение к правилам:",
+   opts:[
+     {e:"📏",text:"Соблюдаю. Правила — это порядок",sc:{tie:3,dress:1}},
+     {e:"🤸",text:"Гибко. Зависит от ситуации",sc:{sneaker:2,shorts:1,cap:1}},
+     {e:"🔥",text:"Нарушаю. Правила — для скучных",sc:{boot:3,tophat:1}},
+     {e:"🤷",text:"Не замечаю. Есть правила?",sc:{flipflop:2,robe:2}},
+     {e:"📖",text:"Создаю свои",sc:{fur:2,shades:2}}
+   ]},
+  {text:"Как ты справляешься с грустью?",
+   sub:"",
+   opts:[
+     {e:"🛏️",text:"Ложусь и лежу. Просто лежу",sc:{robe:3,hoodie:1}},
+     {e:"🏃",text:"Двигаюсь. Бегу, иду, еду куда-то",sc:{sneaker:3,boot:1}},
+     {e:"📞",text:"Звоню близкому человеку",sc:{scarf:3}},
+     {e:"🎭",text:"Делаю вид, что всё ок",sc:{dress:2,shades:2}},
+     {e:"🍕",text:"Ем. Много",sc:{shorts:1,flipflop:1,undies:2,sock:1}}
+   ]},
+  {text:"Что тебе важнее в людях?",
+   opts:[
+     {e:"💯",text:"Честность. Даже если неприятно",sc:{undies:3,boot:1}},
+     {e:"🫂",text:"Теплота. Чтобы было мягко рядом",sc:{scarf:3,sock:1}},
+     {e:"🧠",text:"Ум. Чтобы было интересно",sc:{tophat:2,shades:2}},
+     {e:"😂",text:"Юмор. Чтобы было весело",sc:{cap:2,shorts:2,undies:1}},
+     {e:"💪",text:"Надёжность. Чтобы не подвёл(-а)",sc:{sneaker:2,sock:2}}
+   ]},
+  {text:"Твоя квартира больше похожа на:",
+   opts:[
+     {e:"🏰",text:"Музей. Всё на своих местах",sc:{tie:2,dress:2}},
+     {e:"🧸",text:"Берлогу. Тепло и хаотично",sc:{hoodie:3,robe:1}},
+     {e:"🎨",text:"Галерею. Я всё подбираю по вайбу",sc:{tophat:2,fur:1,shades:1}},
+     {e:"📦",text:"Склад. Я не убираюсь",sc:{flipflop:2,shorts:2,undies:1}},
+     {e:"🌿",text:"Уютный уголок. Свечи, пледы, книги",sc:{scarf:2,sock:2}}
+   ]},
+  {text:"Ты в магазине одежды. Подход:",
+   opts:[
+     {e:"🎯",text:"Знаю что мне нужно. Зашёл — купил — вышел",sc:{sneaker:2,tie:2}},
+     {e:"🛒",text:"Меряю всё подряд. 3 часа пролетают незаметно",sc:{bikini:2,fur:1,dress:1}},
+     {e:"📱",text:"Заказываю онлайн. Зачем ходить",sc:{robe:2,hoodie:2}},
+     {e:"😩",text:"Ненавижу шоппинг",sc:{flipflop:2,undies:2}},
+     {e:"🏷️",text:"Только распродажи",sc:{cap:2,shorts:2}}
+   ]},
+  {text:"Тебе говорят «ты странный(-ая)». Реакция:",
+   opts:[
+     {e:"😊",text:"Спасибо! Это лучший комплимент",sc:{tophat:3,boot:1}},
+     {e:"😔",text:"Обидно. Я хочу быть нормальным(-ой)",sc:{sock:2,hoodie:2}},
+     {e:"🤷",text:"Ок. И что?",sc:{flipflop:2,shorts:2}},
+     {e:"😏",text:"Знаю",sc:{shades:3}},
+     {e:"🙄",text:"Кто бы говорил",sc:{fur:2,boot:1,undies:1}}
+   ]},
+  {text:"Какой из этих запахов — ты?",
+   sub:"Не какой нравится — какой ты.",
+   opts:[
+     {e:"☕",text:"Кофе и ваниль",sc:{scarf:2,sock:2}},
+     {e:"🌊",text:"Морская соль и ветер",sc:{bikini:2,shorts:2}},
+     {e:"🔥",text:"Дым и кожа",sc:{boot:2,shades:2}},
+     {e:"🌸",text:"Пион и пудра",sc:{dress:2,fur:1,bikini:1}},
+     {e:"🌲",text:"Хвоя и мох",sc:{hoodie:2,robe:1,cap:1}},
+     {e:"🍕",text:"Пицца",sc:{undies:2,flipflop:2}}
+   ]},
+  {text:"Ты за рулём. Навигатор сломался. Что делаешь?",
+   opts:[
+     {e:"🧭",text:"Еду по интуиции. Найду дорогу",sc:{sneaker:2,boot:2}},
+     {e:"🗺️",text:"Останавливаюсь и разбираюсь",sc:{tie:2,dress:1}},
+     {e:"📞",text:"Звоню кому-нибудь и спрашиваю",sc:{scarf:2,sock:1}},
+     {e:"😤",text:"Злюсь. Потом еду куда глаза глядят",sc:{fur:2,boot:1}},
+     {e:"😌",text:"Еду куда ехал. Может, приеду. Может, нет. Ладно",sc:{flipflop:3,shorts:1}}
+   ]},
+  {text:"Если бы ты был(-а) сезоном:",
+   opts:[
+     {e:"🌸",text:"Весна. Новое начало, энергия, свежесть",sc:{sneaker:2,bikini:1,dress:1}},
+     {e:"☀️",text:"Лето. Жара, свобода, максимум",sc:{bikini:3,shorts:1}},
+     {e:"🍂",text:"Осень. Уют, меланхолия, глубина",sc:{scarf:2,hoodie:2}},
+     {e:"❄️",text:"Зима. Тишина, холод, красота",sc:{shades:2,fur:1,sock:1}}
+   ]},
+  {text:"Последний вопрос. Самое честное описание тебя прямо сейчас:",
+   sub:"",
+   opts:[
+     {e:"🔥",text:"Я энергичный(-ая) и мне нужно движение",sc:{sneaker:2,bikini:1,boot:1}},
+     {e:"🫠",text:"Я уставший(-ая) и хочу покоя",sc:{robe:2,hoodie:2,sock:1}},
+     {e:"😎",text:"Я в настроении. Сегодня мой день",sc:{fur:2,shades:1,tophat:1}},
+     {e:"🤷",text:"Я не знаю, кто я. И это ок",sc:{shorts:1,flipflop:1,undies:2,cap:1}},
+     {e:"💗",text:"Мне хорошо. Тихо и хорошо",sc:{scarf:2,sock:2,dress:1}}
+   ]}
+];
+
+let curQ=0,selOpt=null;
+
+function startTest(){
+  document.getElementById('headerSection').style.display='none';
+  document.getElementById('progressBar').classList.add('active');
+  showQ(0);
+}
+
+function showQ(i){
+  const q=questions[i],num=String(i+1).padStart(2,'0');
+  selOpt=null;
+  document.getElementById('qContainer').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">${num} / ${questions.length}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub?`<div class="q-sub">${q.sub}</div>`:''}
+      <div class="options">${q.opts.map((o,j)=>`<div class="option" onclick="sel(this,${j})"><span class="opt-emoji">${o.e}</span><span>${o.text}</span></div>`).join('')}</div>
+      <button class="btn-next" id="btnNext" onclick="nxt()">${i===questions.length-1?'Открыть гардероб 👗':'Дальше →'}</button>
+    </div>`;
+  document.getElementById('progressCount').textContent=`${num} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=`${(i/questions.length)*100}%`;
+  window.scrollTo({top:document.getElementById('progressBar').offsetTop-10,behavior:'smooth'});
+}
+
+function sel(el,i){
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selOpt=i;
+  document.getElementById('btnNext').classList.add('active');
+}
+
+function nxt(){
+  if(selOpt===null)return;
+  const sc=questions[curQ].opts[selOpt].sc;
+  for(const[k,v]of Object.entries(sc))scores[k]+=v;
+  selOpt=null;curQ++;
+  curQ<questions.length?showQ(curQ):showResults();
+}
+
+function showResults(){
+  document.getElementById('progressBar').classList.remove('active');
+  document.getElementById('qContainer').innerHTML='';
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const topK=sorted[0][0],c=C[topK],maxVal=Math.max(sorted[0][1],1);
+
+  const top8=sorted.slice(0,8);
+  const barsHTML=top8.map(([k,v])=>{const pct=Math.round((v/maxVal)*100);return`<div class="sc-row"><div class="sc-row-top"><span class="sc-name">${C[k].e} ${C[k].name}</span><span class="sc-val" style="color:${C[k].color}">${pct}%</span></div><div class="sc-bg"><div class="sc-fill" data-w="${pct}" style="background:${C[k].color}"></div></div></div>`;}).join('');
+
+  const traitsHTML=c.traits.map(t=>`<span class="style-tag" style="background:${c.color}10;color:${c.color}">✦ ${t}</span>`).join('');
+
+  const galleryHTML=K.map(k=>{const cc=C[k],cur=k===topK;return`<div class="gallery-item ${cur?'current':''}"><span class="gi-emoji">${cc.e}</span><div class="gi-body"><div class="gi-name">${cc.name}</div><div class="gi-desc">${cc.aka}</div></div>${cur?'<span class="gi-badge">Ты</span>':''}</div>`;}).join('');
+
+  const section=document.getElementById('resultsSection');
+  section.classList.add('active');
+  section.innerHTML=`
+    <div class="res-card" style="--rc:${c.color}">
+      <div style="position:absolute;top:-50%;right:-30%;width:300px;height:300px;background:radial-gradient(circle,${c.color}12,transparent 70%);border-radius:50%"></div>
+      <span class="res-icon">${c.e}</span>
+      <div class="res-label" style="color:${c.color}">Ты — это</div>
+      <div class="res-name">${c.name}</div>
+      <div class="res-aka" style="color:${c.color}">${c.aka}</div>
+      <div class="res-tagline">${c.tag}</div>
+    </div>
+
+    <div class="r-card"><h3>✨ Твои черты</h3><div class="style-grid">${traitsHTML}</div></div>
+
+    <div class="r-card"><h3>${c.e} Описание</h3><p>${c.desc}</p></div>
+
+    <div class="r-card"><h3>📊 Твой гардероб (топ-8)</h3><div class="sc-bars">${barsHTML}</div></div>
+
+    <div class="r-card"><h3>🌙 Обратная сторона</h3><p>${c.shadow}</p></div>
+
+    ${sorted[1][1]>3?`<div class="r-card"><h3>🔀 Тоже ты: ${C[sorted[1][0]].e} ${C[sorted[1][0]].name}</h3><p>${C[sorted[1][0]].tag}</p></div>`:''}
+
+    <button class="gallery-toggle" onclick="document.getElementById('gal').classList.toggle('open')">👗 Все 16 вещей</button>
+    <div class="gallery" id="gal">${galleryHTML}</div>
+
+    <div class="actions">
+      <button class="btn-act btn-primary" onclick="shareShort()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Поделиться</button>
+      <button class="btn-act btn-secondary" onclick="copyFull()">📋 Скопировать</button>
+      <a href="https://lisofoxa-oss.github.io/tests/" class="btn-act btn-secondary">🧪 Ещё тесты</a>
+      <button class="btn-act btn-ghost" onclick="location.reload()">↻ Переодеться</button>
+    </div>`;
+
+  setTimeout(()=>document.querySelectorAll('.sc-fill').forEach(b=>b.style.width=b.dataset.w+'%'),400);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareShort(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const c=C[sorted[0][0]];
+  const text=`${c.e} Я — ${c.name} ${c.aka}\n\n${c.tag}\n\n👗 А ты? https://lisofoxa-oss.github.io/tests/`;
+  if(navigator.share)navigator.share({title:'Какая ты одежда',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('Скопировано!'));
+}
+
+function copyFull(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const c=C[sorted[0][0]],maxVal=Math.max(sorted[0][1],1);
+  const bars=sorted.slice(0,8).map(([k,v])=>{const p=Math.round((v/maxVal)*100);return`  ${C[k].e} ${C[k].name}: ${'█'.repeat(Math.round(p/10))}${'░'.repeat(10-Math.round(p/10))} ${p}%`;}).join('\n');
+  const text=`👗 КАКАЯ ТЫ ОДЕЖДА\n\n${c.e} ${c.name}\n${c.aka}\n\n«${c.tag}»\n\n📊 Гардероб:\n${bars}\n\n${c.desc}\n\n🌙 ${c.shadow}\n\n→ https://lisofoxa-oss.github.io/tests/`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Скопировано!'));
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
